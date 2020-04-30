@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.0.5.RELEASE'
+}
+
+project.version = '1.0.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-dependencies:2.0.5.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    runtime "mysql:mysql-connector-java:8.0.15"
+
+    components {
+        withModule('org.springframework:spring-beans') {
+            allVariants {
+                withDependencyConstraints {
+                    // Need to patch constraints because snakeyaml is an optional dependency
+                    it.findAll { it.name == 'snakeyaml' }.each { it.version { strictly '1.19' } }
+                }
+            }
+        }
+    }
+    
+    // Test Containers, Containers for DAO testing
+    testImplementation "org.testcontainers:testcontainers:1.11.2"
+    testImplementation "org.testcontainers:mysql:1.11.2"
+    testImplementation "org.testcontainers:junit-jupiter:1.11.2"
+    
+    // AssertJ
+    testImplementation "org.assertj:assertj-core:3.11.1"
+    
+    // JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+}
+
+// Needed for Spring Boot
+bootJar {
+    mainClassName = 'org.di.airbnb.Application'
+    archiveName = 'artifact.jar'
+}
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+    // Use jcenter for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+
+// JUnit5 setup 
+test {
+    useJUnitPlatform()
+}
+
+task printVersionName {
+    doLast {
+        println project.version
+    }
+}
