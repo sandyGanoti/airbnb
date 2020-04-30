@@ -109,4 +109,3 @@ INSERT INTO `airbnb`.`renting_rules`(homestay_id, aircondition, tv, internet, li
 INSERT INTO `airbnb`.`renting_rules`(homestay_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking, free_text) VALUES (2, 1, 1, 0, 1, 0, 0, 1, 0, NULL);
 INSERT INTO `airbnb`.`renting_rules`(homestay_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking, free_text) VALUES (3, 1, 0, 0, 1, 0, 0, 1, 0, NULL);
 INSERT INTO `airbnb`.`renting_rules`(homestay_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking, free_text) VALUES (4, 0, 1, 0, 1, 0, 0, 1, 0, NULL);
-
