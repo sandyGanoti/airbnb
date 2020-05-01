@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `airbnb`.`renting_rules` (
   `living_room` TINYINT(1) DEFAULT FALSE,
   `kitchen` TINYINT(1) DEFAULT FALSE,
   `party_friendly` TINYINT(1) DEFAULT FALSE,
-  `party_friendly` TINYINT(1) DEFAULT FALSE,
+  `pet_friendly` TINYINT(1) DEFAULT FALSE,
   `smoking_friendly` TINYINT(1) DEFAULT FALSE,
   `free_text` TEXT DEFAULT NULL,
   PRIMARY KEY(`homestay_id`),
