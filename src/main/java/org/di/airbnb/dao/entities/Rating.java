@@ -1,29 +1,33 @@
-package org.di.airbnb.entities;
+package org.di.airbnb.dao.entities;
 
 import java.time.Instant;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
-import org.di.airbnb.constant.Role;
 
 @Entity()
 @Table(name = "rating")
 public class Rating {
 
+	private long id;
 	private long raterId;
 	private long homestayId;
-	private int rating;
+	private int mark;
 	private Instant createdAt;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	public long getId() {
+		return id;
+	}
+
+	public void setId( final long id ) {
+		this.id = id;
+	}
 
 	public long getRaterId() {
 		return raterId;
@@ -41,12 +45,12 @@ public class Rating {
 		this.homestayId = homestayId;
 	}
 
-	public int getRating() {
-		return rating;
+	public int getMark() {
+		return mark;
 	}
 
-	public void setRating( final int rating ) {
-		this.rating = rating;
+	public void setMark( final int rating ) {
+		this.mark = mark;
 	}
 
 	public Instant getCreatedAt() {
@@ -65,18 +69,18 @@ public class Rating {
 		if ( o == null || getClass() != o.getClass() ) {
 			return false;
 		}
-		final Rating rating1 = (Rating) o;
-		return raterId == rating1.raterId && homestayId == rating1.homestayId && rating == rating1.rating && createdAt
-				.equals( rating1.createdAt );
+		final Rating rating = (Rating) o;
+		return id == rating.id && raterId == rating.raterId && homestayId == rating.homestayId && mark == rating.mark && createdAt
+				.equals( rating.createdAt );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( raterId, homestayId, rating, createdAt );
+		return Objects.hash( id, raterId, homestayId, mark, createdAt );
 	}
 
 	@Override
 	public String toString() {
-		return "Rating{" + "raterId=" + raterId + ", homestayId=" + homestayId + ", rating=" + rating + ", createdAt=" + createdAt + '}';
+		return "Rating{" + "id=" + id + "raterId=" + raterId + ", homestayId=" + homestayId + ", mark=" + mark + ", createdAt=" + createdAt + '}';
 	}
 }

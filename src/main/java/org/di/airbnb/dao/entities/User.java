@@ -1,4 +1,4 @@
-package org.di.airbnb.entities;
+package org.di.airbnb.dao.entities;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -28,9 +28,6 @@ public class User {
 	private Role role;
 	private Instant createdAt;
 	private String email;
-
-	public User() {
-	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

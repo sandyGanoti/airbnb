@@ -1,4 +1,4 @@
-package org.di.airbnb.entities;
+package org.di.airbnb.dao.entities;
 
 import java.time.Instant;
 

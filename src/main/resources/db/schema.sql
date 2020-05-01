@@ -70,11 +70,12 @@ CREATE TABLE IF NOT EXISTS `airbnb`.`booking` (
 );
 
 CREATE TABLE IF NOT EXISTS `airbnb`.`rating` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `rater_id` BIGINT(20) NOT NULL,
   `homestay_id` BIGINT(20) NOT NULL,
-  `rating` INTEGER NOT NULL,
+  `mark` INTEGER NOT NULL,
   `created_at` DATETIME NOT NULL,
-  PRIMARY KEY (rater_id, homestay_id),
+  PRIMARY KEY(id),
   KEY fk_rating_user (rater_id),
   CONSTRAINT fk_rating_user FOREIGN KEY (rater_id) REFERENCES user (id),
   KEY fk_rating_homestay (homestay_id),
