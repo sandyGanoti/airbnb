@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.assemblers.UserLimitedDTO;
+import org.di.airbnb.assemblers.user.UserModel;
 import org.di.airbnb.dao.AirbnbDao;
 import org.di.airbnb.dao.repository.UserRepository;
 import org.di.airbnb.exceptions.http.EntityNotFoundException;
@@ -26,7 +27,7 @@ public class AirbnbManager {
 
 	//TODO: Use assembler here in order to return data from this layer to the above
 
-	public UserLimitedDTO login( final @NotNull String username, final @NotNull String password ) {
+	public UserModel login( final @NotNull String username, final @NotNull String password ) {
 
 		String encoded = null;
 		try {

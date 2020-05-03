@@ -3,9 +3,10 @@ package org.di.airbnb.api;
 import javax.annotation.Resource;
 
 import org.di.airbnb.AirbnbManager;
-import org.di.airbnb.airbnb.transferables.UserLimitedDTO;
-import org.di.airbnb.airbnb.transferables.UserWithPasswordDTO;
+import org.di.airbnb.assemblers.user.UserModel;
+import org.di.airbnb.assemblers.UserWithPasswordDTO;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,9 +22,10 @@ public class AirbnbController {
 	//	curl -d '{"username": 1, "password": "bourdou" }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/login
 	@PostMapping(value = "user/login")
 	@ResponseStatus(HttpStatus.OK)
-	public UserLimitedDTO login( @RequestHeader("X-User-Id") String userId,
+	public ResponseEntity<UserModel> login( @RequestHeader("X-User-Id") String userId,
 			@RequestBody UserWithPasswordDTO userDTO ) {
-		return manager.login( userDTO.getUsername(), userDTO.getPassword() );
+		return new ResponseEntity<>( manager.login( userDTO.getUsername(), userDTO.getPassword() ),
+				HttpStatus.OK );
 	}
 
 	//
