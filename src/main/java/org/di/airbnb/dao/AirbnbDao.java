@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.di.airbnb.assemblers.MessagingLimitedDTO;
-import org.di.airbnb.assemblers.UserLimitedDTO;
+import org.di.airbnb.assemblers.UserSubModel;
 import org.di.airbnb.dao.entities.Messaging;
 import org.di.airbnb.dao.entities.Rating;
 import org.springframework.stereotype.Repository;
@@ -14,11 +14,11 @@ public interface AirbnbDao {
 
 	//TODO: RETURN ENTITIES
 
-	List<UserLimitedDTO> getLimitedMany( List<Long> userIds );
+	List<UserSubModel> getLimitedMany( List<Long> userIds );
 
-	Optional<UserLimitedDTO> getUserInfo( Long userId );
+	Optional<UserSubModel> getUserInfo( Long userId );
 
-	Optional<UserLimitedDTO> login( String username, String password );
+	Optional<UserSubModel> login( String username, String password );
 
 	boolean isNewMessage( final long recipientId );
 

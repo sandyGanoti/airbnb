@@ -1,15 +1,8 @@
-package org.di.airbnb.assemblers.user;
-
-import java.time.Instant;
+package org.di.airbnb.api.request;
 
 import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.constant.Role;
-import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonRootName;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,13 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@JsonRootName(value = "user")
-@Relation(collectionRelation = "users")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserModel extends RepresentationModel<UserModel> {
+public class UserCreationRequest {
 
-	@NotNull
-	private long id;
 	@NotNull
 	private String username;
 	@NotNull
@@ -39,6 +27,8 @@ public class UserModel extends RepresentationModel<UserModel> {
 	private String lastName;
 	@NotNull
 	private String phoneNumber;
+	@NotNull
+	private String country;
 	@NotNull
 	private Role role;
 	@NotNull

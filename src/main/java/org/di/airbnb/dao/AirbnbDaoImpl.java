@@ -1,6 +1,5 @@
 package org.di.airbnb.dao;
 
-import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +11,7 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import org.di.airbnb.assemblers.MessagingLimitedDTO;
-import org.di.airbnb.assemblers.UserLimitedDTO;
+import org.di.airbnb.assemblers.UserSubModel;
 import org.di.airbnb.dao.entities.Messaging;
 import org.di.airbnb.dao.entities.Rating;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,15 +19,6 @@ import org.springframework.cache.annotation.Cacheable;
 public class AirbnbDaoImpl implements AirbnbDao {
 	@PersistenceContext
 	private EntityManager entityManager;
-	private Clock clock;
-
-	//	AirbnbDaoImpl() {
-	//		this( Clock.systemUTC() );
-	//	}
-	//
-	//	AirbnbDaoImpl( Clock clock ) {
-	//		this.clock = clock;
-	//	}
 
 	//	public List<User> getMany( final List<Long> userIds ) {
 	//		TypedQuery<User> query = entityManager.createQuery( "FROM User where id in (:ids)",
@@ -36,19 +26,19 @@ public class AirbnbDaoImpl implements AirbnbDao {
 	//		return query.getResultList();
 	//	}
 	@Override
-	public List<UserLimitedDTO> getLimitedMany( final List<Long> userIds ) {
-		TypedQuery<UserLimitedDTO> query = entityManager.createQuery(
+	public List<UserSubModel> getLimitedMany( final List<Long> userIds ) {
+		TypedQuery<UserSubModel> query = entityManager.createQuery(
 				"SELECT NEW org.di.airbnb.airbnb.transferables.UserLimitedDTO(u.username, u.id) FROM User u where id in (:ids)",
-				UserLimitedDTO.class ).setParameter( "ids", userIds );
+				UserSubModel.class ).setParameter( "ids", userIds );
 		return query.getResultList();
 	}
 
 	@Override
 	@Cacheable("user_limited")
-	public Optional<UserLimitedDTO> getUserInfo( final Long userId ) {
-		TypedQuery<UserLimitedDTO> query = entityManager.createQuery(
+	public Optional<UserSubModel> getUserInfo( final Long userId ) {
+		TypedQuery<UserSubModel> query = entityManager.createQuery(
 				"SELECT NEW org.di.airbnb.airbnb.transferables.UserLimitedDTO(u.username, u.id) FROM User u where id = :id",
-				UserLimitedDTO.class ).setParameter( "id", userId );
+				UserSubModel.class ).setParameter( "id", userId );
 		try {
 			return Optional.of( query.getSingleResult() );
 		} catch ( NoResultException e ) {
@@ -57,10 +47,10 @@ public class AirbnbDaoImpl implements AirbnbDao {
 	}
 
 	@Override
-	public Optional<UserLimitedDTO> login( final String username, final String password ) {
-		TypedQuery<UserLimitedDTO> query = entityManager.createQuery(
+	public Optional<UserSubModel> login( final String username, final String password ) {
+		TypedQuery<UserSubModel> query = entityManager.createQuery(
 				"SELECT NEW org.di.airbnb.airbnb.transferables.UserLimitedDTO(u.username, u.id) FROM User u where username = :username and password= :password",
-				UserLimitedDTO.class )
+				UserSubModel.class )
 				.setParameter( "username", username )
 				.setParameter( "password", password );
 		try {

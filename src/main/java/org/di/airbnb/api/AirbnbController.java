@@ -1,10 +1,13 @@
 package org.di.airbnb.api;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.AirbnbManager;
-import org.di.airbnb.assemblers.user.UserModel;
-import org.di.airbnb.assemblers.UserWithPasswordDTO;
+import org.di.airbnb.api.request.UserCreationRequest;
+import org.di.airbnb.assemblers.UserSubModel;
+import org.di.airbnb.assemblers.UsernamePasswordModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,33 +22,24 @@ public class AirbnbController {
 	@Resource
 	private AirbnbManager manager;
 
+	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
+	@PostMapping(value = "user/signup")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Long signUp( @RequestBody @Valid @NotNull UserCreationRequest userCreationRequest ) {
+
+		return manager.createUser( userCreationRequest ).getId();
+		//TODO: 1. check existing username
+	}
+
 	//	curl -d '{"username": 1, "password": "bourdou" }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/login
 	@PostMapping(value = "user/login")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<UserModel> login( @RequestHeader("X-User-Id") String userId,
-			@RequestBody UserWithPasswordDTO userDTO ) {
+	public ResponseEntity<UserSubModel> login( @RequestHeader("X-User-Id") String userId,
+			@RequestBody @NotNull UsernamePasswordModel userDTO ) {
 		return new ResponseEntity<>( manager.login( userDTO.getUsername(), userDTO.getPassword() ),
 				HttpStatus.OK );
 	}
-
-	//
-	//	private AuctionItemService auctionItemService;
-	//
-	//	@Autowired
-	//	private ItemCategoryService itemCategoryService;
-	//
-	//	@Autowired
-	//	private BidService bidService;
-	//
-	//	@Autowired
-	//	private RatingService ratingService;
-	//
-	//	@Autowired
-	//	private MessagingService messagingService;
-	//
-	//	@Autowired
-	//	private UserRepository userRepository;
-
+	
 	//	//	curl -k https://localhost:8443/auctions/active --header 'X-User-Id':1
 	//	@GetMapping(value = "auctions/active")
 	//	@ResponseStatus(HttpStatus.OK)
@@ -77,7 +71,7 @@ public class AirbnbController {
 	//	@ResponseStatus(HttpStatus.OK)
 	//	public List<AuctionItemDTO> getActiveAuctionsByUser(
 	//			@RequestHeader("X-User-Id") String userId ) {
-	//		UserLimitedDTO user;
+	//		UserSubModel user;
 	//		try {
 	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
 	//		} catch ( EntityNotFoundException e ) {
@@ -90,7 +84,7 @@ public class AirbnbController {
 	//	@GetMapping(value = "user/auctions")
 	//	@ResponseStatus(HttpStatus.OK)
 	//	public List<AuctionItemDTO> getAuctionsByUser( @RequestHeader("X-User-Id") String userId ) {
-	//		UserLimitedDTO user;
+	//		UserSubModel user;
 	//		try {
 	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
 	//		} catch ( EntityNotFoundException e ) {
@@ -117,7 +111,7 @@ public class AirbnbController {
 	//	@ResponseStatus(HttpStatus.OK)
 	//	public boolean activateAuction( @RequestHeader("X-User-Id") String userId,
 	//			@PathVariable("id") Long auctionId ) {
-	//		UserLimitedDTO user;
+	//		UserSubModel user;
 	//		try {
 	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
 	//		} catch ( EntityNotFoundException e ) {
@@ -131,7 +125,7 @@ public class AirbnbController {
 	//	@ResponseStatus(HttpStatus.OK)
 	//	public List<BidDTO> getBidsByAuctionItem( @RequestHeader("X-User-Id") String userId,
 	//			@PathVariable("id") Long auctionItemId ) {
-	//		UserLimitedDTO user;
+	//		UserSubModel user;
 	//		try {
 	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
 	//		} catch ( EntityNotFoundException e ) {
@@ -148,7 +142,7 @@ public class AirbnbController {
 	//	@GetMapping(value = "/user/bids")
 	//	@ResponseStatus(HttpStatus.OK)
 	//	public List<BidDTO> getBidsByUser( @RequestHeader("X-User-Id") String userId ) {
-	//		UserLimitedDTO user;
+	//		UserSubModel user;
 	//		try {
 	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
 	//		} catch ( EntityNotFoundException e ) {
@@ -164,7 +158,7 @@ public class AirbnbController {
 	//	@ResponseStatus(HttpStatus.OK)
 	//	public List<BidDTO> getBidsByAuctionItemAndUser( @RequestHeader("X-User-Id") String userId,
 	//			@PathVariable("id") Long auctionItemId ) {
-	//		UserLimitedDTO user;
+	//		UserSubModel user;
 	//		try {
 	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
 	//		} catch ( EntityNotFoundException e ) {
@@ -181,7 +175,7 @@ public class AirbnbController {
 	//	@ResponseStatus(HttpStatus.NO_CONTENT)
 	//	public void deleteAuction( @RequestHeader("X-User-Id") String userId,
 	//			@PathVariable("id") Long auctionItemId ) {
-	//		UserLimitedDTO user;
+	//		UserSubModel user;
 	//		try {
 	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
 	//		} catch ( EntityNotFoundException e ) {
@@ -263,7 +257,7 @@ public class AirbnbController {
 	//	@GetMapping(value = "/messages/unread/recipient")
 	//	@ResponseStatus(HttpStatus.OK)
 	//	public boolean isNewMessage( @RequestHeader("X-User-Id") String userId ) {
-	//		UserLimitedDTO user;
+	//		UserSubModel user;
 	//		try {
 	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
 	//		} catch ( EntityNotFoundException e ) {
@@ -278,7 +272,7 @@ public class AirbnbController {
 	//	@ResponseStatus(HttpStatus.OK)
 	//	public List<MessagingLimitedDTO> getSentInfoBySender(
 	//			@RequestHeader("X-User-Id") String userId ) {
-	//		UserLimitedDTO user;
+	//		UserSubModel user;
 	//		try {
 	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
 	//		} catch ( EntityNotFoundException e ) {
@@ -292,7 +286,7 @@ public class AirbnbController {
 	//	@ResponseStatus(HttpStatus.OK)
 	//	public List<MessagingLimitedDTO> getIncomingInfoBySender(
 	//			@RequestHeader("X-User-Id") String userId ) {
-	//		UserLimitedDTO user;
+	//		UserSubModel user;
 	//		try {
 	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
 	//		} catch ( EntityNotFoundException e ) {
@@ -355,7 +349,7 @@ public class AirbnbController {
 	//	@ResponseStatus(HttpStatus.NO_CONTENT)
 	//	public void deleteChat( @RequestHeader("X-User-Id") String userId,
 	//			@PathVariable("messageId") Long messageId ) {
-	//		UserLimitedDTO user;
+	//		UserSubModel user;
 	//		try {
 	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
 	//		} catch ( EntityNotFoundException e ) {
@@ -371,8 +365,8 @@ public class AirbnbController {
 	//	 * On all the auctions, find the winners */
 	//	@GetMapping(value = "auctions/{id}/winner")
 	//	@ResponseStatus(HttpStatus.OK)
-	//	public List<UserLimitedDTO> getUsersAbleToChat( @RequestHeader("X-User-Id") String userId ) {
-	//		UserLimitedDTO user;
+	//	public List<UserSubModel> getUsersAbleToChat( @RequestHeader("X-User-Id") String userId ) {
+	//		UserSubModel user;
 	//		try {
 	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
 	//		} catch ( EntityNotFoundException e ) {
@@ -410,23 +404,5 @@ public class AirbnbController {
 	//		return userRepository.getLimitedMany( userIds );
 	//	}
 	//
-	//	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
-	//	@PostMapping(value = "user/signup")
-	//	@ResponseStatus(HttpStatus.CREATED)
-	//	public Long signUp( @RequestHeader("X-User-Id") String userId, @RequestBody UserDTO userDTO ) {
-	//
-	//		Long e = userRepository.save( new User() );
-	//		if ( createdUserId == null ) {
-	//			throw new ConflictException( "User name already in use" );
-	//		}
-	//		return createdUserId;
-	//	}
-	//
-	//	//	curl -d '{"username": 1, "password": "bourdou" }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/login
-	//	@PostMapping(value = "user/login")
-	//	@ResponseStatus(HttpStatus.OK)
-	//	public UserLimitedDTO login( @RequestHeader("X-User-Id") String userId,
-	//			@RequestBody UserWithPasswordDTO userDTO ) {
-	//		return userRepository.login( userDTO.getUsername(), userDTO.getPassword() );
-	//	}
+
 }
