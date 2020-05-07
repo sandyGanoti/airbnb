@@ -12,10 +12,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-dependencies:2.0.5.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
-    
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
     compile group: 'com.google.inject', name: 'guice', version: '4.0'
-    compile group: 'org.springframework.hateoas', name: 'spring-hateoas', version: '1.0.5.RELEASE'
+
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
     compile group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'
@@ -33,7 +33,7 @@ dependencies {
             }
         }
     }
-    
+
     // Test Containers, Containers for DAO testing
     testImplementation "org.testcontainers:testcontainers:1.11.2"
     testImplementation "org.testcontainers:mysql:1.11.2"
@@ -42,7 +42,7 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
     // AssertJ
     testImplementation "org.assertj:assertj-core:3.11.1"
-    
+
     // JUnit 5
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
