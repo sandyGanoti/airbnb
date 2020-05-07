@@ -31,7 +31,7 @@ public class AirbnbController {
 		//TODO: 1. check existing username
 	}
 
-	//	curl -d '{"username": 1, "password": "bourdou" }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/login
+	//	curl -d '{"username": 1, "password": "bourdou" }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k http://localhost:8443/user/login
 	@PostMapping(value = "user/login")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<UserSubModel> login( @RequestHeader("X-User-Id") String userId,
@@ -39,7 +39,7 @@ public class AirbnbController {
 		return new ResponseEntity<>( manager.login( userDTO.getUsername(), userDTO.getPassword() ),
 				HttpStatus.OK );
 	}
-	
+
 	//	//	curl -k https://localhost:8443/auctions/active --header 'X-User-Id':1
 	//	@GetMapping(value = "auctions/active")
 	//	@ResponseStatus(HttpStatus.OK)

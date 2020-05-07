@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS `airbnb`.`homestay` (
 );
 
 CREATE TABLE IF NOT EXISTS `airbnb`.`renting_rules` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `homestay_id` BIGINT(20) NOT NULL,
   `aircondition` TINYINT(1) DEFAULT FALSE,
   `tv` TINYINT(1) DEFAULT FALSE,
@@ -50,9 +51,10 @@ CREATE TABLE IF NOT EXISTS `airbnb`.`renting_rules` (
   `pet_friendly` TINYINT(1) DEFAULT FALSE,
   `smoking_friendly` TINYINT(1) DEFAULT FALSE,
   `free_text` TEXT DEFAULT NULL,
-  PRIMARY KEY(`homestay_id`),
+  PRIMARY KEY(`id`),
   KEY fk_rentingrules_user (homestay_id),
-  CONSTRAINT fk_rentingrules_user FOREIGN KEY (homestay_id) REFERENCES homestay (id)
+  CONSTRAINT fk_rentingrules_user FOREIGN KEY (homestay_id) REFERENCES homestay (id),
+  UNIQUE KEY (`homestay_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `airbnb`.`booking` (
@@ -106,7 +108,7 @@ INSERT INTO `airbnb`.`homestay`(id, name, country, city, region, landlord_id, pr
 INSERT INTO `airbnb`.`homestay`(id, name, country, city, region, landlord_id, price, beds, bedrooms, bathrooms, minimum_days, minimum_tenants, maximum_tenants, property_size, free_text) values(3, "Another nice house", "Greece", "Athens", "Agios Stefanos", 3, 200, 1, 1, 1, 1, 1, 1, 28, "A nice place to stay");
 INSERT INTO `airbnb`.`homestay`(id, name, country, city, region, landlord_id, price, beds, bedrooms, bathrooms, minimum_days, minimum_tenants, maximum_tenants, property_size, free_text) values(4, "A beautiful house", "Greece", "Athens", "Patisia", 1, 32, 1, 1, 3, 1, 1, 3, 34, "Another nice place to stay");
 
-INSERT INTO `airbnb`.`renting_rules`(homestay_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking, free_text) VALUES (1, 1, 1, 1, 1, 1, 1, 1, 1, NULL);
-INSERT INTO `airbnb`.`renting_rules`(homestay_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking, free_text) VALUES (2, 1, 1, 0, 1, 0, 0, 1, 0, NULL);
-INSERT INTO `airbnb`.`renting_rules`(homestay_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking, free_text) VALUES (3, 1, 0, 0, 1, 0, 0, 1, 0, NULL);
-INSERT INTO `airbnb`.`renting_rules`(homestay_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking, free_text) VALUES (4, 0, 1, 0, 1, 0, 0, 1, 0, NULL);
+INSERT INTO `airbnb`.`renting_rules`(homestay_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking_friendly, free_text) VALUES (1, 1, 1, 1, 1, 1, 1, 1, 1, NULL);
+INSERT INTO `airbnb`.`renting_rules`(homestay_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking_friendly, free_text) VALUES (2, 1, 1, 0, 1, 0, 0, 1, 0, NULL);
+INSERT INTO `airbnb`.`renting_rules`(homestay_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking_friendly, free_text) VALUES (3, 1, 0, 0, 1, 0, 0, 1, 0, NULL);
+INSERT INTO `airbnb`.`renting_rules`(homestay_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking_friendly, free_text) VALUES (4, 0, 1, 0, 1, 0, 0, 1, 0, NULL);

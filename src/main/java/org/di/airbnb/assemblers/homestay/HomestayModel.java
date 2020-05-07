@@ -1,11 +1,6 @@
 package org.di.airbnb.assemblers.homestay;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-
-import org.di.airbnb.constant.Role;
-import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -22,9 +17,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "user")
-@Relation(collectionRelation = "users")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class HomestayModel extends RepresentationModel<HomestayModel> {
+public class HomestayModel {
 
 	private long id;
 	private String name;

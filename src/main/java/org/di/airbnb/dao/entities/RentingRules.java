@@ -5,12 +5,16 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "renting_rules")
 public class RentingRules implements Serializable {
 
+	private long id;
 	private long homestayId;
 	private boolean airdcondition;
 	private boolean tv;
@@ -21,6 +25,16 @@ public class RentingRules implements Serializable {
 	private boolean petFriendly;
 	private boolean smokingFriendly;
 	private String freeText;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	public long getId() {
+		return id;
+	}
+
+	public void setId( final long id ) {
+		this.id = id;
+	}
 
 	@Column(name = "homestay_id")
 	public long getHomestayId() {
@@ -95,7 +109,7 @@ public class RentingRules implements Serializable {
 		return smokingFriendly;
 	}
 
-	public void setSmoking( final boolean smokingFriendly ) {
+	public void setSmokingFriendly( final boolean smokingFriendly ) {
 		this.smokingFriendly = smokingFriendly;
 	}
 

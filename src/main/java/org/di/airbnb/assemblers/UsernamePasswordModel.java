@@ -2,8 +2,6 @@ package org.di.airbnb.assemblers;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.hateoas.server.core.Relation;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -19,7 +17,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "usernamepassword")
-@Relation(collectionRelation = "usernamepasswords")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UsernamePasswordModel {
 

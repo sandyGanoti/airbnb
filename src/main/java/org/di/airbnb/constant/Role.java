@@ -6,11 +6,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum Role {
-	LANDLORD( 1 ),
+	TENANT( 1 ),
 
-	TENANT( 2 ),
-
-	TENANT_AND_LANDLORD(3);
+	TENANT_AND_LANDLORD( 2 );
 
 	private static final Map<Integer, Role> byId = Arrays.stream( Role.values() )
 			.collect( Collectors.toMap( Role::getId, Function.identity() ) );
