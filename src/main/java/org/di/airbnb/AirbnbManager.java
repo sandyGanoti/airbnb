@@ -1,5 +1,6 @@
 package org.di.airbnb;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import javax.inject.Singleton;
@@ -50,8 +51,11 @@ public class AirbnbManager {
 	}
 
 	public UserModel createUser( final @NotNull UserCreationRequest userCreationRequest ) {
+		User user = modelMapper.map( userCreationRequest, User.class );
+		user.setCreatedAt( Instant.now(  ) );
+
 		return modelMapper.map(
-				userRepository.save( modelMapper.map( userCreationRequest, User.class ) ),
+				userRepository.save( user ),
 				UserModel.class );
 	}
 

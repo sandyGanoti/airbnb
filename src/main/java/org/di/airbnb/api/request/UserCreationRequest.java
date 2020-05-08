@@ -28,8 +28,6 @@ public class UserCreationRequest {
 	@NotNull
 	private String phoneNumber;
 	@NotNull
-	private String country;
-	@NotNull
 	private Role role;
 	@NotNull
 	private String email;
