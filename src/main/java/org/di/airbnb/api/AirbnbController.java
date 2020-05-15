@@ -40,6 +40,16 @@ public class AirbnbController {
 				HttpStatus.OK );
 	}
 
+	@PostMapping(value = "user/login")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<UserSubModel> getPropertiesByHost( @RequestHeader("X-User-Id") String userId,
+			@RequestBody @NotNull UsernamePasswordModel userDTO ) {
+		return new ResponseEntity<>( manager.login( userDTO.getUsername(), userDTO.getPassword() ),
+				HttpStatus.OK );
+	}
+
+
+
 	//	//	curl -k https://localhost:8443/auctions/active --header 'X-User-Id':1
 	//	@GetMapping(value = "auctions/active")
 	//	@ResponseStatus(HttpStatus.OK)

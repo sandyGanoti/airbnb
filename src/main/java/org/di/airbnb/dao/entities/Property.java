@@ -19,7 +19,7 @@ public class Property {
 	private String country;
 	private String city;
 	private String region;
-	private Long landlordId;
+	private Long hostId;
 	private BigDecimal price;
 	private Integer beds;
 	private Integer bedrooms;
@@ -70,13 +70,13 @@ public class Property {
 		this.region = region;
 	}
 
-	@Column(name = "landlord_id")
-	public Long getLandlordId() {
-		return landlordId;
+	@Column(name = "host_id")
+	public Long getHostId() {
+		return hostId;
 	}
 
-	public void setLandlordId( final Long landlordId ) {
-		this.landlordId = landlordId;
+	public void setHostId( final Long hostId ) {
+		this.hostId = hostId;
 	}
 
 	public BigDecimal getPrice() {
@@ -150,7 +150,7 @@ public class Property {
 		final Property property = (Property) o;
 		return id == property.id && name.equals( property.name ) && country.equals(
 				property.country ) && city.equals( property.city ) && region.equals(
-				property.region ) && landlordId.equals( property.landlordId ) && price.equals(
+				property.region ) && hostId.equals( property.hostId ) && price.equals(
 				property.price ) && beds.equals( property.beds ) && bedrooms.equals(
 				property.bedrooms ) && minimumDays.equals(
 				property.minimumDays ) && maximumDays.equals( property.maximumDays ) && propertySize
@@ -159,12 +159,12 @@ public class Property {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( id, name, country, city, region, landlordId, price, beds, bedrooms,
+		return Objects.hash( id, name, country, city, region, hostId, price, beds, bedrooms,
 				minimumDays, maximumDays, propertySize, freeText );
 	}
 
 	@Override
 	public String toString() {
-		return "Property{" + "id=" + id + ", name='" + name + '\'' + ", country='" + country + '\'' + ", city='" + city + '\'' + ", region='" + region + '\'' + ", landlordId=" + landlordId + ", price=" + price + ", beds=" + beds + ", bedrooms=" + bedrooms + ", minimumDays=" + minimumDays + ", maximumDays=" + maximumDays + ", propertySize=" + propertySize + ", freeText='" + freeText + '\'' + '}';
+		return "Property{" + "id=" + id + ", name='" + name + '\'' + ", country='" + country + '\'' + ", city='" + city + '\'' + ", region='" + region + '\'' + ", hostId=" + hostId + ", price=" + price + ", beds=" + beds + ", bedrooms=" + bedrooms + ", minimumDays=" + minimumDays + ", maximumDays=" + maximumDays + ", propertySize=" + propertySize + ", freeText='" + freeText + '\'' + '}';
 	}
 }

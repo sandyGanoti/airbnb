@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public enum Role {
 	TENANT( 1 ),
 
-	TENANT_AND_LANDLORD( 2 );
+	TENANT_AND_HOST( 2 );
 
 	private static final Map<Integer, Role> byId = Arrays.stream( Role.values() )
 			.collect( Collectors.toMap( Role::getId, Function.identity() ) );

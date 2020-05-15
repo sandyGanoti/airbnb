@@ -25,7 +25,7 @@ public class PropertyModel {
 	private String country;
 	private String city;
 	private String region;
-	private Long landlordId;
+	private Long hostId;
 	private BigDecimal price;
 	private Integer beds;
 	private Integer bedrooms;
