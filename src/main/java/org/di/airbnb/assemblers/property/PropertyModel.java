@@ -1,4 +1,4 @@
-package org.di.airbnb.assemblers.homestay;
+package org.di.airbnb.assemblers.property;
 
 import java.math.BigDecimal;
 
@@ -16,9 +16,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@JsonRootName(value = "user")
+@JsonRootName(value = "property")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class HomestayModel {
+public class PropertyModel {
 
 	private long id;
 	private String name;

@@ -16,13 +16,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@JsonRootName(value = "user")
+@JsonRootName(value = "rating")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RatingModel {
 
 	private long id;
 	private long raterId;
-	private long homestayId;
+	private long propertyId;
 	private int mark;
 	private Instant createdAt;
 

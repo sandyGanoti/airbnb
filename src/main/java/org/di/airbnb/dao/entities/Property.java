@@ -11,8 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "homestay")
-public class Homestay {
+@Table(name = "property")
+public class Property {
 
 	private long id;
 	private String name;
@@ -147,14 +147,14 @@ public class Homestay {
 		if ( o == null || getClass() != o.getClass() ) {
 			return false;
 		}
-		final Homestay homestay = (Homestay) o;
-		return id == homestay.id && name.equals( homestay.name ) && country.equals(
-				homestay.country ) && city.equals( homestay.city ) && region.equals(
-				homestay.region ) && landlordId.equals( homestay.landlordId ) && price.equals(
-				homestay.price ) && beds.equals( homestay.beds ) && bedrooms.equals(
-				homestay.bedrooms ) && minimumDays.equals(
-				homestay.minimumDays ) && maximumDays.equals( homestay.maximumDays ) && propertySize
-				.equals( homestay.propertySize ) && freeText.equals( homestay.freeText );
+		final Property property = (Property) o;
+		return id == property.id && name.equals( property.name ) && country.equals(
+				property.country ) && city.equals( property.city ) && region.equals(
+				property.region ) && landlordId.equals( property.landlordId ) && price.equals(
+				property.price ) && beds.equals( property.beds ) && bedrooms.equals(
+				property.bedrooms ) && minimumDays.equals(
+				property.minimumDays ) && maximumDays.equals( property.maximumDays ) && propertySize
+				.equals( property.propertySize ) && freeText.equals( property.freeText );
 	}
 
 	@Override
@@ -165,6 +165,6 @@ public class Homestay {
 
 	@Override
 	public String toString() {
-		return "Homestay{" + "id=" + id + ", name='" + name + '\'' + ", country='" + country + '\'' + ", city='" + city + '\'' + ", region='" + region + '\'' + ", landlordId=" + landlordId + ", price=" + price + ", beds=" + beds + ", bedrooms=" + bedrooms + ", minimumDays=" + minimumDays + ", maximumDays=" + maximumDays + ", propertySize=" + propertySize + ", freeText='" + freeText + '\'' + '}';
+		return "Property{" + "id=" + id + ", name='" + name + '\'' + ", country='" + country + '\'' + ", city='" + city + '\'' + ", region='" + region + '\'' + ", landlordId=" + landlordId + ", price=" + price + ", beds=" + beds + ", bedrooms=" + bedrooms + ", minimumDays=" + minimumDays + ", maximumDays=" + maximumDays + ", propertySize=" + propertySize + ", freeText='" + freeText + '\'' + '}';
 	}
 }

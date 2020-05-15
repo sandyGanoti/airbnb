@@ -16,7 +16,7 @@ public class Booking implements Serializable {
 
 	private long id;
 	private long tenantId;
-	private long homestayId;
+	private long propertyId;
 	private Instant fromDatetime;
 	private Instant toDatetime;
 	private Instant createdAt;
@@ -39,12 +39,12 @@ public class Booking implements Serializable {
 		this.tenantId = tenantId;
 	}
 
-	public long getHomestayId() {
-		return homestayId;
+	public long getPropertyId() {
+		return propertyId;
 	}
 
-	public void setHomestayId( final long homestayId ) {
-		this.homestayId = homestayId;
+	public void setPropertyId( final long propertyId ) {
+		this.propertyId = propertyId;
 	}
 
 	public Instant getFromDatetime() {
@@ -80,18 +80,18 @@ public class Booking implements Serializable {
 			return false;
 		}
 		final Booking booking = (Booking) o;
-		return id == booking.id && tenantId == booking.tenantId && homestayId == booking.homestayId && fromDatetime
+		return id == booking.id && tenantId == booking.tenantId && propertyId == booking.propertyId && fromDatetime
 				.equals( booking.fromDatetime ) && toDatetime.equals(
 				booking.toDatetime ) && createdAt.equals( booking.createdAt );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( id, tenantId, homestayId, fromDatetime, toDatetime, createdAt );
+		return Objects.hash( id, tenantId, propertyId, fromDatetime, toDatetime, createdAt );
 	}
 
 	@Override
 	public String toString() {
-		return "Booking{" + "id=" + id + ", tenantId=" + tenantId + ", homestayId=" + homestayId + ", fromDatetime=" + fromDatetime + ", toDatetime=" + toDatetime + ", createdAt=" + createdAt + '}';
+		return "Booking{" + "id=" + id + ", tenantId=" + tenantId + ", propertyId=" + propertyId + ", fromDatetime=" + fromDatetime + ", toDatetime=" + toDatetime + ", createdAt=" + createdAt + '}';
 	}
 }

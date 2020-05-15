@@ -15,7 +15,7 @@ import javax.persistence.Table;
 public class RentingRules implements Serializable {
 
 	private long id;
-	private long homestayId;
+	private long propertyId;
 	private boolean airdcondition;
 	private boolean tv;
 	private boolean internet;
@@ -36,13 +36,13 @@ public class RentingRules implements Serializable {
 		this.id = id;
 	}
 
-	@Column(name = "homestay_id")
-	public long getHomestayId() {
-		return homestayId;
+	@Column(name = "property_id")
+	public long getPropertyId() {
+		return propertyId;
 	}
 
-	public void setHomestayId( final long homestayId ) {
-		this.homestayId = homestayId;
+	public void setPropertyId( final long propertyId ) {
+		this.propertyId = propertyId;
 	}
 
 	public boolean hasAirdcondition() {
@@ -131,18 +131,18 @@ public class RentingRules implements Serializable {
 			return false;
 		}
 		final RentingRules that = (RentingRules) o;
-		return airdcondition == that.airdcondition && tv == that.tv && internet == that.internet && livingRoom == that.livingRoom && kitchen == that.kitchen && partyFriendly == that.partyFriendly && petFriendly == that.petFriendly && smokingFriendly == that.smokingFriendly && homestayId == that.homestayId && freeText
+		return airdcondition == that.airdcondition && tv == that.tv && internet == that.internet && livingRoom == that.livingRoom && kitchen == that.kitchen && partyFriendly == that.partyFriendly && petFriendly == that.petFriendly && smokingFriendly == that.smokingFriendly && propertyId == that.propertyId && freeText
 				.equals( that.freeText );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( homestayId, airdcondition, tv, internet, livingRoom, kitchen,
+		return Objects.hash( propertyId, airdcondition, tv, internet, livingRoom, kitchen,
 				partyFriendly, petFriendly, smokingFriendly, freeText );
 	}
 
 	@Override
 	public String toString() {
-		return "RentingRules{" + "homestayId=" + homestayId + ", airdcondition=" + airdcondition + ", tv=" + tv + ", internet=" + internet + ", livingRoom=" + livingRoom + ", kitchen=" + kitchen + ", partyFriendly=" + partyFriendly + ", petFriendly=" + petFriendly + ", smokingFriendly=" + smokingFriendly + ", freeText='" + freeText + '\'' + '}';
+		return "RentingRules{" + "propertyId=" + propertyId + ", airdcondition=" + airdcondition + ", tv=" + tv + ", internet=" + internet + ", livingRoom=" + livingRoom + ", kitchen=" + kitchen + ", partyFriendly=" + partyFriendly + ", petFriendly=" + petFriendly + ", smokingFriendly=" + smokingFriendly + ", freeText='" + freeText + '\'' + '}';
 	}
 }

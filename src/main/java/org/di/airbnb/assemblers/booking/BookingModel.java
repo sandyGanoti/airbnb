@@ -16,13 +16,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@JsonRootName(value = "user")
+@JsonRootName(value = "booking")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookingModel {
 
 	private long id;
 	private long tenantId;
-	private long homestayId;
+	private long propertyId;
 	private Instant fromDatetime;
 	private Instant toDatetime;
 	private Instant createdAt;

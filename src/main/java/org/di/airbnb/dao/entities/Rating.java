@@ -15,7 +15,7 @@ public class Rating {
 
 	private long id;
 	private long raterId;
-	private long homestayId;
+	private long propertyId;
 	private int mark;
 	private Instant createdAt;
 
@@ -37,12 +37,12 @@ public class Rating {
 		this.raterId = raterId;
 	}
 
-	public long getHomestayId() {
-		return homestayId;
+	public long getPropertyId() {
+		return propertyId;
 	}
 
-	public void setHomestayId( final long homestayId ) {
-		this.homestayId = homestayId;
+	public void setPropertyId( final long propertyId ) {
+		this.propertyId = propertyId;
 	}
 
 	public int getMark() {
@@ -70,17 +70,17 @@ public class Rating {
 			return false;
 		}
 		final Rating rating = (Rating) o;
-		return id == rating.id && raterId == rating.raterId && homestayId == rating.homestayId && mark == rating.mark && createdAt
+		return id == rating.id && raterId == rating.raterId && propertyId == rating.propertyId && mark == rating.mark && createdAt
 				.equals( rating.createdAt );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( id, raterId, homestayId, mark, createdAt );
+		return Objects.hash( id, raterId, propertyId, mark, createdAt );
 	}
 
 	@Override
 	public String toString() {
-		return "Rating{" + "id=" + id + "raterId=" + raterId + ", homestayId=" + homestayId + ", mark=" + mark + ", createdAt=" + createdAt + '}';
+		return "Rating{" + "id=" + id + "raterId=" + raterId + ", propertyId=" + propertyId + ", mark=" + mark + ", createdAt=" + createdAt + '}';
 	}
 }
