@@ -85,14 +85,14 @@ public class AirbnbController {
 		manager.updateUser( userUpdateRequest );
 	}
 
-	@GetMapping(value = "property/available")
-	@ResponseStatus(HttpStatus.OK)
-	public List<PropertyModel> getAvailableProperties(@RequestBody @NotNull PropertyAvailabilityRequest propertyAvailabilityRequest ) {
-
-			manager.propertyAvailabilityRequest( Long.parseLong( userId ) );
-
-
-	}
+//	@GetMapping(value = "property/available")
+//	@ResponseStatus(HttpStatus.OK)
+//	public List<PropertyModel> getAvailableProperties(@RequestBody @NotNull PropertyAvailabilityRequest propertyAvailabilityRequest ) {
+//
+//			manager.propertyAvailabilityRequest( Long.parseLong( userId ) );
+//
+//
+//	}
 
 	//	//	curl -k https://localhost:8443/auctions/active --header 'X-User-Id':1
 	//	@GetMapping(value = "auctions/active")
