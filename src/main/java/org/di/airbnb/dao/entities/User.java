@@ -1,10 +1,12 @@
-package org.di.airbnb.entities;
+package org.di.airbnb.dao.entities;
 
 import java.time.Instant;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,9 +30,6 @@ public class User {
 	private Role role;
 	private Instant createdAt;
 	private String email;
-
-	public User() {
-	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -87,6 +86,7 @@ public class User {
 		this.phoneNumber = phoneNumber;
 	}
 
+	@Enumerated(EnumType.STRING)
 	public Role getRole() {
 		return role;
 	}
