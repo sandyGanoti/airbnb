@@ -29,7 +29,10 @@ public class AirbnbController {
 
 	@Resource
 	private AirbnbManager manager;
-
+	@GetMapping(value = "/")
+	public String sayHello() {
+		return "Hello man!";
+	}
 	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
 	@PostMapping(value = "user/signup")
 	@ResponseStatus(HttpStatus.CREATED)
