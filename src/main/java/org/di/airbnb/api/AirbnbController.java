@@ -1,18 +1,26 @@
 package org.di.airbnb.api;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.AirbnbManager;
+import org.di.airbnb.api.request.PropertyAvailabilityRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
+import org.di.airbnb.api.request.UserUpdateRequest;
 import org.di.airbnb.assemblers.UserSubModel;
 import org.di.airbnb.assemblers.UsernamePasswordModel;
+import org.di.airbnb.assemblers.property.PropertyModel;
+import org.di.airbnb.assemblers.rating.RatingModel;
+import org.di.airbnb.assemblers.user.UserModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,21 +42,57 @@ public class AirbnbController {
 	//	curl -d '{"username": 1, "password": "bourdou" }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k http://localhost:8443/user/login
 	@PostMapping(value = "user/login")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<UserSubModel> login( @RequestHeader("X-User-Id") String userId,
+	public ResponseEntity<UserSubModel> login(
 			@RequestBody @NotNull UsernamePasswordModel userDTO ) {
 		return new ResponseEntity<>( manager.login( userDTO.getUsername(), userDTO.getPassword() ),
 				HttpStatus.OK );
 	}
 
-	@PostMapping(value = "user/login")
+	@PostMapping(value = "host/{id}/properties")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<UserSubModel> getPropertiesByHost( @RequestHeader("X-User-Id") String userId,
-			@RequestBody @NotNull UsernamePasswordModel userDTO ) {
-		return new ResponseEntity<>( manager.login( userDTO.getUsername(), userDTO.getPassword() ),
-				HttpStatus.OK );
+	public ResponseEntity<List<PropertyModel>> getPropertiesByHost(
+			@PathVariable("id") long hostId ) {
+		return new ResponseEntity<>( manager.getPropertiesByHost( hostId ), HttpStatus.OK );
 	}
 
+	@PostMapping(value = "user/{id}/bookings")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<List<PropertyModel>> getUserBookings( @PathVariable("id") long userId ) {
+		return new ResponseEntity<>( manager.getUserBookings( userId ), HttpStatus.OK );
+	}
 
+	@PostMapping(value = "user/{id}")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<UserModel> getUserInfo( @PathVariable("id") long userId ) {
+		return new ResponseEntity<>( manager.getUserInfo( userId ), HttpStatus.OK );
+//	} catch ( EntityNotFoundException e ) {
+		//		throw new UserNotFoundException( String.format( "User with id %d not found", userId ) );
+		//	}
+	}
+
+	@PostMapping(value = "rating/property/{id}")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<List<RatingModel>> getPropertyRating(
+			@PathVariable("id") long propertyId ) {
+		return new ResponseEntity<>( manager.getPropertyRatings( propertyId ), HttpStatus.OK );
+	}
+
+	//	curl -d '{"name": "item for auction","categories": [{"name": "BABY"}, {"name": "CRAFTS"}],"description": "hopus","location": "US","country": "Alabama","firstBid": 3,"startedAt": "","endsAt": "","bids" : [],"currently": 3,"userId": 1,"active": false}' --header 'X-User-Id':1  -H "Content-Type: application/json" -X POST -k https://localhost:8443/auction/
+	@PostMapping(value = "user/{id}/update")
+	@ResponseStatus(HttpStatus.CREATED)
+	public void updateUserInfo( @PathVariable("id") long propertyId,
+			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
+		manager.updateUser( userUpdateRequest );
+	}
+
+	@GetMapping(value = "property/available")
+	@ResponseStatus(HttpStatus.OK)
+	public List<PropertyModel> getAvailableProperties(@RequestBody @NotNull PropertyAvailabilityRequest propertyAvailabilityRequest ) {
+
+			manager.propertyAvailabilityRequest( Long.parseLong( userId ) );
+
+
+	}
 
 	//	//	curl -k https://localhost:8443/auctions/active --header 'X-User-Id':1
 	//	@GetMapping(value = "auctions/active")

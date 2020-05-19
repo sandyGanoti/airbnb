@@ -12,7 +12,9 @@ import javax.transaction.Transactional;
 
 import org.di.airbnb.assemblers.MessagingLimitedDTO;
 import org.di.airbnb.assemblers.UserSubModel;
+import org.di.airbnb.dao.entities.Booking;
 import org.di.airbnb.dao.entities.Messaging;
+import org.di.airbnb.dao.entities.Property;
 import org.di.airbnb.dao.entities.Rating;
 import org.di.airbnb.dao.entities.User;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,6 +24,36 @@ import org.springframework.stereotype.Repository;
 public class AirbnbDaoImpl {
 	@PersistenceContext
 	private EntityManager entityManager;
+
+	public Optional<UserSubModel> login( final String username, final String password ) {
+		TypedQuery<User> query = entityManager.createQuery(
+				"FROM User u where username = :username and password= :password", User.class )
+				.setParameter( "username", username )
+				.setParameter( "password", password );
+		try {
+			User user = query.getSingleResult();
+			return Optional.of( new UserSubModel( user.getId(), user.getUsername() ) );
+		} catch ( NoResultException e ) {
+			return Optional.empty();
+		}
+	}
+
+	public List<Property> getPropertiesByHost( final long hostId ) {
+		return entityManager.createQuery( "FROM Property p where hostId = :hostId", Property.class )
+				.setParameter( "hostId", hostId )
+				.getResultList();
+	}
+
+	public List<Booking> getTenantBookings( final long tenantId ) {
+		return entityManager.createQuery( "FROM Booking b where tenantId = :tenantId",
+				Booking.class ).setParameter( "tenantId", tenantId ).getResultList();
+	}
+
+	public List<Rating> getPropertyRatings( final long propertyId ) {
+		return entityManager.createQuery( "FROM Rating r where propertyId = :propertyId",
+				Rating.class ).setParameter( "propertyId", propertyId ).getResultList();
+	}
+
 
 	//	public List<User> getMany( final List<Long> userIds ) {
 	//		TypedQuery<User> query = entityManager.createQuery( "FROM User where id in (:ids)",
@@ -35,7 +67,6 @@ public class AirbnbDaoImpl {
 		return query.getResultList();
 	}
 
-//	@Override
 	@Cacheable("user_limited")
 	public Optional<UserSubModel> getUserInfo( final Long userId ) {
 		TypedQuery<UserSubModel> query = entityManager.createQuery(
@@ -48,40 +79,22 @@ public class AirbnbDaoImpl {
 		}
 	}
 
-//	@Override
-	public Optional<UserSubModel> login( final String username, final String password ) {
-		TypedQuery<User> query = entityManager.createQuery(
-				"FROM User u where username = :username and password= :password",
-				User.class )
-				.setParameter( "username", username )
-				.setParameter( "password", password );
-		try {
-			User user =  query.getSingleResult();
-			return Optional.of( new UserSubModel( user.getId(), user.getUsername() ) );
-		} catch ( NoResultException e ) {
-			return Optional.empty();
-		}
-	}
-
-//	@Override
-	/* fetch info for recipients that sender=userId has sent messages to */ public List<MessagingLimitedDTO> getSentInfoBySenderId(
-			final long userId ) {
+	/* fetch info for recipients that sender=userId has sent messages to */
+	public List<MessagingLimitedDTO> getSentInfoBySenderId( final long userId ) {
 		TypedQuery<MessagingLimitedDTO> query = entityManager.createQuery(
 				"SELECT NEW org.di.airbnb.airbnb.transferables.MessagingLimitedDTO(m.id, u.username, m.createdAt) FROM Messaging m LEFT JOIN User u ON m.recipient = u.id WHERE m.sender = :userId GROUP BY u.id",
 				MessagingLimitedDTO.class ).setParameter( "userId", userId );
 		return query.getResultList();
 	}
 
-//	@Override
-	/* fetch info for senders that recipient=userId has received messages from */ public List<MessagingLimitedDTO> getIncomingInfoByRecipientId(
-			final long userId ) {
+	/* fetch info for senders that recipient=userId has received messages from */
+	public List<MessagingLimitedDTO> getIncomingInfoByRecipientId( final long userId ) {
 		TypedQuery<MessagingLimitedDTO> query = entityManager.createQuery(
 				"SELECT NEW org.di.airbnb.airbnb.transferables.MessagingLimitedDTO(m.id, u.username, m.createdAt) FROM Messaging m LEFT JOIN User u ON m.recipient = u.id WHERE m.recipient = :userId GROUP BY u.id",
 				MessagingLimitedDTO.class ).setParameter( "userId", userId );
 		return query.getResultList();
 	}
 
-//	@Override
 	public boolean isNewMessage( final long recipientId ) {
 		TypedQuery<Long> query = entityManager.createQuery(
 				"SELECT COUNT(*) FROM Messaging WHERE readStatus = 0 AND recipient = :recipientId",
@@ -89,7 +102,6 @@ public class AirbnbDaoImpl {
 		return query.getSingleResult() > 0;
 	}
 
-//	@Override
 	public List<Messaging> getChatBySenderIdAndRecipientId( final long senderId,
 			final long recipientId ) {
 		TypedQuery<Messaging> query = entityManager.createQuery(
@@ -100,7 +112,6 @@ public class AirbnbDaoImpl {
 		return query.getResultList();
 	}
 
-//	@Override
 	@Transactional
 	public boolean readChatBySenderIdAndRecipientId( final long senderId, final long recipientId ) {
 		String queryString = new StringBuilder().append( "update Messaging " )
@@ -114,7 +125,6 @@ public class AirbnbDaoImpl {
 		return query.executeUpdate() > 0;
 	}
 
-//	@Override
 	public List<Rating> getUserRatings( final long ratedUserId ) {
 		TypedQuery<Rating> query = entityManager.createQuery(
 				"FROM Rating where rated_user_id = id", Rating.class )
