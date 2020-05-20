@@ -18,6 +18,8 @@ import lombok.NoArgsConstructor;
 public class UserUpdateRequest {
 
 	@NotNull
+	private long userId;
+	@NotNull
 	private String username;
 	@NotNull
 	private String password;

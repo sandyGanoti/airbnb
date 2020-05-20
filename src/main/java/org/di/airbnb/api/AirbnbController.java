@@ -51,6 +51,32 @@ public class AirbnbController {
 				HttpStatus.OK );
 	}
 
+	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
+	@PostMapping(value = "user/{id}/update")
+	@ResponseStatus(HttpStatus.CREATED)
+	public void updateUserInfo( @PathVariable("id") long propertyId,
+			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
+		manager.updateUser( userUpdateRequest );
+	}
+
+	@GetMapping(value = "user/{id}")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<UserModel> getUserInfo( @PathVariable("id") long userId ) {
+		return new ResponseEntity<>( manager.getUserInfo( userId ), HttpStatus.OK );
+		//	} catch ( EntityNotFoundException e ) {
+		//		throw new UserNotFoundException( String.format( "User with id %d not found", userId ) );
+		//	}
+	}
+
+	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
+	@PostMapping(value = "user/{id}/avatar")
+	@ResponseStatus(HttpStatus.CREATED)
+	public void addAvatar( @PathVariable("id") long propertyId,
+			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
+		manager.updateUser( userUpdateRequest );
+	}
+
+
 	@PostMapping(value = "host/{id}/properties")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<List<PropertyModel>> getPropertiesByHost(
@@ -64,14 +90,7 @@ public class AirbnbController {
 		return new ResponseEntity<>( manager.getUserBookings( userId ), HttpStatus.OK );
 	}
 
-	@PostMapping(value = "user/{id}")
-	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<UserModel> getUserInfo( @PathVariable("id") long userId ) {
-		return new ResponseEntity<>( manager.getUserInfo( userId ), HttpStatus.OK );
-//	} catch ( EntityNotFoundException e ) {
-		//		throw new UserNotFoundException( String.format( "User with id %d not found", userId ) );
-		//	}
-	}
+
 
 	@PostMapping(value = "rating/property/{id}")
 	@ResponseStatus(HttpStatus.OK)
@@ -80,13 +99,7 @@ public class AirbnbController {
 		return new ResponseEntity<>( manager.getPropertyRatings( propertyId ), HttpStatus.OK );
 	}
 
-	//	curl -d '{"name": "item for auction","categories": [{"name": "BABY"}, {"name": "CRAFTS"}],"description": "hopus","location": "US","country": "Alabama","firstBid": 3,"startedAt": "","endsAt": "","bids" : [],"currently": 3,"userId": 1,"active": false}' --header 'X-User-Id':1  -H "Content-Type: application/json" -X POST -k https://localhost:8443/auction/
-	@PostMapping(value = "user/{id}/update")
-	@ResponseStatus(HttpStatus.CREATED)
-	public void updateUserInfo( @PathVariable("id") long propertyId,
-			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
-		manager.updateUser( userUpdateRequest );
-	}
+
 
 //	@GetMapping(value = "property/available")
 //	@ResponseStatus(HttpStatus.OK)

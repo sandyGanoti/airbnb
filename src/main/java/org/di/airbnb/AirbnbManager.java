@@ -13,6 +13,7 @@ import org.di.airbnb.assemblers.UserSubModel;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.rating.RatingModel;
 import org.di.airbnb.assemblers.user.UserModel;
+import org.di.airbnb.constant.Role;
 import org.di.airbnb.dao.AirbnbDaoImpl;
 import org.di.airbnb.dao.entities.User;
 import org.di.airbnb.dao.repository.UserRepository;
@@ -57,13 +58,15 @@ public class AirbnbManager {
 	public UserModel createUser( final @NotNull UserCreationRequest userCreationRequest ) {
 		User user = modelMapper.map( userCreationRequest, User.class );
 		user.setCreatedAt( Instant.now() );
-
+		user.setRole( userCreationRequest.isHost() ? Role.TENANT_AND_HOST : Role.TENANT );
 		return modelMapper.map( userRepository.save( user ), UserModel.class );
 	}
 
 	public UserModel updateUser( final @NotNull UserUpdateRequest userUpdateRequest ) {
 		User user = modelMapper.map( userUpdateRequest, User.class );
 		user.setCreatedAt( Instant.now() );
+
+		System.out.println( user.getId() );
 
 		return modelMapper.map( userRepository.save( user ), UserModel.class );
 	}
