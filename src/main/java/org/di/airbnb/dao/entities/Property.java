@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "property")
+@Table(name = "property_to_rent")
 public class Property {
 
 	private long id;

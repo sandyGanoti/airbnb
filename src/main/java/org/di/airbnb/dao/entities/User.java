@@ -16,7 +16,7 @@ import javax.persistence.UniqueConstraint;
 import org.di.airbnb.constant.Role;
 
 @Entity
-@Table(name = "user",
+@Table(name = "user_",
 		uniqueConstraints = { @UniqueConstraint(name = "email", columnNames = { "email" }),
 							  @UniqueConstraint(name = "username", columnNames = { "username" }) })
 public class User {
