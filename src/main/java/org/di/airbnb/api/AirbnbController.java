@@ -14,7 +14,6 @@ import org.di.airbnb.assemblers.UsernamePasswordModel;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.rating.RatingModel;
 import org.di.airbnb.assemblers.user.UserModel;
-import org.di.airbnb.exceptions.api.UserNotFoundException;
 import org.di.airbnb.exceptions.api.UserNotValidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,9 +59,10 @@ public class AirbnbController {
 	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/update
 	@PostMapping(value = "user/update")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void updateUserInfo( @RequestHeader("X-User-Id") long userId,
+	public ResponseEntity<UserModel> updateUserInfo( @RequestHeader("X-User-Id") long userId,
 			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
-		manager.updateUser( userUpdateRequest, userId );
+		return new ResponseEntity<>( manager.updateUser( userUpdateRequest, userId ),
+				HttpStatus.CREATED );
 	}
 
 	//	curl -k https://localhost:8443/user --header 'X-User-Id':1
@@ -70,9 +70,6 @@ public class AirbnbController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<UserModel> getUserInfo( @RequestHeader("X-User-Id") long userId ) {
 		return new ResponseEntity<>( manager.getUserInfo( userId ), HttpStatus.OK );
-		//	} catch ( EntityNotFoundException e ) {
-		//		throw new UserNotFoundException( String.format( "User with id %d not found", userId ) );
-		//	}
 	}
 
 	//	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
@@ -105,6 +102,7 @@ public class AirbnbController {
 		return new ResponseEntity<>( manager.getUserBookings( userId ), HttpStatus.OK );
 	}
 
+	//	curl -k https://localhost:8443/rating/property/1 --header 'X-User-Id':2
 	@GetMapping(value = "rating/property/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<List<RatingModel>> getPropertyRating(

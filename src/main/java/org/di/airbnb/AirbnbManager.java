@@ -133,7 +133,11 @@ public class AirbnbManager {
 	}
 
 	public UserModel getUserInfo( long userId ) {
-		return modelMapper.map( userRepository.getOne( userId ), UserModel.class );
+		try {
+			return modelMapper.map( userRepository.getOne( userId ), UserModel.class );
+		} catch ( EntityNotFoundException e ) {
+			return null;
+		}
 	}
 
 	public List<RatingModel> getPropertyRatings( long propertyId ) {
