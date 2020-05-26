@@ -2,7 +2,6 @@ package org.di.airbnb;
 
 import javax.sql.DataSource;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +18,8 @@ public class DatabaseConfig {
 	@Bean
 	public DataSource dataSource() {
 		HikariConfig config = new HikariConfig();
-		config.setJdbcUrl(dbUrl);
-		return new HikariDataSource(config);
+		config.setJdbcUrl( dbUrl );
+		return new HikariDataSource( config );
 	}
 
 }

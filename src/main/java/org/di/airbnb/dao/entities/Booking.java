@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "bid")
+@Table(name = "booking")
 public class Booking implements Serializable {
 
 	private long id;
@@ -31,6 +32,7 @@ public class Booking implements Serializable {
 		this.id = id;
 	}
 
+	@Column(name = "tenant_id")
 	public long getTenantId() {
 		return tenantId;
 	}
@@ -39,6 +41,7 @@ public class Booking implements Serializable {
 		this.tenantId = tenantId;
 	}
 
+	@Column(name = "property_id")
 	public long getPropertyId() {
 		return propertyId;
 	}
@@ -47,6 +50,7 @@ public class Booking implements Serializable {
 		this.propertyId = propertyId;
 	}
 
+	@Column(name = "from_datetime")
 	public Instant getFromDatetime() {
 		return fromDatetime;
 	}
@@ -55,6 +59,7 @@ public class Booking implements Serializable {
 		this.fromDatetime = fromDatetime;
 	}
 
+	@Column(name = "to_datetime")
 	public Instant getToDatetime() {
 		return toDatetime;
 	}
@@ -63,6 +68,7 @@ public class Booking implements Serializable {
 		this.toDatetime = toDatetime;
 	}
 
+	@Column(name = "created_at")
 	public Instant getCreatedAt() {
 		return createdAt;
 	}

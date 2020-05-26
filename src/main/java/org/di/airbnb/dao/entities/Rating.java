@@ -3,6 +3,7 @@ package org.di.airbnb.dao.entities;
 import java.time.Instant;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,6 +30,7 @@ public class Rating {
 		this.id = id;
 	}
 
+	@Column(name = "rater_id")
 	public long getRaterId() {
 		return raterId;
 	}
@@ -37,6 +39,7 @@ public class Rating {
 		this.raterId = raterId;
 	}
 
+	@Column(name = "property_id")
 	public long getPropertyId() {
 		return propertyId;
 	}
@@ -49,10 +52,11 @@ public class Rating {
 		return mark;
 	}
 
-	public void setMark( final int rating ) {
+	public void setMark( final int mark ) {
 		this.mark = mark;
 	}
 
+	@Column(name = "created_at")
 	public Instant getCreatedAt() {
 		return createdAt;
 	}

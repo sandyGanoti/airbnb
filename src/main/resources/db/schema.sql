@@ -112,3 +112,7 @@ INSERT INTO `renting_rules`(property_id, aircondition, tv, internet, living_room
 INSERT INTO `renting_rules`(property_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking_friendly, free_text) VALUES (2, 1, 1, 0, 1, 0, 0, 1, 0, NULL);
 INSERT INTO `renting_rules`(property_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking_friendly, free_text) VALUES (3, 1, 0, 0, 1, 0, 0, 1, 0, NULL);
 INSERT INTO `renting_rules`(property_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking_friendly, free_text) VALUES (4, 0, 1, 0, 1, 0, 0, 1, 0, NULL);
+
+INSERT INTO `booking`(id, tenant_id, property_id, from_datetime, to_datetime, created_at) values(1, 1, 1, now(), now(), now());
+
+INSERT INTO `rating`(id, rater_id, property_id, mark, created_at) VALUES(1, 1, 1, 3, now());
