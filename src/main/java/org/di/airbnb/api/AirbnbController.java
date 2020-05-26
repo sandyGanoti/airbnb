@@ -36,21 +36,19 @@ public class AirbnbController {
 	public String sayHello() {
 		return "ping";
 	}
-	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
 
-	//	curl -d '{"username": "p", "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "isHost": "True","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
+	//	curl -d '{"username": "p", "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "isHost": "True","email": "sandu@sandu"  }'  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
 	//	{"timestamp":"2020-05-22T13:38:06.168+0000","status":500,"error":"Internal Server Error","message":"Email already in use","path":"/user/signup"}
 	//error for constraint violation exception
 	@PostMapping(value = "user/signup")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Long signUp( @RequestHeader("X-User-Id") long userId,
-			@RequestBody @Valid @NotNull UserCreationRequest userCreationRequest ) {
+	public Long signUp( @RequestBody @Valid @NotNull UserCreationRequest userCreationRequest ) {
 
 		return manager.createUser( userCreationRequest ).getId();
 		//TODO: 1. check existing username
 	}
 
-	//	curl -d '{"username": 1, "password": "bourdou" }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/login
+	//	curl -d '{"username": 1, "password": "bourdou" }'  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/login
 	@PostMapping(value = "user/login")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<UserSubModel> login(
@@ -67,7 +65,7 @@ public class AirbnbController {
 		manager.updateUser( userUpdateRequest, userId );
 	}
 
-//	curl -k https://localhost:8443/user --header 'X-User-Id':1
+	//	curl -k https://localhost:8443/user --header 'X-User-Id':1
 	@GetMapping(value = "user")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<UserModel> getUserInfo( @RequestHeader("X-User-Id") long userId ) {
@@ -77,30 +75,31 @@ public class AirbnbController {
 		//	}
 	}
 
-//	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
-//	@PostMapping(value = "user/avatar")
-//	@ResponseStatus(HttpStatus.CREATED)
-//	public void addAvatar( @RequestHeader("X-User-Id") long userId,
-//			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
-//		manager.updateUser( userUpdateRequest,userId );
-//	}
+	//	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
+	//	@PostMapping(value = "user/avatar")
+	//	@ResponseStatus(HttpStatus.CREATED)
+	//	public void addAvatar( @RequestHeader("X-User-Id") long userId,
+	//			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
+	//		manager.updateUser( userUpdateRequest,userId );
+	//	}
 
-//	curl -k https://localhost:8443/host/properties --header 'X-User-Id':2
+	//	curl -k https://localhost:8443/host/properties --header 'X-User-Id':2
 	@GetMapping(value = "host/properties")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<List<PropertyModel>> getPropertiesByHost(
 			@RequestHeader("X-User-Id") long userId ) {
-		if (!manager.isValidUser( userId ) ){
+		if ( !manager.isValidUser( userId ) ) {
 			throw new UserNotValidException( "User cannot perform that kind of action" );
 		}
 		return new ResponseEntity<>( manager.getPropertiesByHost( userId ), HttpStatus.OK );
 	}
 
-//	curl -k https://localhost:8443/user/bookings --header 'X-User-Id':2
+	//	curl -k https://localhost:8443/user/bookings --header 'X-User-Id':2
 	@GetMapping(value = "user/bookings")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<List<PropertyModel>> getUserBookings( @RequestHeader("X-User-Id") long userId ) {
-		if (!manager.isValidUser( userId ) ){
+	public ResponseEntity<List<PropertyModel>> getUserBookings(
+			@RequestHeader("X-User-Id") long userId ) {
+		if ( !manager.isValidUser( userId ) ) {
 			throw new UserNotValidException( "User cannot perform that kind of action" );
 		}
 		return new ResponseEntity<>( manager.getUserBookings( userId ), HttpStatus.OK );
@@ -108,9 +107,9 @@ public class AirbnbController {
 
 	@GetMapping(value = "rating/property/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<List<RatingModel>> getPropertyRating( @RequestHeader("X-User-Id") long userId,
-			@PathVariable("id") long propertyId ) {
-		if (!manager.isValidUser( userId ) ){
+	public ResponseEntity<List<RatingModel>> getPropertyRating(
+			@RequestHeader("X-User-Id") long userId, @PathVariable("id") long propertyId ) {
+		if ( !manager.isValidUser( userId ) ) {
 			throw new UserNotValidException( "User cannot perform that kind of action" );
 		}
 		return new ResponseEntity<>( manager.getPropertyRatings( propertyId ), HttpStatus.OK );
