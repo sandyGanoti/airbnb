@@ -23,8 +23,10 @@ public class Property {
 	private BigDecimal price;
 	private Integer beds;
 	private Integer bedrooms;
+	private Integer bathrooms;
 	private Integer minimumDays;
-	private Integer maximumDays;
+	private Integer minimumTenants;
+	private Integer maximumTenants;
 	private Double propertySize;
 	private String freeText;
 
@@ -103,6 +105,32 @@ public class Property {
 		this.bedrooms = bedrooms;
 	}
 
+	public Integer getBathrooms() {
+		return bathrooms;
+	}
+
+	public void setBathrooms( final Integer bathrooms ) {
+		this.bathrooms = bathrooms;
+	}
+
+	@Column(name = "minimum_tenants")
+	public Integer getMinimumTenants() {
+		return minimumTenants;
+	}
+
+	public void setMinimumTenants( final Integer minimumTenants ) {
+		this.minimumTenants = minimumTenants;
+	}
+
+	@Column(name = "maximum_tenants")
+	public Integer getMaximumTenants() {
+		return maximumTenants;
+	}
+
+	public void setMaximumTenants( final Integer maximumTenants ) {
+		this.maximumTenants = maximumTenants;
+	}
+
 	@Column(name = "minimum_days")
 	public Integer getMinimumDays() {
 		return minimumDays;
@@ -110,15 +138,6 @@ public class Property {
 
 	public void setMinimumDays( final Integer minimumDays ) {
 		this.minimumDays = minimumDays;
-	}
-
-	@Column(name = "maximum_days")
-	public Integer getMaximumDays() {
-		return maximumDays;
-	}
-
-	public void setMaximumDays( final Integer maximumDays ) {
-		this.maximumDays = maximumDays;
 	}
 
 	@Column(name = "property_size")
@@ -152,19 +171,16 @@ public class Property {
 				property.country ) && city.equals( property.city ) && region.equals(
 				property.region ) && hostId.equals( property.hostId ) && price.equals(
 				property.price ) && beds.equals( property.beds ) && bedrooms.equals(
-				property.bedrooms ) && minimumDays.equals(
-				property.minimumDays ) && maximumDays.equals( property.maximumDays ) && propertySize
-				.equals( property.propertySize ) && freeText.equals( property.freeText );
+				property.bedrooms ) && bathrooms.equals( property.bathrooms ) && minimumDays.equals(
+				property.minimumDays ) && minimumTenants.equals(
+				property.minimumTenants ) && maximumTenants.equals(
+				property.maximumTenants ) && propertySize.equals( property.propertySize ) && Objects
+				.equals( freeText, property.freeText );
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash( id, name, country, city, region, hostId, price, beds, bedrooms,
-				minimumDays, maximumDays, propertySize, freeText );
-	}
-
-	@Override
-	public String toString() {
-		return "Property{" + "id=" + id + ", name='" + name + '\'' + ", country='" + country + '\'' + ", city='" + city + '\'' + ", region='" + region + '\'' + ", hostId=" + hostId + ", price=" + price + ", beds=" + beds + ", bedrooms=" + bedrooms + ", minimumDays=" + minimumDays + ", maximumDays=" + maximumDays + ", propertySize=" + propertySize + ", freeText='" + freeText + '\'' + '}';
+				bathrooms, minimumDays, minimumTenants, maximumTenants, propertySize, freeText );
 	}
 }

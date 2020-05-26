@@ -7,7 +7,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.AirbnbManager;
-import org.di.airbnb.api.request.PropertyAvailabilityRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
 import org.di.airbnb.assemblers.UserSubModel;
@@ -15,12 +14,15 @@ import org.di.airbnb.assemblers.UsernamePasswordModel;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.rating.RatingModel;
 import org.di.airbnb.assemblers.user.UserModel;
+import org.di.airbnb.exceptions.api.UserNotFoundException;
+import org.di.airbnb.exceptions.api.UserNotValidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,20 +31,26 @@ public class AirbnbController {
 
 	@Resource
 	private AirbnbManager manager;
+
 	@GetMapping(value = "/")
 	public String sayHello() {
-		return "Hello man!";
+		return "ping";
 	}
 	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
+
+	//	curl -d '{"username": "p", "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "isHost": "True","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
+	//	{"timestamp":"2020-05-22T13:38:06.168+0000","status":500,"error":"Internal Server Error","message":"Email already in use","path":"/user/signup"}
+	//error for constraint violation exception
 	@PostMapping(value = "user/signup")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Long signUp( @RequestBody @Valid @NotNull UserCreationRequest userCreationRequest ) {
+	public Long signUp( @RequestHeader("X-User-Id") long userId,
+			@RequestBody @Valid @NotNull UserCreationRequest userCreationRequest ) {
 
 		return manager.createUser( userCreationRequest ).getId();
 		//TODO: 1. check existing username
 	}
 
-	//	curl -d '{"username": 1, "password": "bourdou" }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k http://localhost:8443/user/login
+	//	curl -d '{"username": 1, "password": "bourdou" }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/login
 	@PostMapping(value = "user/login")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<UserSubModel> login(
@@ -51,64 +59,71 @@ public class AirbnbController {
 				HttpStatus.OK );
 	}
 
-	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
-	@PostMapping(value = "user/{id}/update")
+	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/update
+	@PostMapping(value = "user/update")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void updateUserInfo( @PathVariable("id") long propertyId,
+	public void updateUserInfo( @RequestHeader("X-User-Id") long userId,
 			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
-		manager.updateUser( userUpdateRequest );
+		manager.updateUser( userUpdateRequest, userId );
 	}
 
-	@GetMapping(value = "user/{id}")
+//	curl -k https://localhost:8443/user --header 'X-User-Id':1
+	@GetMapping(value = "user")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<UserModel> getUserInfo( @PathVariable("id") long userId ) {
+	public ResponseEntity<UserModel> getUserInfo( @RequestHeader("X-User-Id") long userId ) {
 		return new ResponseEntity<>( manager.getUserInfo( userId ), HttpStatus.OK );
 		//	} catch ( EntityNotFoundException e ) {
 		//		throw new UserNotFoundException( String.format( "User with id %d not found", userId ) );
 		//	}
 	}
 
-	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
-	@PostMapping(value = "user/{id}/avatar")
-	@ResponseStatus(HttpStatus.CREATED)
-	public void addAvatar( @PathVariable("id") long propertyId,
-			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
-		manager.updateUser( userUpdateRequest );
-	}
+//	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
+//	@PostMapping(value = "user/avatar")
+//	@ResponseStatus(HttpStatus.CREATED)
+//	public void addAvatar( @RequestHeader("X-User-Id") long userId,
+//			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
+//		manager.updateUser( userUpdateRequest,userId );
+//	}
 
-
-	@PostMapping(value = "host/{id}/properties")
+//	curl -k https://localhost:8443/host/properties --header 'X-User-Id':2
+	@GetMapping(value = "host/properties")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<List<PropertyModel>> getPropertiesByHost(
-			@PathVariable("id") long hostId ) {
-		return new ResponseEntity<>( manager.getPropertiesByHost( hostId ), HttpStatus.OK );
+			@RequestHeader("X-User-Id") long userId ) {
+		if (!manager.isValidUser( userId ) ){
+			throw new UserNotValidException( "User cannot perform that kind of action" );
+		}
+		return new ResponseEntity<>( manager.getPropertiesByHost( userId ), HttpStatus.OK );
 	}
 
-	@PostMapping(value = "user/{id}/bookings")
+//	curl -k https://localhost:8443/user/bookings --header 'X-User-Id':2
+	@GetMapping(value = "user/bookings")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<List<PropertyModel>> getUserBookings( @PathVariable("id") long userId ) {
+	public ResponseEntity<List<PropertyModel>> getUserBookings( @RequestHeader("X-User-Id") long userId ) {
+		if (!manager.isValidUser( userId ) ){
+			throw new UserNotValidException( "User cannot perform that kind of action" );
+		}
 		return new ResponseEntity<>( manager.getUserBookings( userId ), HttpStatus.OK );
 	}
 
-
-
-	@PostMapping(value = "rating/property/{id}")
+	@GetMapping(value = "rating/property/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<List<RatingModel>> getPropertyRating(
+	public ResponseEntity<List<RatingModel>> getPropertyRating( @RequestHeader("X-User-Id") long userId,
 			@PathVariable("id") long propertyId ) {
+		if (!manager.isValidUser( userId ) ){
+			throw new UserNotValidException( "User cannot perform that kind of action" );
+		}
 		return new ResponseEntity<>( manager.getPropertyRatings( propertyId ), HttpStatus.OK );
 	}
 
-
-
-//	@GetMapping(value = "property/available")
-//	@ResponseStatus(HttpStatus.OK)
-//	public List<PropertyModel> getAvailableProperties(@RequestBody @NotNull PropertyAvailabilityRequest propertyAvailabilityRequest ) {
-//
-//			manager.propertyAvailabilityRequest( Long.parseLong( userId ) );
-//
-//
-//	}
+	//	@GetMapping(value = "property/available")
+	//	@ResponseStatus(HttpStatus.OK)
+	//	public List<PropertyModel> getAvailableProperties(@RequestBody @NotNull PropertyAvailabilityRequest propertyAvailabilityRequest ) {
+	//
+	//			manager.propertyAvailabilityRequest( Long.parseLong( userId ) );
+	//
+	//
+	//	}
 
 	//	//	curl -k https://localhost:8443/auctions/active --header 'X-User-Id':1
 	//	@GetMapping(value = "auctions/active")

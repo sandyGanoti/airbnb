@@ -27,7 +27,6 @@ public class UserCreationRequest {
 	private String lastName;
 	@NotNull
 	private String phoneNumber;
-	@NotNull
 	private boolean isHost;
 	@NotNull
 	private String email;

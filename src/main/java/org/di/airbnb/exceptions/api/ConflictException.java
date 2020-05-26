@@ -1,15 +1,15 @@
-package org.di.airbnb.exceptions.http;
+package org.di.airbnb.exceptions.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-// 404
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class EntityNotFoundException extends RuntimeException {
-  
+// 409
+@ResponseStatus(HttpStatus.CONFLICT)
+public class ConflictException extends RuntimeException {
+
   private static final long serialVersionUID = 3400248338734389783L;
 
-  public EntityNotFoundException(String message) {
+  public ConflictException(String message) {
     super(message);
   }
 }
