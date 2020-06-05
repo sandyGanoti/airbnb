@@ -46,7 +46,7 @@ public class AirbnbController {
 	@Resource
 	private AirbnbManager manager;
 
-	@GetMapping(value = "/")
+	@GetMapping(value = "/healthcheck")
 	public String sayHello() {
 		return "ping";
 	}
