@@ -9,25 +9,40 @@ import javax.validation.constraints.NotNull;
 import org.di.airbnb.AirbnbManager;
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
-import org.di.airbnb.assemblers.UserSubModel;
+import org.di.airbnb.api.response.JwtResponse;
 import org.di.airbnb.assemblers.UsernamePasswordModel;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.rating.RatingModel;
 import org.di.airbnb.assemblers.user.UserModel;
 import org.di.airbnb.exceptions.api.UserNotValidException;
+import org.di.airbnb.security.JwtUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/airbnb")
 public class AirbnbController {
-
+	@Autowired
+	AuthenticationManager authenticationManager;
+	@Autowired
+	JwtUtils jwtUtils;
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Resource
 	private AirbnbManager manager;
 
@@ -36,40 +51,66 @@ public class AirbnbController {
 		return "ping";
 	}
 
-	//	curl -d '{"username": "p", "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "isHost": "True","email": "sandu@sandu"  }'  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
-	//	{"timestamp":"2020-05-22T13:38:06.168+0000","status":500,"error":"Internal Server Error","message":"Email already in use","path":"/user/signup"}
-	//error for constraint violation exception
+	/*
+	curl
+		-H "Content-Type: application/json"
+		-d '{"username": "pw1", "password": "bourdoud", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "isHost": "True","email": "sandudsw@sandu"  }'
+		-X POST -k http://localhost:8443/airbnb/user/signup
+	*/
 	@PostMapping(value = "user/signup")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Long signUp( @RequestBody @Valid @NotNull UserCreationRequest userCreationRequest ) {
-
-		return manager.createUser( userCreationRequest ).getId();
-		//TODO: 1. check existing username
+	public ResponseEntity signUp(
+			@RequestBody @Valid @NotNull UserCreationRequest userCreationRequest ) {
+		manager.createUser( userCreationRequest ).getId();
+		return ResponseEntity.ok( "User created successfully" );
 	}
 
-	//	curl -d '{"username": 1, "password": "bourdou" }'  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/login
+	/*
+	curl
+		-H "Content-Type: application/json"
+		-d '{"username": "pw1", "password": "bourdoud" }'
+	 	-X POST -k http://localhost:8443/airbnb/user/login
+	 */
 	@PostMapping(value = "user/login")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<UserSubModel> login(
-			@RequestBody @NotNull UsernamePasswordModel userDTO ) {
-		return new ResponseEntity<>( manager.login( userDTO.getUsername(), userDTO.getPassword() ),
-				HttpStatus.OK );
+	public ResponseEntity<JwtResponse> login(
+			@RequestBody @Valid @NotNull UsernamePasswordModel loginRequest ) {
+
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken( loginRequest.getUsername(),
+						loginRequest.getPassword() ) );
+
+		SecurityContextHolder.getContext().setAuthentication( authentication );
+		String jwt = jwtUtils.generateJwtToken( authentication );
+
+		return ResponseEntity.ok( new JwtResponse( jwt ) );
 	}
 
-	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/update
-	@PostMapping(value = "user/update")
-	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<UserModel> updateUserInfo( @RequestHeader("X-User-Id") long userId,
-			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
-		return new ResponseEntity<>( manager.updateUser( userUpdateRequest, userId ),
-				HttpStatus.CREATED );
-	}
-
-	//	curl -k https://localhost:8443/user --header 'X-User-Id':1
-	@GetMapping(value = "user")
+	/*
+	curl
+	-H "Content-Type: application/json"
+	-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
+	 http://localhost:8443/airbnb/user/38
+	* */
+	@GetMapping(value = "user/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<UserModel> getUserInfo( @RequestHeader("X-User-Id") long userId ) {
+	public ResponseEntity<UserModel> getUserInfo( @PathVariable("id") long userId ) {
 		return new ResponseEntity<>( manager.getUserInfo( userId ), HttpStatus.OK );
+	}
+
+	/*
+	curl
+	-H "Content-Type: application/json"
+	-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
+	-d '{"username": "", "password": "", "firstName": "", "lastName": "", "phoneNumber": "12121212", "country": "UK","email": "sandu@sandu"  }'
+	 -X POST -k http://localhost:8443/airbnb/user/38/update
+	*/
+	@PostMapping(value = "user/{id}/update")
+	@ResponseStatus(HttpStatus.CREATED)
+	public ResponseEntity<?> updateUserInfo( @PathVariable("id") long userId,
+			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
+		manager.updateUser( userUpdateRequest, userId );
+		return new ResponseEntity<>( "User updated successfully", HttpStatus.CREATED );
 	}
 
 	//	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
@@ -80,36 +121,59 @@ public class AirbnbController {
 	//		manager.updateUser( userUpdateRequest,userId );
 	//	}
 
-	//	curl -k https://localhost:8443/host/properties --header 'X-User-Id':2
-	@GetMapping(value = "host/properties")
+	/*
+	curl
+	-H "Content-Type: application/json"
+	-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
+	http://localhost:8443/airbnb/host/38/properties
+	*/
+	@GetMapping(value = "host/{id}/properties")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<List<PropertyModel>> getPropertiesByHost(
-			@RequestHeader("X-User-Id") long userId ) {
-		if ( !manager.isValidUser( userId ) ) {
+			@RequestHeader("Authorization") String authorizationHeader,
+			@PathVariable("id") long userId ) {
+		if ( !manager.isUserAuthenticated( userId, getUsernameFromJwt( authorizationHeader ) ) ) {
 			throw new UserNotValidException( "User cannot perform that kind of action" );
 		}
 		return new ResponseEntity<>( manager.getPropertiesByHost( userId ), HttpStatus.OK );
 	}
 
-	//	curl -k https://localhost:8443/user/bookings --header 'X-User-Id':2
-	@GetMapping(value = "user/bookings")
+	private String getUsernameFromJwt( String authorizationHeader ) {
+		if ( StringUtils.hasText( authorizationHeader ) && authorizationHeader.startsWith(
+				"Bearer " ) ) {
+			return jwtUtils.getUserNameFromJwtToken( authorizationHeader.substring( 7 ) );
+		}
+
+		return null;
+	}
+
+	/*
+	curl
+	-H "Content-Type: application/json"
+	-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
+	http://localhost:8443/airbnb/user/38/bookings
+	*/
+	@GetMapping(value = "user/{id}/bookings")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<List<PropertyModel>> getUserBookings(
-			@RequestHeader("X-User-Id") long userId ) {
-		if ( !manager.isValidUser( userId ) ) {
+			@RequestHeader("Authorization") String authorizationHeader,
+			@PathVariable("id") long userId ) {
+		if ( !manager.isUserAuthenticated( userId, getUsernameFromJwt( authorizationHeader ) ) ) {
 			throw new UserNotValidException( "User cannot perform that kind of action" );
 		}
 		return new ResponseEntity<>( manager.getUserBookings( userId ), HttpStatus.OK );
 	}
 
-	//	curl -k https://localhost:8443/rating/property/1 --header 'X-User-Id':2
-	@GetMapping(value = "rating/property/{id}")
+	/*
+	curl
+	-H "Content-Type: application/json"
+	-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
+	http://localhost:8443/airbnb/user/38/rating/property/1
+	*/
+	@GetMapping(value = "user/{id}/rating/property/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<List<RatingModel>> getPropertyRating(
-			@RequestHeader("X-User-Id") long userId, @PathVariable("id") long propertyId ) {
-		if ( !manager.isValidUser( userId ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
-		}
+	public ResponseEntity<List<RatingModel>> getPropertyRating( @PathVariable("id") long userId,
+			@PathVariable("id") long propertyId ) {
 		return new ResponseEntity<>( manager.getPropertyRatings( propertyId ), HttpStatus.OK );
 	}
 

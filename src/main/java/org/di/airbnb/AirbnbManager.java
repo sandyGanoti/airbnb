@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
-import org.di.airbnb.assemblers.UserSubModel;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.rating.RatingModel;
 import org.di.airbnb.assemblers.user.UserModel;
@@ -19,12 +18,15 @@ import org.di.airbnb.constant.Role;
 import org.di.airbnb.dao.AirbnbDaoImpl;
 import org.di.airbnb.dao.entities.User;
 import org.di.airbnb.dao.repository.UserRepository;
-import org.di.airbnb.exceptions.api.UniqueConstraintViolationException;
 import org.di.airbnb.exceptions.api.EntityNotFoundException;
+import org.di.airbnb.exceptions.api.UniqueConstraintViolationException;
 import org.di.airbnb.exceptions.api.UserNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.google.common.base.Strings;
 
 @Singleton
 @Service
@@ -39,31 +41,15 @@ public class AirbnbManager {
 	@Autowired
 	private ModelMapper modelMapper;
 
-	//TODO: Use assembler here in order to return data from this layer to the above
-
-	public UserSubModel login( final @NotNull String username, final @NotNull String password ) {
-		//		String encoded = null;
-		//		try {
-		//			MessageDigest digest = MessageDigest.getInstance( "SHA-256" );
-		//			byte[] hash = digest.digest( password.getBytes( StandardCharsets.UTF_8 ) );
-		//			encoded = Base64.getEncoder().encodeToString( hash );
-		//		} catch ( NoSuchAlgorithmException e ) {
-		//			return null;
-		//		}
-		//
-		//		Optional<UserSubModel> user = airbnbDao.login( username, encoded );
-		Optional<UserSubModel> user = airbnbDao.login( username, password );
-		if ( !user.isPresent() ) {
-			throw new EntityNotFoundException( "No user found with the provided details." );
-		}
-		return user.get();
-	}
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	public UserModel createUser( final @NotNull UserCreationRequest userCreationRequest ) {
 		UserModel userModel = null;
 		User user = modelMapper.map( userCreationRequest, User.class );
 		user.setCreatedAt( Instant.now() );
 		user.setRole( userCreationRequest.isHost() ? Role.TENANT_AND_HOST : Role.TENANT );
+		user.setPassword( bCryptPasswordEncoder.encode( userCreationRequest.getPassword() ) );
 		try {
 			userModel = modelMapper.map( userRepository.save( user ), UserModel.class );
 		} catch ( RuntimeException e ) {
@@ -78,25 +64,25 @@ public class AirbnbManager {
 		Optional<User> userIsPresent = userRepository.findById( userId );
 		if ( userIsPresent.isPresent() ) {
 			User user = userIsPresent.get();
-			if ( userUpdateRequest.getEmail() != null ) {
+			if ( !Strings.isNullOrEmpty( userUpdateRequest.getEmail() ) ) {
 				user.setEmail( userUpdateRequest.getEmail() );
 			}
-			if ( userUpdateRequest.getFirstName() != null ) {
+			if ( !Strings.isNullOrEmpty( userUpdateRequest.getFirstName() ) ) {
 				user.setFirstName( userUpdateRequest.getFirstName() );
 			}
-			if ( userUpdateRequest.getLastName() != null ) {
+			if ( !Strings.isNullOrEmpty( userUpdateRequest.getLastName() ) ) {
 				user.setLastName( userUpdateRequest.getLastName() );
 			}
-			if ( userUpdateRequest.getUsername() != null ) {
+			if ( !Strings.isNullOrEmpty( userUpdateRequest.getUsername() ) ) {
 				user.setUsername( userUpdateRequest.getUsername() );
 			}
-			if ( userUpdateRequest.getEmail() != null ) {
+			if ( !Strings.isNullOrEmpty( userUpdateRequest.getEmail() ) ) {
 				user.setEmail( userUpdateRequest.getEmail() );
 			}
-			if ( userUpdateRequest.getPassword() != null ) {
-				user.setPassword( userUpdateRequest.getPassword() );
+			if ( !Strings.isNullOrEmpty( userUpdateRequest.getPassword() ) ) {
+				user.setPassword( bCryptPasswordEncoder.encode( userUpdateRequest.getPassword() ) );
 			}
-			if ( userUpdateRequest.getPhoneNumber() != null ) {
+			if ( !Strings.isNullOrEmpty( userUpdateRequest.getPhoneNumber() ) ) {
 				user.setPhoneNumber( userUpdateRequest.getPhoneNumber() );
 			}
 			try {
@@ -120,8 +106,8 @@ public class AirbnbManager {
 		}
 	}
 
-	public boolean isValidUser( final long userId ) {
-		return userRepository.findById( userId ).isPresent();
+	public boolean isUserAuthenticated( final long userId, final String username ) {
+		return userRepository.findById( userId ).get().getUsername().equals( username );
 	}
 
 	public List<PropertyModel> getPropertiesByHost( final long hostId ) {
