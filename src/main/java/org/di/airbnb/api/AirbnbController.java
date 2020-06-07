@@ -1,6 +1,7 @@
 package org.di.airbnb.api;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,29 +10,31 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.AirbnbManager;
+import org.di.airbnb.api.request.MessagingCreationRequest;
 import org.di.airbnb.api.request.PropertyCreationRequest;
 import org.di.airbnb.api.request.PropertyUpdateRequest;
+import org.di.airbnb.api.request.ReviewPropertyCreationRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
 import org.di.airbnb.api.response.JwtResponse;
 import org.di.airbnb.assemblers.UsernamePasswordModel;
+import org.di.airbnb.assemblers.messaging.MessagingModel;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
 import org.di.airbnb.assemblers.rating.RatingModel;
 import org.di.airbnb.assemblers.user.UserModel;
+import org.di.airbnb.exceptions.api.InvalidUserActionException;
 import org.di.airbnb.exceptions.api.UserNotValidException;
 import org.di.airbnb.security.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,7 +44,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -219,19 +221,6 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
-		http://localhost:8443/airbnb/user/38/rating/property/1
-	*/
-	@GetMapping(value = "user/{id}/rating/property/{id}")
-	public ResponseEntity<List<RatingModel>> getPropertyRating( @PathVariable("id") long userId,
-			@PathVariable("id") long propertyId ) {
-		return new ResponseEntity<>( airbnbManager.getPropertyRatings( propertyId ),
-				HttpStatus.OK );
-	}
-
-	/*
-	curl
-		-H "Content-Type: application/json"
 		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzczEiLCJpYXQiOjE1OTE1Mjk3NjUsImV4cCI6MTU5MTYxNjE2NX0.yXEmqMgvHhGO3OQL8oxpdSaGtE2DfaXb65zWSF6iHU7YAiI_qU-K97-vvKEPsBdmPk_i623sWiuUlLkKyVFmJg"
 		http://localhost:8443/airbnb/property/1
 	*/
@@ -327,11 +316,106 @@ public class AirbnbController {
 		}
 		try {
 			airbnbManager.deleteProperty( userId, propertyId );
-		} catch ( UnsupportedOperationException e ) {
+		} catch ( InvalidUserActionException e ) {
 			return new ResponseEntity<>( "User is not eligible to perform this action",
 					HttpStatus.NO_CONTENT );
 		}
 		return new ResponseEntity<>( "Resource deleted", HttpStatus.OK );
+	}
+
+	/*
+	curl
+		-H "Content-Type: application/json"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwdzEiLCJpYXQiOjE1OTE1NjAzODQsImV4cCI6MTU5MTY0Njc4NH0.41NI-LKJO67Iu_RoHUVjosQTkSXr_x8bkXTdZyC04m12F6Dyj1FqA-Z-3PjvuoB9QUf6j0ZA-HsYNYHhvQ6P7A"
+		http://localhost:8443/airbnb/user/1/messaging
+	*/
+	@GetMapping(value = "user/{userId}/messaging")
+	public ResponseEntity<HashMap<Long, List<MessagingModel>>> getNewMessages(
+			@RequestHeader("Authorization") String authorizationHeader,
+			@PathVariable("userId") long userId ) {
+		if ( !airbnbManager.isUserAuthenticated( userId,
+				getUsernameFromJwt( authorizationHeader ) ) ) {
+			throw new UserNotValidException( "User cannot perform that kind of action" );
+		}
+
+		return new ResponseEntity<>( airbnbManager.getNewMessages( userId ), HttpStatus.OK );
+	}
+
+	/*
+	curl
+		-H "Content-Type: application/json"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwdzEiLCJpYXQiOjE1OTE1NjAzODQsImV4cCI6MTU5MTY0Njc4NH0.41NI-LKJO67Iu_RoHUVjosQTkSXr_x8bkXTdZyC04m12F6Dyj1FqA-Z-3PjvuoB9QUf6j0ZA-HsYNYHhvQ6P7A"
+		http://localhost:8443/airbnb/user/1/messaging/2
+		-d '{"body": "la la la la"  }'
+	*/
+	@PostMapping(value = "user/{userId}/messaging/{recipientId}")
+	public ResponseEntity<?> createMessage(
+			@RequestHeader("Authorization") String authorizationHeader,
+			@PathVariable("userId") long userId, @PathVariable("recipientId") long recipientId,
+			@RequestBody @Valid @NotNull MessagingCreationRequest messagingCreationRequest ) {
+		if ( !airbnbManager.isUserAuthenticated( userId,
+				getUsernameFromJwt( authorizationHeader ) ) ) {
+			throw new UserNotValidException( "User cannot perform that kind of action" );
+		}
+		if ( userId == recipientId ) {
+			throw new UserNotValidException( "User cannot send a message to itself." );
+		}
+		airbnbManager.createMessaging( messagingCreationRequest.getBody(), userId, recipientId );
+		return new ResponseEntity<>( HttpStatus.CREATED );
+	}
+
+	//TODO: where is the error???
+
+	/*
+	curl
+		-H "Content-Type: application/json"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwdzEiLCJpYXQiOjE1OTE1NjAzODQsImV4cCI6MTU5MTY0Njc4NH0.41NI-LKJO67Iu_RoHUVjosQTkSXr_x8bkXTdZyC04m12F6Dyj1FqA-Z-3PjvuoB9QUf6j0ZA-HsYNYHhvQ6P7A"
+		-d '{"mark": 3 }'
+		-X POST -k http://localhost:8443/airbnb/user/4/property/4/review/create
+	*/
+	@PostMapping(value = "user/{userId}/property/{propertyId}/review/create")
+	public ResponseEntity<?> reviewProperty(
+			@RequestHeader("Authorization") String authorizationHeader,
+			@PathVariable("userId") long userId, @PathVariable("propertyId") long propertyId,
+			@RequestBody @Valid @NotNull ReviewPropertyCreationRequest reviewPropertyCreationRequest ) {
+
+		if ( !airbnbManager.isUserAuthenticated( userId,
+				getUsernameFromJwt( authorizationHeader ) ) ) {
+			throw new UserNotValidException( "User cannot perform that kind of action" );
+		}
+		try {
+			airbnbManager.reviewProperty( userId, propertyId,
+					reviewPropertyCreationRequest.getMark() );
+		} catch ( InvalidUserActionException e ) {
+			return new ResponseEntity<>(
+					"User has to have booked the place before to try to review it.",
+					HttpStatus.NO_CONTENT );
+		}
+		return new ResponseEntity<>( "Review submitted!", HttpStatus.CREATED );
+	}
+
+	/*
+	curl
+		-H "Content-Type: application/json"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
+		http://localhost:8443/airbnb/rating/property/1
+	*/
+	@GetMapping(value = "rating/property/{propertyId}")
+	public ResponseEntity<List<RatingModel>> getPropertyRating(
+			@PathVariable("propertyId") long propertyId ) {
+		return new ResponseEntity<>( airbnbManager.getPropertyRatings( propertyId ),
+				HttpStatus.OK );
+	}
+
+	/*
+	curl
+		-H "Content-Type: application/json"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
+		http://localhost:8443/airbnb/rating/user/1
+	*/
+	@GetMapping(value = "rating/user/{userId}")
+	public ResponseEntity<List<RatingModel>> getHostRating( @PathVariable("userId") long userId ) {
+		return new ResponseEntity<>( airbnbManager.getHostRatings( userId ), HttpStatus.OK );
 	}
 
 	//	//	curl -k https://localhost:8443/auctions/active --header 'X-User-Id':1

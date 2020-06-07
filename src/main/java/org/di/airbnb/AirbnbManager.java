@@ -6,6 +6,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.Deflater;
@@ -18,6 +20,7 @@ import org.di.airbnb.api.request.PropertyCreationRequest;
 import org.di.airbnb.api.request.PropertyUpdateRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
+import org.di.airbnb.assemblers.messaging.MessagingModel;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
 import org.di.airbnb.assemblers.property.RentingRulesModel;
@@ -26,13 +29,18 @@ import org.di.airbnb.assemblers.user.UserModel;
 import org.di.airbnb.constant.Role;
 import org.di.airbnb.dao.AirbnbDaoImpl;
 import org.di.airbnb.dao.entities.Image;
+import org.di.airbnb.dao.entities.Messaging;
 import org.di.airbnb.dao.entities.Property;
+import org.di.airbnb.dao.entities.Rating;
 import org.di.airbnb.dao.entities.RentingRules;
 import org.di.airbnb.dao.entities.User;
 import org.di.airbnb.dao.repository.ImageRepository;
+import org.di.airbnb.dao.repository.MessagingRepository;
 import org.di.airbnb.dao.repository.PropertyRepository;
+import org.di.airbnb.dao.repository.RatingRepository;
 import org.di.airbnb.dao.repository.RentingRulesRepository;
 import org.di.airbnb.dao.repository.UserRepository;
+import org.di.airbnb.exceptions.api.InvalidUserActionException;
 import org.di.airbnb.exceptions.api.UniqueConstraintViolationException;
 import org.di.airbnb.exceptions.api.UserNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -61,6 +69,12 @@ public class AirbnbManager {
 
 	@Autowired
 	private RentingRulesRepository rentingRulesRepository;
+
+	@Autowired
+	private MessagingRepository messagingRepository;
+
+	@Autowired
+	private RatingRepository ratingRepository;
 
 	@Autowired
 	private AirbnbDaoImpl airbnbDao;
@@ -188,6 +202,10 @@ public class AirbnbManager {
 		return modelMapper.map( airbnbDao.getPropertyRatings( propertyId ), List.class );
 	}
 
+	public List<RatingModel> getHostRatings( final long userId ) {
+		return modelMapper.map( airbnbDao.getHostRatings( userId ), List.class );
+	}
+
 	public Optional<PropertyWithRentingRules> getPropertyById( final long propertyId ) {
 		Property property = propertyRepository.getOne( propertyId );
 		if ( property == null ) {
@@ -232,7 +250,7 @@ public class AirbnbManager {
 	public void deleteProperty( final long userId, final long propertyId ) {
 		Property property = propertyRepository.getOne( propertyId );
 		if ( !property.getHostId().equals( userId ) ) {
-			throw new UnsupportedOperationException();
+			throw new InvalidUserActionException();
 		}
 		RentingRules rentingRules = airbnbDao.getPropertyRentingRules( propertyId );
 		if ( rentingRules != null ) {
@@ -331,6 +349,45 @@ public class AirbnbManager {
 			}
 		} else {
 			throw new UserNotFoundException( "User do not exist" );
+		}
+	}
+
+	public HashMap<Long, List<MessagingModel>> getNewMessages( final long userId ) {
+		HashMap<Long, List<MessagingModel>> newMessages = new HashMap<>();
+
+		airbnbDao.getNewMessages( userId ).forEach( message -> {
+			Long sender = message.getSender();
+			List<MessagingModel> messages = newMessages.get( sender );
+			if ( messages == null ) {
+				messages = new ArrayList<>();
+			}
+			messages.add( modelMapper.map( message, MessagingModel.class ) );
+			newMessages.put( sender, messages );
+		} );
+
+		return newMessages;
+	}
+
+	public void createMessaging( final String body, final long senderId, final long recipientId ) {
+		Messaging messaging = new Messaging();
+		messaging.setRecipient( recipientId );
+		messaging.setSender( senderId );
+		messaging.setMessageBody( body );
+		messaging.setCreatedAt( Instant.now() );
+		messaging.setReadStatus( Boolean.FALSE );
+		messagingRepository.save( messaging );
+	}
+
+	public void reviewProperty( final long raterId, final long propertyId, final int mark ) {
+		if ( !airbnbDao.getPropertyBookingsByUser( raterId, propertyId ).isEmpty() ) {
+			Rating rating = new Rating();
+			rating.setMark( mark );
+			rating.setPropertyId( propertyId );
+			rating.setRaterId( raterId );
+			rating.setCreatedAt( Instant.now() );
+			ratingRepository.save( rating );
+		} else {
+			throw new InvalidUserActionException();
 		}
 	}
 

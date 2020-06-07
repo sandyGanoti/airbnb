@@ -9,7 +9,7 @@ public class InvalidUserActionException extends RuntimeException {
 
   private static final long serialVersionUID = 3400248338734389783L;
 
-  public InvalidUserActionException(String message) {
-    super(message);
+  public InvalidUserActionException() {
+    super();
   }
 }
