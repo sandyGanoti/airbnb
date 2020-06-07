@@ -76,7 +76,9 @@ CREATE TABLE IF NOT EXISTS `booking` (
 CREATE TABLE IF NOT EXISTS `rating` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `rater_id` BIGINT(20) NOT NULL,
-  `property_id` BIGINT(20) NOT NULL,
+  `property_id` BIGINT(20),
+  `host_id` BIGINT(20),
+  `text` TEXT DEFAULT NULL,
   `mark` INTEGER NOT NULL,
   `created_at` DATETIME NOT NULL,
   PRIMARY KEY(id),
@@ -126,4 +128,4 @@ INSERT INTO `renting_rules`(property_id, aircondition, tv, internet, living_room
 
 INSERT INTO `booking`(id, tenant_id, property_id, from_datetime, to_datetime, created_at) values(1, 1, 1, now(), now(), now());
 
-INSERT INTO `rating`(id, rater_id, property_id, mark, created_at) VALUES(1, 1, 1, 3, now());
+INSERT INTO `rating`(id, rater_id, property_id, host_id, text, mark, created_at) VALUES(1, 1, 1, 1, "free text review", 3, now());
