@@ -21,22 +21,24 @@ CREATE TABLE IF NOT EXISTS `user_` (
 CREATE TABLE IF NOT EXISTS `property_to_rent` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(128) NULL,
+  `property_type` VARCHAR(120) NOT NULL,
   `country` VARCHAR(128) NULL,
   `city` VARCHAR(128) NULL,
-  `region` VARCHAR(128) NULL,
+  `district` VARCHAR(128) NULL,
   `host_id`  BIGINT(20) NOT NULL,
   `price` DECIMAL NOT NULL,
   `beds` INTEGER NOT NULL,
   `bedrooms` INTEGER NOT NULL,
   `bathrooms` INTEGER NOT NULL,
   `minimum_days` INTEGER NOT NULL,
-  `minimum_tenants` INTEGER NOT NULL,
   `maximum_tenants` INTEGER NOT NULL,
   `property_size` DECIMAL NOT NULL,
   `free_text` TEXT DEFAULT NULL,
   PRIMARY KEY(`id`),
+  UNIQUE KEY (`name`),
+  UNIQUE KEY (`host_id`)
   KEY fk_property_user (host_id),
-  CONSTRAINT fk_property_user FOREIGN KEY (host_id) REFERENCES user_ (id)
+  CONSTRAINT fk_property_user FOREIGN KEY (host_id) REFERENCES user_ (id),
 );
 
 CREATE TABLE IF NOT EXISTS `renting_rules` (
@@ -99,14 +101,23 @@ CREATE TABLE IF NOT EXISTS `messaging` (
   CONSTRAINT fk_messaging_recipient_user FOREIGN KEY (recipient) REFERENCES user_ (id)
 );
 
+CREATE TABLE IF NOT EXISTS `image_table` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(250) NOT NULL,
+  `type` VARCHAR(250) NOT NULL,
+  `picByte` blob NOT NULL,
+  `owner_id` BIGINT(20) NOT NULL,
+  PRIMARY KEY (id)
+);
+
 INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(1, "22", "jon", "doe", "jonDoe", "1234", "TENANT", now(), "jon@doe.com");
 INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(2, "222", "sandu", "doe", "sanduDoe", "1234", "TENANT", now(), "sandu@doe.com");
 INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(3, "333", "bourdou", "doe", "bourdouDoe", "1234", "TENANT_AND_HOST", now(), "bourdou@doe.com");
 
-INSERT INTO `property_to_rent`(id, name, country, city, region, host_id, price, beds, bedrooms, bathrooms, minimum_days, minimum_tenants, maximum_tenants, property_size, free_text) values(1, "A great place to stay by the sea", "Greece", "Athens", "Melissia", 1, 29.34, 2, 2, 2, 4, 2, 4, 32, NULL);
-INSERT INTO `property_to_rent`(id, name, country, city, region, host_id, price, beds, bedrooms, bathrooms, minimum_days, minimum_tenants, maximum_tenants, property_size, free_text) values(2, "A nice house", "Greece", "Athens", "Patisia", 2, 29.34, 5, 3, 2, 2, 3, 3, 30, NULL);
-INSERT INTO `property_to_rent`(id, name, country, city, region, host_id, price, beds, bedrooms, bathrooms, minimum_days, minimum_tenants, maximum_tenants, property_size, free_text) values(3, "Another nice house", "Greece", "Athens", "Agios Stefanos", 3, 200, 1, 1, 1, 1, 1, 1, 28, "A nice place to stay");
-INSERT INTO `property_to_rent`(id, name, country, city, region, host_id, price, beds, bedrooms, bathrooms, minimum_days, minimum_tenants, maximum_tenants, property_size, free_text) values(4, "A beautiful house", "Greece", "Athens", "Patisia", 1, 32, 1, 1, 3, 1, 1, 3, 34, "Another nice place to stay");
+INSERT INTO `property_to_rent`(id, name, property_type, country, city, district, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text) values(1, "A great place to stay by the sea", "ROOM", "Greece", "Athens", "Melissia", 1, 29.34, 2, 2, 2, 4,  4, 32, NULL);
+INSERT INTO `property_to_rent`(id, name, property_type, country, city, district, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text) values(2, "A nice house", "HOUSE", "Greece", "Athens", "Patisia", 2, 29.34, 5, 3, 2, 2, 3, 30, NULL);
+INSERT INTO `property_to_rent`(id, name, property_type, country, city, district, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text) values(3, "Another nice house", "HOUSE", "Greece", "Athens", "Agios Stefanos", 3, 200, 1, 1, 1, 1, 1, 28, "A nice place to stay");
+INSERT INTO `property_to_rent`(id, name, property_type, country, city, district, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text) values(4, "A beautiful house", "ROOM", "Greece", "Athens", "Patisia", 1, 32, 1, 1, 3, 1, 3, 34, "Another nice place to stay");
 
 INSERT INTO `renting_rules`(property_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking_friendly, free_text) VALUES (1, 1, 1, 1, 1, 1, 1, 1, 1, NULL);
 INSERT INTO `renting_rules`(property_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking_friendly, free_text) VALUES (2, 1, 1, 0, 1, 0, 0, 1, 0, NULL);

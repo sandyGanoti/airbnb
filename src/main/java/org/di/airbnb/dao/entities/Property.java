@@ -5,10 +5,14 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.di.airbnb.constant.PropertyType;
 
 @Entity
 @Table(name = "property_to_rent")
@@ -16,16 +20,16 @@ public class Property {
 
 	private long id;
 	private String name;
+	private PropertyType propertyType;
 	private String country;
 	private String city;
-	private String region;
+	private String district;
 	private Long hostId;
 	private BigDecimal price;
 	private Integer beds;
 	private Integer bedrooms;
 	private Integer bathrooms;
 	private Integer minimumDays;
-	private Integer minimumTenants;
 	private Integer maximumTenants;
 	private Double propertySize;
 	private String freeText;
@@ -48,6 +52,16 @@ public class Property {
 		this.name = name;
 	}
 
+	@Column(name = "property_type")
+	@Enumerated(EnumType.STRING)
+	public PropertyType getPropertyType() {
+		return propertyType;
+	}
+
+	public void setPropertyType( final PropertyType propertyType ) {
+		this.propertyType = propertyType;
+	}
+
 	public String getCountry() {
 		return country;
 	}
@@ -64,12 +78,12 @@ public class Property {
 		this.city = city;
 	}
 
-	public String getRegion() {
-		return region;
+	public String getDistrict() {
+		return district;
 	}
 
-	public void setRegion( final String region ) {
-		this.region = region;
+	public void setDistrict( final String district ) {
+		this.district = district;
 	}
 
 	@Column(name = "host_id")
@@ -111,15 +125,6 @@ public class Property {
 
 	public void setBathrooms( final Integer bathrooms ) {
 		this.bathrooms = bathrooms;
-	}
-
-	@Column(name = "minimum_tenants")
-	public Integer getMinimumTenants() {
-		return minimumTenants;
-	}
-
-	public void setMinimumTenants( final Integer minimumTenants ) {
-		this.minimumTenants = minimumTenants;
 	}
 
 	@Column(name = "maximum_tenants")
@@ -168,19 +173,18 @@ public class Property {
 		}
 		final Property property = (Property) o;
 		return id == property.id && name.equals( property.name ) && country.equals(
-				property.country ) && city.equals( property.city ) && region.equals(
-				property.region ) && hostId.equals( property.hostId ) && price.equals(
+				property.country ) && city.equals( property.city ) && district.equals(
+				property.district ) && hostId.equals( property.hostId ) && price.equals(
 				property.price ) && beds.equals( property.beds ) && bedrooms.equals(
 				property.bedrooms ) && bathrooms.equals( property.bathrooms ) && minimumDays.equals(
-				property.minimumDays ) && minimumTenants.equals(
-				property.minimumTenants ) && maximumTenants.equals(
+				property.minimumDays ) && maximumTenants.equals(
 				property.maximumTenants ) && propertySize.equals( property.propertySize ) && Objects
 				.equals( freeText, property.freeText );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( id, name, country, city, region, hostId, price, beds, bedrooms,
-				bathrooms, minimumDays, minimumTenants, maximumTenants, propertySize, freeText );
+		return Objects.hash( id, name, country, city, district, hostId, price, beds, bedrooms,
+				bathrooms, minimumDays, maximumTenants, propertySize, freeText );
 	}
 }

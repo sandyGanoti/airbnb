@@ -16,7 +16,7 @@ import org.di.airbnb.dao.entities.Booking;
 import org.di.airbnb.dao.entities.Messaging;
 import org.di.airbnb.dao.entities.Property;
 import org.di.airbnb.dao.entities.Rating;
-import org.di.airbnb.dao.entities.User;
+import org.di.airbnb.dao.entities.RentingRules;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
@@ -24,19 +24,6 @@ import org.springframework.stereotype.Repository;
 public class AirbnbDaoImpl {
 	@PersistenceContext
 	private EntityManager entityManager;
-
-	public Optional<UserSubModel> login( final String username, final String password ) {
-		TypedQuery<User> query = entityManager.createQuery(
-				"FROM User u where username = :username and password= :password", User.class )
-				.setParameter( "username", username )
-				.setParameter( "password", password );
-		try {
-			User user = query.getSingleResult();
-			return Optional.of( new UserSubModel( user.getId(), user.getUsername() ) );
-		} catch ( NoResultException e ) {
-			return Optional.empty();
-		}
-	}
 
 	public List<Property> getPropertiesByHost( final long hostId ) {
 		return entityManager.createQuery( "FROM Property p where hostId = :hostId", Property.class )
@@ -54,6 +41,14 @@ public class AirbnbDaoImpl {
 				Rating.class ).setParameter( "propertyId", propertyId ).getResultList();
 	}
 
+	public RentingRules getPropertyRentingRules( final long propertyId ) {
+		try {
+			return entityManager.createQuery( "FROM RentingRules r where propertyId = :propertyId",
+					RentingRules.class ).setParameter( "propertyId", propertyId ).getSingleResult();
+		} catch ( NoResultException e ) {
+			return null;
+		}
+	}
 
 	//	public List<User> getMany( final List<Long> userIds ) {
 	//		TypedQuery<User> query = entityManager.createQuery( "FROM User where id in (:ids)",
