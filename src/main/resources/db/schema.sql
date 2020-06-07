@@ -36,9 +36,9 @@ CREATE TABLE IF NOT EXISTS `property_to_rent` (
   `free_text` TEXT DEFAULT NULL,
   PRIMARY KEY(`id`),
   UNIQUE KEY (`name`),
-  UNIQUE KEY (`host_id`)
+  UNIQUE KEY (`host_id`),
   KEY fk_property_user (host_id),
-  CONSTRAINT fk_property_user FOREIGN KEY (host_id) REFERENCES user_ (id),
+  CONSTRAINT fk_property_user FOREIGN KEY (host_id) REFERENCES user_ (id)
 );
 
 CREATE TABLE IF NOT EXISTS `renting_rules` (
