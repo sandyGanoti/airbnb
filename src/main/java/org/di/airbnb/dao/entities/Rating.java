@@ -17,6 +17,8 @@ public class Rating {
 	private long id;
 	private long raterId;
 	private long propertyId;
+	private long hostId;
+	private String text;
 	private int mark;
 	private Instant createdAt;
 
@@ -48,6 +50,23 @@ public class Rating {
 		this.propertyId = propertyId;
 	}
 
+	@Column(name = "host_id")
+	public long getHostId() {
+		return hostId;
+	}
+
+	public void setHostId( final long hostId ) {
+		this.hostId = hostId;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText( final String text ) {
+		this.text = text;
+	}
+
 	public int getMark() {
 		return mark;
 	}
@@ -74,17 +93,17 @@ public class Rating {
 			return false;
 		}
 		final Rating rating = (Rating) o;
-		return id == rating.id && raterId == rating.raterId && propertyId == rating.propertyId && mark == rating.mark && createdAt
-				.equals( rating.createdAt );
+		return id == rating.id && raterId == rating.raterId && propertyId == rating.propertyId && hostId == rating.hostId && mark == rating.mark && text
+				.equals( rating.text ) && createdAt.equals( rating.createdAt );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( id, raterId, propertyId, mark, createdAt );
+		return Objects.hash( id, raterId, propertyId, hostId, text, mark, createdAt );
 	}
 
 	@Override
 	public String toString() {
-		return "Rating{" + "id=" + id + "raterId=" + raterId + ", propertyId=" + propertyId + ", mark=" + mark + ", createdAt=" + createdAt + '}';
+		return "Rating{" + "id=" + id + ", raterId=" + raterId + ", propertyId=" + propertyId + ", hostId=" + hostId + ", text='" + text + '\'' + ", mark=" + mark + ", createdAt=" + createdAt + '}';
 	}
 }

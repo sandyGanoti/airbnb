@@ -1,6 +1,7 @@
 package org.di.airbnb.dao.entities;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -71,5 +72,29 @@ public class Messaging {
 
 	public void setReadStatus( final Boolean readStatus ) {
 		this.readStatus = readStatus;
+	}
+
+	@Override
+	public boolean equals( final Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
+		final Messaging messaging = (Messaging) o;
+		return id == messaging.id && sender == messaging.sender && recipient == messaging.recipient && messageBody
+				.equals( messaging.messageBody ) && createdAt.equals(
+				messaging.createdAt ) && readStatus.equals( messaging.readStatus );
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash( id, sender, recipient, messageBody, createdAt, readStatus );
+	}
+
+	@Override
+	public String toString() {
+		return "Messaging{" + "id=" + id + ", sender=" + sender + ", recipient=" + recipient + ", messageBody='" + messageBody + '\'' + ", createdAt=" + createdAt + ", readStatus=" + readStatus + '}';
 	}
 }
