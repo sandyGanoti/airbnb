@@ -1,5 +1,6 @@
 package org.di.airbnb.assemblers.user;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.constant.Role;
@@ -24,19 +25,17 @@ public class UserModel {
 
 	@NotNull
 	private long id;
-	@NotNull
+	@NotBlank
 	private String username;
-	@NotNull
-	private String password;
-	@NotNull
+	@NotBlank
 	private String firstName;
-	@NotNull
+	@NotBlank
 	private String lastName;
-	@NotNull
+	@NotBlank
 	private String phoneNumber;
-	@NotNull
+	@NotBlank
 	private Role role;
-	@NotNull
+	@NotBlank
 	private String email;
 
 }

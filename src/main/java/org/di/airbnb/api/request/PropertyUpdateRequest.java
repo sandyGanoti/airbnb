@@ -1,12 +1,12 @@
-package org.di.airbnb.assemblers.property;
+package org.di.airbnb.api.request;
 
 import java.math.BigDecimal;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonRootName;
+import org.di.airbnb.constant.PropertyType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,37 +19,29 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@JsonRootName(value = "property_to_rent")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class PropertyModel {
+public class PropertyUpdateRequest {
 
-	@NotNull
-	private long id;
-	@NotBlank
 	private String name;
-	@NotBlank
-	private String propertyType;
-	@NotBlank
+	private PropertyType propertyType;
 	private String country;
-	@NotBlank
 	private String city;
-	@NotBlank
-	private String region;
-	@NotNull
-	private Long hostId;
-	@NotNull
+	private String district;
 	private BigDecimal price;
-	@NotNull
 	private Integer beds;
-	@NotNull
 	private Integer bedrooms;
-	@NotNull
+	private Integer bathrooms;
 	private Integer minimumDays;
-	@NotNull
-	private Integer maximumDays;
-	@NotNull
+	private Integer maximumTenants;
 	private Double propertySize;
-
 	private String freeText;
+	private Boolean aircondition;
+	private Boolean tv;
+	private Boolean internet;
+	private Boolean livingRoom;
+	private Boolean kitchen;
+	private Boolean partyFriendly;
+	private Boolean petFriendly;
+	private Boolean smokingFriendly;
+	private String extraFreeText;
 
 }

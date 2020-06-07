@@ -1,8 +1,8 @@
 package org.di.airbnb.api.request;
 
-import javax.validation.constraints.NotNull;
-
-import org.di.airbnb.constant.Role;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,18 +17,30 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 public class UserCreationRequest {
 
-	@NotNull
+	@NotBlank
+	@Size(min = 1, max = 20)
 	private String username;
-	@NotNull
+
+	@NotBlank
+	@Size(min = 3, max = 40)
 	private String password;
-	@NotNull
+
+	@NotBlank
+	@Size(min = 1, max = 40)
 	private String firstName;
-	@NotNull
+
+	@NotBlank
+	@Size(min = 1, max = 40)
 	private String lastName;
-	@NotNull
+
+	@NotBlank
 	private String phoneNumber;
+
 	private boolean isHost;
-	@NotNull
+
+	@NotBlank
+	@Size(max = 50)
+	@Email
 	private String email;
 
 }
