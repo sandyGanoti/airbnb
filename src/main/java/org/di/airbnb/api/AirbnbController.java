@@ -369,7 +369,7 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwdzEiLCJpYXQiOjE1OTE1NjAzODQsImV4cCI6MTU5MTY0Njc4NH0.41NI-LKJO67Iu_RoHUVjosQTkSXr_x8bkXTdZyC04m12F6Dyj1FqA-Z-3PjvuoB9QUf6j0ZA-HsYNYHhvQ6P7A"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZGRkcHcxIiwiaWF0IjoxNTkxNjM4NzUxLCJleHAiOjE1OTE3MjUxNTF9.Y5oNQF0v4bZO0M7qFyddxmx6HfGXDYWxas_-39XezQDnMg60Idtxxcr08U9CTCEoktXf0VrTB6rHdvSthOkMLA"
 		-d '{"mark": 3 }'
 		-X POST -k http://localhost:8443/airbnb/user/4/property/4/review/create
 	*/
@@ -387,9 +387,7 @@ public class AirbnbController {
 			airbnbManager.reviewProperty( userId, propertyId,
 					reviewPropertyCreationRequest.getMark() );
 		} catch ( InvalidUserActionException e ) {
-			return new ResponseEntity<>(
-					"User has to have booked the place before to try to review it.",
-					HttpStatus.NO_CONTENT );
+			throw new UserNotValidException( "User has to have booked the place before to try to review it." );
 		}
 		return new ResponseEntity<>( "Review submitted!", HttpStatus.CREATED );
 	}
