@@ -1,6 +1,4 @@
-package org.di.airbnb.assemblers.rating;
-
-import java.time.Instant;
+package org.di.airbnb.assemblers.image;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -16,16 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@JsonRootName(value = "rating")
+@JsonRootName(value = "image")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RatingModel {
-
-	private long id;
-	private long raterId;
-	private long hostId;
-	private String text;
-	private long propertyId;
-	private int mark;
-	private Instant createdAt;
-
+public class ImageModel {
+	private byte[] picByte;
 }

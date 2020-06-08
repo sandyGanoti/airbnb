@@ -18,8 +18,10 @@ import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.api.request.PropertyCreationRequest;
 import org.di.airbnb.api.request.PropertyUpdateRequest;
+import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
+import org.di.airbnb.api.response.SearchResult;
 import org.di.airbnb.assemblers.messaging.MessagingModel;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
@@ -206,6 +208,10 @@ public class AirbnbManager {
 		return modelMapper.map( airbnbDao.getHostRatings( userId ), List.class );
 	}
 
+	public List<PropertyModel> getPopularPlaces( final long userId ) {
+		return modelMapper.map( airbnbDao.getPopularPlaces( userId ), List.class );
+	}
+
 	public Optional<PropertyWithRentingRules> getPropertyById( final long propertyId ) {
 		Property property = propertyRepository.getOne( propertyId );
 		if ( property == null ) {
@@ -389,6 +395,11 @@ public class AirbnbManager {
 		} else {
 			throw new InvalidUserActionException();
 		}
+	}
+
+	public List<SearchResult> findProperties( final SearchRequest searchRequest ) {
+		return airbnbDao.getPropertiesBySearchQuery( searchRequest.getFrom(), searchRequest.getTo(),
+				searchRequest.getNumberOfPeople(), searchRequest.getPagination() );
 	}
 
 }

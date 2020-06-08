@@ -1,5 +1,6 @@
 package org.di.airbnb.dao;
 
+import java.time.Instant;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -9,6 +10,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
+import org.di.airbnb.api.response.SearchResult;
 import org.di.airbnb.dao.entities.Booking;
 import org.di.airbnb.dao.entities.Messaging;
 import org.di.airbnb.dao.entities.Property;
@@ -38,8 +40,14 @@ public class AirbnbDaoImpl {
 	}
 
 	public List<Rating> getHostRatings( final long userId ) {
-		return entityManager.createQuery( "FROM Rating r where hostId = :userId",
-				Rating.class ).setParameter( "userId", userId ).getResultList();
+		return entityManager.createQuery( "FROM Rating r where hostId = :userId", Rating.class )
+				.setParameter( "userId", userId )
+				.getResultList();
+	}
+
+	public List<Property> getPopularPlaces( final long userId ) {
+		return entityManager.createQuery( "FROM Property p", Property.class )
+				.getResultList();
 	}
 
 	public List<Booking> getPropertyBookingsByUser( final long userId, final long propertyId ) {
@@ -65,6 +73,17 @@ public class AirbnbDaoImpl {
 				"FROM Messaging WHERE readStatus = 0 AND recipient = :recipientId",
 				Messaging.class ).setParameter( "recipientId", recipientId );
 		return query.getResultList();
+	}
+
+	public List<SearchResult> getPropertiesBySearchQuery( final Instant from, final Instant to,
+			final int numberOfPeople, final Pagination pagination ) {
+		return entityManager.createQuery(
+				"SELECT NEW org.di.airbnb.api.response.SearchResult(p.price, p.country, p.city, p.district) FROM Property p INNER JOIN Booking b ON b.propertyId = p.id WHERE :from > b.toDatetime AND :to < b.fromDatetime AND p.maximumTenants >= :numberOfPeople ",
+				SearchResult.class )
+				.setParameter( "numberOfPeople", numberOfPeople )
+				.setParameter( "from", from )
+				.setParameter( "to", to )
+				.getResultList();
 	}
 
 	public List<Messaging> getChatBySenderIdAndRecipientId( final long senderId,

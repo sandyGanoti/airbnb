@@ -14,9 +14,11 @@ import org.di.airbnb.api.request.MessagingCreationRequest;
 import org.di.airbnb.api.request.PropertyCreationRequest;
 import org.di.airbnb.api.request.PropertyUpdateRequest;
 import org.di.airbnb.api.request.ReviewPropertyCreationRequest;
+import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
 import org.di.airbnb.api.response.JwtResponse;
+import org.di.airbnb.api.response.SearchResult;
 import org.di.airbnb.assemblers.UsernamePasswordModel;
 import org.di.airbnb.assemblers.messaging.MessagingModel;
 import org.di.airbnb.assemblers.property.PropertyModel;
@@ -364,8 +366,6 @@ public class AirbnbController {
 		return new ResponseEntity<>( HttpStatus.CREATED );
 	}
 
-	//TODO: where is the error???
-
 	/*
 	curl
 		-H "Content-Type: application/json"
@@ -387,7 +387,8 @@ public class AirbnbController {
 			airbnbManager.reviewProperty( userId, propertyId,
 					reviewPropertyCreationRequest.getMark() );
 		} catch ( InvalidUserActionException e ) {
-			throw new UserNotValidException( "User has to have booked the place before to try to review it." );
+			throw new UserNotValidException(
+					"User has to have booked the place before to try to review it." );
 		}
 		return new ResponseEntity<>( "Review submitted!", HttpStatus.CREATED );
 	}
@@ -395,7 +396,7 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZGRkcHcxIiwiaWF0IjoxNTkxNjM4NzUxLCJleHAiOjE1OTE3MjUxNTF9.Y5oNQF0v4bZO0M7qFyddxmx6HfGXDYWxas_-39XezQDnMg60Idtxxcr08U9CTCEoktXf0VrTB6rHdvSthOkMLA"
 		http://localhost:8443/airbnb/rating/property/1
 	*/
 	@GetMapping(value = "rating/property/{propertyId}")
@@ -408,12 +409,49 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZGRkcHcxIiwiaWF0IjoxNTkxNjM4NzUxLCJleHAiOjE1OTE3MjUxNTF9.Y5oNQF0v4bZO0M7qFyddxmx6HfGXDYWxas_-39XezQDnMg60Idtxxcr08U9CTCEoktXf0VrTB6rHdvSthOkMLA"
 		http://localhost:8443/airbnb/rating/user/1
 	*/
 	@GetMapping(value = "rating/user/{userId}")
 	public ResponseEntity<List<RatingModel>> getHostRating( @PathVariable("userId") long userId ) {
 		return new ResponseEntity<>( airbnbManager.getHostRatings( userId ), HttpStatus.OK );
+	}
+
+	//TODO: fix the pagination
+	// TODO: load image
+	// TODO: load meanRating
+	/*
+	curl
+		-H "Content-Type: application/json"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZGRkcHcxIiwiaWF0IjoxNTkxNjM4NzUxLCJleHAiOjE1OTE3MjUxNTF9.Y5oNQF0v4bZO0M7qFyddxmx6HfGXDYWxas_-39XezQDnMg60Idtxxcr08U9CTCEoktXf0VrTB6rHdvSthOkMLA"
+		-d '{"from": "2020-06-08T18:10:08Z", "to": "2020-06-08T18:10:08Z", "numberOfPeople": 3, "country": "-", "city": "-", "district": "-", "pagination": {"limit": 0, "offset": 1}  }'
+		-X POST -k http://localhost:8443/airbnb/property/search
+	*/
+	@PostMapping(value = "/property/search")
+	public ResponseEntity<List<SearchResult>> searchProperty(
+			@RequestBody @Valid @NotNull SearchRequest searchRequest ) {
+		return new ResponseEntity<>( airbnbManager.findProperties( searchRequest ),
+				HttpStatus.CREATED );
+	}
+
+	//TODO: fix the logic for popular places
+
+	/*
+	curl
+		-H "Content-Type: application/json"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZGRkcHcxIiwiaWF0IjoxNTkxNjM4NzUxLCJleHAiOjE1OTE3MjUxNTF9.Y5oNQF0v4bZO0M7qFyddxmx6HfGXDYWxas_-39XezQDnMg60Idtxxcr08U9CTCEoktXf0VrTB6rHdvSthOkMLA"
+		http://localhost:8443/airbnb/user/4/popular
+	*/
+	@GetMapping(value = "user/{userId}/popular")
+	public ResponseEntity<List<PropertyModel>> getPopularPlaces(
+			@RequestHeader("Authorization") String authorizationHeader,
+			@PathVariable("userId") long userId ) {
+		if ( !airbnbManager.isUserAuthenticated( userId,
+				getUsernameFromJwt( authorizationHeader ) ) ) {
+			throw new UserNotValidException( "User cannot perform that kind of action" );
+		}
+
+		return new ResponseEntity<>( airbnbManager.getPopularPlaces( userId ), HttpStatus.OK );
 	}
 
 	//	//	curl -k https://localhost:8443/auctions/active --header 'X-User-Id':1
