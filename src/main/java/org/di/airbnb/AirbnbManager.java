@@ -22,6 +22,7 @@ import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
 import org.di.airbnb.api.response.SearchResult;
+import org.di.airbnb.assemblers.location.CountryModel;
 import org.di.airbnb.assemblers.messaging.MessagingModel;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
@@ -36,6 +37,9 @@ import org.di.airbnb.dao.entities.Property;
 import org.di.airbnb.dao.entities.Rating;
 import org.di.airbnb.dao.entities.RentingRules;
 import org.di.airbnb.dao.entities.User;
+import org.di.airbnb.dao.repository.location.CityRepository;
+import org.di.airbnb.dao.repository.location.CountryRepository;
+import org.di.airbnb.dao.repository.location.DistrictRepository;
 import org.di.airbnb.dao.repository.ImageRepository;
 import org.di.airbnb.dao.repository.MessagingRepository;
 import org.di.airbnb.dao.repository.PropertyRepository;
@@ -79,6 +83,15 @@ public class AirbnbManager {
 	private RatingRepository ratingRepository;
 
 	@Autowired
+	private CountryRepository countryRepository;
+
+	@Autowired
+	private CityRepository cityRepository;
+
+	@Autowired
+	private DistrictRepository districtRepository;
+
+	@Autowired
 	private AirbnbDaoImpl airbnbDao;
 
 	@Autowired
@@ -112,14 +125,13 @@ public class AirbnbManager {
 		user.setRole( userCreationRequest.isHost() ? Role.TENANT_AND_HOST : Role.TENANT );
 		user.setPassword( bCryptPasswordEncoder.encode( userCreationRequest.getPassword() ) );
 		try {
-//			user = userRepository.save( user );
+			//			user = userRepository.save( user );
 			user = userRepository.saveAndFlush( user );
 		} catch ( RuntimeException e ) {
 			handleException( e );
 		}
 		return user.getId();
 	}
-
 
 	public Optional<User> getUserByUsername( final String username ) {
 		return userRepository.findByUsername( username );
@@ -214,6 +226,12 @@ public class AirbnbManager {
 	public List<RatingModel> getHostRatings( final long userId ) {
 		return modelMapper.map( airbnbDao.getHostRatings( userId ), List.class );
 	}
+
+	public List<CountryModel> getCountries() {
+		return modelMapper.map( countryRepository.findAll(), List.class );
+	}
+
+
 
 	public List<PropertyModel> getPopularPlaces( final long userId ) {
 		return modelMapper.map( airbnbDao.getPopularPlaces( userId ), List.class );

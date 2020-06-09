@@ -52,4 +52,10 @@ public class PropertyModel {
 
 	private String freeText;
 
+	@NotNull
+	private Double latitude;
+
+	@NotNull
+	private Double longitude;
+
 }

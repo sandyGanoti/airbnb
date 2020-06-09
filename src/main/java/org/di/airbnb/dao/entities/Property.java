@@ -33,6 +33,8 @@ public class Property {
 	private Integer maximumTenants;
 	private Double propertySize;
 	private String freeText;
+	private Double latitude;
+	private Double longitude;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -163,6 +165,22 @@ public class Property {
 		this.freeText = freeText;
 	}
 
+	public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude( final Double latitude ) {
+		this.latitude = latitude;
+	}
+
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude( final Double longitude ) {
+		this.longitude = longitude;
+	}
+
 	@Override
 	public boolean equals( final Object o ) {
 		if ( this == o ) {
@@ -172,19 +190,22 @@ public class Property {
 			return false;
 		}
 		final Property property = (Property) o;
-		return id == property.id && name.equals( property.name ) && country.equals(
+		return id == property.id && name.equals(
+				property.name ) && propertyType == property.propertyType && country.equals(
 				property.country ) && city.equals( property.city ) && district.equals(
 				property.district ) && hostId.equals( property.hostId ) && price.equals(
 				property.price ) && beds.equals( property.beds ) && bedrooms.equals(
 				property.bedrooms ) && bathrooms.equals( property.bathrooms ) && minimumDays.equals(
 				property.minimumDays ) && maximumTenants.equals(
-				property.maximumTenants ) && propertySize.equals( property.propertySize ) && Objects
-				.equals( freeText, property.freeText );
+				property.maximumTenants ) && propertySize.equals(
+				property.propertySize ) && freeText.equals( property.freeText ) && latitude.equals(
+				property.latitude ) && longitude.equals( property.longitude );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( id, name, country, city, district, hostId, price, beds, bedrooms,
-				bathrooms, minimumDays, maximumTenants, propertySize, freeText );
+		return Objects.hash( id, name, propertyType, country, city, district, hostId, price, beds,
+				bedrooms, bathrooms, minimumDays, maximumTenants, propertySize, freeText, latitude,
+				longitude );
 	}
 }

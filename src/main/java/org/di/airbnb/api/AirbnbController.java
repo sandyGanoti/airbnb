@@ -20,6 +20,7 @@ import org.di.airbnb.api.request.UserUpdateRequest;
 import org.di.airbnb.api.response.JwtResponse;
 import org.di.airbnb.api.response.SearchResult;
 import org.di.airbnb.assemblers.UsernamePasswordModel;
+import org.di.airbnb.assemblers.location.CountryModel;
 import org.di.airbnb.assemblers.messaging.MessagingModel;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
@@ -89,7 +90,7 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-d '{"username": "pw1", "password": "bourdoud" }'
+		-d '{"username": "user1", "password": "user1" }'
 	 	-X POST -k http://localhost:8443/airbnb/user/login
 	 */
 	@PostMapping(value = "user/login")
@@ -156,7 +157,7 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnYXRha29zIiwiaWF0IjoxNTkxNzEyMTM4LCJleHAiOjE1OTE3OTg1Mzh9.owSjPSD76NzE255Q2Gbfi1atR6VmS96ID2gVPcabXiQ7FlT9-9CXyxVQkUE6mj8tAr30MDXGfpruDy05kF_KNQ"
 	 	http://localhost:8443/airbnb/user/38
 	* */
 	@GetMapping(value = "user/{id}")
@@ -170,18 +171,10 @@ public class AirbnbController {
 		}
 	}
 
-	//	//	curl -d '{"username": 1, "password": "bourdou", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "country": "UK","email": "sandu@sandu"  }'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/user/signup
-	//	@PostMapping(value = "user/avatar")
-	//	@ResponseStatus(HttpStatus.CREATED)
-	//	public void addAvatar( @RequestHeader("X-User-Id") long userId,
-	//			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
-	//		manager.updateUser( userUpdateRequest,userId );
-	//	}
-
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTU5MTcxNzM1NSwiZXhwIjoxNTkxODAzNzU1fQ.Y-tVjhsCdXLGd5C-npGarUFEyrPQYIez-9QQLIm-alKcJsRDknSXgrsKqEnJbUqigOM3_Yhawh0GlDDwvt2D8A"
 		http://localhost:8443/airbnb/host/38/properties
 	*/
 	@GetMapping(value = "host/{id}/properties")
@@ -456,6 +449,18 @@ public class AirbnbController {
 
 		return new ResponseEntity<>( airbnbManager.getPopularPlaces( userId ), HttpStatus.OK );
 	}
+
+	/*
+	curl
+		-H "Content-Type: application/json"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTU5MTcyMDg5MSwiZXhwIjoxNTkxODA3MjkxfQ.i_Xbc1YDPDIMbz0Wl5bHwyK3Psrbc7wXZOb9ksEhXVohZUm7ZOmdGfEYRG5L_rEzAD6XabRPWtCodYXDcK9xSw"
+		http://localhost:8443/airbnb/location/countries
+*/
+	@GetMapping(value = "location/countries")
+	public ResponseEntity<List<CountryModel>> getCountries() {
+		return new ResponseEntity<>( airbnbManager.getCountries(), HttpStatus.OK );
+	}
+
 
 	//	//	curl -k https://localhost:8443/auctions/active --header 'X-User-Id':1
 	//	@GetMapping(value = "auctions/active")

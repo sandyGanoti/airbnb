@@ -17,5 +17,4 @@ public class PropertyWithRentingRules {
 	private RentingRulesModel rentingRulesModel;
 	private List<AvailableDate> availableDates;
 
-
 }

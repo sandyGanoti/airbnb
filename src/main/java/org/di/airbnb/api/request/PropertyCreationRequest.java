@@ -68,5 +68,8 @@ public class PropertyCreationRequest {
 	private Boolean smokingFriendly;
 	@NotNull
 	private String extraFreeText;
-
+	@NotNull
+	private Double longitude;
+	@NotNull
+	private Double latitude;
 }
