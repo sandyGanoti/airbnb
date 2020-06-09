@@ -231,8 +231,6 @@ public class AirbnbManager {
 		return modelMapper.map( countryRepository.findAll(), List.class );
 	}
 
-
-
 	public List<PropertyModel> getPopularPlaces( final long userId ) {
 		return modelMapper.map( airbnbDao.getPopularPlaces( userId ), List.class );
 	}
@@ -343,6 +341,12 @@ public class AirbnbManager {
 			}
 			if ( !Strings.isNullOrEmpty( propertyUpdateRequest.getFreeText() ) ) {
 				property.setFreeText( propertyUpdateRequest.getFreeText() );
+			}
+			if ( propertyUpdateRequest.getLatitude() != null ) {
+				property.setLatitude( propertyUpdateRequest.getLatitude() );
+			}
+			if ( propertyUpdateRequest.getLongitude() != null ) {
+				property.setLongitude( propertyUpdateRequest.getLongitude() );
 			}
 			if ( propertyUpdateRequest.getAircondition() != null ) {
 				rentingRules.setAircondition( propertyUpdateRequest.getAircondition() );

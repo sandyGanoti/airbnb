@@ -43,5 +43,7 @@ public class PropertyUpdateRequest {
 	private Boolean petFriendly;
 	private Boolean smokingFriendly;
 	private String extraFreeText;
+	private Double longitude;
+	private Double latitude;
 
 }
