@@ -16,6 +16,8 @@ import org.di.airbnb.dao.entities.Messaging;
 import org.di.airbnb.dao.entities.Property;
 import org.di.airbnb.dao.entities.Rating;
 import org.di.airbnb.dao.entities.RentingRules;
+import org.di.airbnb.dao.entities.location.City;
+import org.di.airbnb.dao.entities.location.District;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -46,8 +48,7 @@ public class AirbnbDaoImpl {
 	}
 
 	public List<Property> getPopularPlaces( final long userId ) {
-		return entityManager.createQuery( "FROM Property p", Property.class )
-				.getResultList();
+		return entityManager.createQuery( "FROM Property p", Property.class ).getResultList();
 	}
 
 	public List<Booking> getPropertyBookingsByUser( final long userId, final long propertyId ) {
@@ -66,6 +67,20 @@ public class AirbnbDaoImpl {
 		} catch ( NoResultException e ) {
 			return null;
 		}
+	}
+
+	public List<City> getCitiesByCountry( final long countryId ) {
+		return entityManager.createQuery( "FROM City c where countryId = :countryId", City.class )
+				.setParameter( "countryId", countryId )
+				.getResultList();
+
+	}
+
+	public List<District> getDistrictsByCity( final long cityId ) {
+		return entityManager.createQuery( "FROM District d where cityId = :cityId", District.class )
+				.setParameter( "cityId", cityId )
+				.getResultList();
+
 	}
 
 	public List<Messaging> getNewMessages( final long recipientId ) {

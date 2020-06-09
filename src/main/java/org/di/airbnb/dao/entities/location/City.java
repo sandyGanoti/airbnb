@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,6 +21,7 @@ public class City {
 	private long id;
 	private String name;
 	private Set<District> districts;
+	private long countryId;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,6 +52,15 @@ public class City {
 		this.districts = districts;
 	}
 
+	@Column(name = "country_id")
+	public long getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId( final long countryId ) {
+		this.countryId = countryId;
+	}
+
 	@Override
 	public boolean equals( final Object o ) {
 		if ( this == o ) {
@@ -59,11 +70,12 @@ public class City {
 			return false;
 		}
 		final City city = (City) o;
-		return id == city.id && name.equals( city.name ) && districts.equals( city.districts );
+		return id == city.id && countryId == city.countryId && name.equals( city.name ) && districts
+				.equals( city.districts );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( id, name, districts );
+		return Objects.hash( id, name, districts, countryId );
 	}
 }

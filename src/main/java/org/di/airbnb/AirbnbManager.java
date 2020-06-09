@@ -22,7 +22,9 @@ import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
 import org.di.airbnb.api.response.SearchResult;
+import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
+import org.di.airbnb.assemblers.location.DistrictModel;
 import org.di.airbnb.assemblers.messaging.MessagingModel;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
@@ -233,6 +235,13 @@ public class AirbnbManager {
 
 	public List<PropertyModel> getPopularPlaces( final long userId ) {
 		return modelMapper.map( airbnbDao.getPopularPlaces( userId ), List.class );
+	}
+	public List<CityModel> getCitiesByCountry( final long countryId ) {
+		return modelMapper.map( airbnbDao.getCitiesByCountry( countryId ), List.class );
+	}
+
+	public List<DistrictModel> getDistrictsByCity( final long cityId ) {
+		return modelMapper.map( airbnbDao.getDistrictsByCity( cityId ), List.class );
 	}
 
 	public Optional<PropertyWithRentingRules> getPropertyById( final long propertyId ) {
