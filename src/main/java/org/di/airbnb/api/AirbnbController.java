@@ -25,6 +25,7 @@ import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
 import org.di.airbnb.assemblers.rating.RatingModel;
 import org.di.airbnb.assemblers.user.UserModel;
+import org.di.airbnb.dao.entities.User;
 import org.di.airbnb.exceptions.api.InvalidUserActionException;
 import org.di.airbnb.exceptions.api.UserNotValidException;
 import org.di.airbnb.security.JwtUtils;
@@ -79,10 +80,10 @@ public class AirbnbController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<JwtResponse> signUp(
 			@RequestBody @Valid @NotNull UserCreationRequest userCreationRequest ) {
-		airbnbManager.createUser( userCreationRequest );
+		long userId = airbnbManager.createUser( userCreationRequest );
 		return ResponseEntity.ok( new JwtResponse(
 				generateJwtAuthToken( userCreationRequest.getUsername(),
-						userCreationRequest.getPassword() ) ) );
+						userCreationRequest.getPassword() ), userId ) );
 	}
 
 	/*
@@ -95,8 +96,10 @@ public class AirbnbController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<JwtResponse> login(
 			@RequestBody @Valid @NotNull UsernamePasswordModel loginRequest ) {
+		User user = airbnbManager.getUserByUsername( loginRequest.getUsername() ).get();
 		return ResponseEntity.ok( new JwtResponse(
-				generateJwtAuthToken( loginRequest.getUsername(), loginRequest.getPassword() ) ) );
+				generateJwtAuthToken( loginRequest.getUsername(), loginRequest.getPassword() ),
+				user.getId() ) );
 	}
 
 	private String generateJwtAuthToken( final String username, final String password ) {
@@ -129,7 +132,7 @@ public class AirbnbController {
 		String newPassword = userUpdateRequest.getPassword();
 		String authToken = !Strings.isNullOrEmpty( newPassword ) ? generateJwtAuthToken(
 				usernameFromJwt, newPassword ) : authorizationHeader;
-		return new ResponseEntity<>( new JwtResponse( authToken ), HttpStatus.CREATED );
+		return new ResponseEntity<>( new JwtResponse( authToken, userId ), HttpStatus.CREATED );
 	}
 
 	/*

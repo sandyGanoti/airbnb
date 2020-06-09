@@ -106,16 +106,23 @@ public class AirbnbManager {
 		return outputStream.toByteArray();
 	}
 
-	public void createUser( final @NotNull UserCreationRequest userCreationRequest ) {
+	public long createUser( final @NotNull UserCreationRequest userCreationRequest ) {
 		User user = modelMapper.map( userCreationRequest, User.class );
 		user.setCreatedAt( Instant.now() );
 		user.setRole( userCreationRequest.isHost() ? Role.TENANT_AND_HOST : Role.TENANT );
 		user.setPassword( bCryptPasswordEncoder.encode( userCreationRequest.getPassword() ) );
 		try {
-			userRepository.save( user );
+//			user = userRepository.save( user );
+			user = userRepository.saveAndFlush( user );
 		} catch ( RuntimeException e ) {
 			handleException( e );
 		}
+		return user.getId();
+	}
+
+
+	public Optional<User> getUserByUsername( final String username ) {
+		return userRepository.findByUsername( username );
 	}
 
 	public void updateUser( final @NotNull UserUpdateRequest userUpdateRequest,
