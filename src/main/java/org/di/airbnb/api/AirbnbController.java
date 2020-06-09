@@ -131,6 +131,8 @@ public class AirbnbController {
 		airbnbManager.updateUser( userUpdateRequest, userId );
 
 		String newPassword = userUpdateRequest.getPassword();
+		authorizationHeader = authorizationHeader.replace( "Bearer", "" );
+		authorizationHeader.trim();
 		String authToken = !Strings.isNullOrEmpty( newPassword ) ? generateJwtAuthToken(
 				usernameFromJwt, newPassword ) : authorizationHeader;
 		return new ResponseEntity<>( new JwtResponse( authToken, userId ), HttpStatus.CREATED );
