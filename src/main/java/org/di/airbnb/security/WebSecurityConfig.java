@@ -16,7 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Configuration
+//@Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -60,11 +60,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure( HttpSecurity http ) throws Exception {
-		http.cors()
-				.and()
-				.csrf()
-				.disable()
-				.authorizeRequests()
+//		http.cors()
+//				.and()
+//				.csrf()
+//				.disable()
+				http.authorizeRequests()
 				.antMatchers( HttpMethod.POST, "/airbnb/user/signup", "/airbnb/user/login" )
 				.permitAll()
 				.anyRequest()
