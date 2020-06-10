@@ -1,15 +1,12 @@
-package org.di.airbnb.api.request;
+package org.di.airbnb.api.request.property;
 
 import java.math.BigDecimal;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.di.airbnb.constant.PropertyType;
-
-import io.swagger.models.auth.In;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,54 +19,31 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class PropertyCreationRequest {
-	@NotBlank
-	@Size(min = 1, max = 20)
+public class PropertyUpdateRequest {
+
 	private String name;
-	@NotNull
 	private PropertyType propertyType;
-	@NotBlank
 	private String country;
-	@NotBlank
 	private String city;
-	@NotBlank
 	private String district;
-	@NotNull
 	private BigDecimal price;
-	@NotNull
 	private Integer beds;
-	@NotNull
 	private Integer bedrooms;
-	@NotNull
 	private Integer bathrooms;
-	@NotNull
 	private Integer minimumDays;
-	@NotNull
 	private Integer maximumTenants;
-	@NotNull
 	private Double propertySize;
-	@NotBlank
 	private String freeText;
-	@NotNull
 	private Boolean aircondition;
-	@NotNull
 	private Boolean tv;
-	@NotNull
 	private Boolean internet;
-	@NotNull
 	private Boolean livingRoom;
-	@NotNull
 	private Boolean kitchen;
-	@NotNull
 	private Boolean partyFriendly;
-	@NotNull
 	private Boolean petFriendly;
-	@NotNull
 	private Boolean smokingFriendly;
-	@NotNull
 	private String extraFreeText;
-	@NotNull
 	private Double longitude;
-	@NotNull
 	private Double latitude;
+
 }

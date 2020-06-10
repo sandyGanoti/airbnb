@@ -11,8 +11,8 @@ import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.AirbnbManager;
 import org.di.airbnb.api.request.MessagingCreationRequest;
-import org.di.airbnb.api.request.PropertyCreationRequest;
-import org.di.airbnb.api.request.PropertyUpdateRequest;
+import org.di.airbnb.api.request.property.PropertyCreationRequest;
+import org.di.airbnb.api.request.property.PropertyUpdateRequest;
 import org.di.airbnb.api.request.ReviewPropertyCreationRequest;
 import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
@@ -76,7 +76,7 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-d '{"username": "pw1", "password": "bourdoud", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "isHost": "True","email": "sandudsw@sandu"  }'
+		-d '{"username": "user2", "password": "user2", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "isHost": "True","email": "sandudsw@sandu"  }'
 		-X POST -k http://localhost:8443/airbnb/user/signup
 	*/
 	@PostMapping(value = "user/signup")
@@ -265,7 +265,7 @@ public class AirbnbController {
 	curl
 		-H "Content-Type: application/json"
 		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkcHcxIiwiaWF0IjoxNTkxNTQzNjk3LCJleHAiOjE1OTE2MzAwOTd9.C-2VSjy-q4w845llI5fQstGX-dmDZkHbuPBNWhMch98XO9A9kv2MaYhru53A8mCzsfoG-HjqQz3nWO_ttWWjTg"
-		-d '{"name": "name", "propertyType": "ROOM", "country": "a", "city": "a", "district": "a","price": 1.2, "beds": 1, "bedrooms": 1, "bathrooms": 1, "minimumDays": 1, "maximumTenants": 1, "propertySize": 1, "freeText": "la la", "aircondition": "True",  "tv": "True", "internet": "True", "livingRoom": "True", "kitchen": "True", "partyFriendly": "True", "petFriendly": "True", "smokingFriendly": "True", "extraFreeText": ""  }'
+		-d '{"name": "name", "propertyType": "ROOM", "country": "a", "city": "a", "district": "a","price": 1.2, "beds": 1, "bedrooms": 1, "bathrooms": 1, "minimumDays": 1, "maximumTenants": 1, "propertySize": 1, "freeText": "la la", "aircondition": "True",  "tv": "True", "internet": "True", "livingRoom": "True", "kitchen": "True", "partyFriendly": "True", "petFriendly": "True", "smokingFriendly": "True", "extraFreeText": "", "longitude": -74.00898606, "latitude": 40.71727401, "availableDates": [{"from": "", "to": }]  }'
 		-X POST -k http://localhost:8443/airbnb/user/4/property/create
 	*/
 	@PostMapping(value = "user/{userId}/property/create")
@@ -439,7 +439,7 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZGRkcHcxIiwiaWF0IjoxNTkxNjM4NzUxLCJleHAiOjE1OTE3MjUxNTF9.Y5oNQF0v4bZO0M7qFyddxmx6HfGXDYWxas_-39XezQDnMg60Idtxxcr08U9CTCEoktXf0VrTB6rHdvSthOkMLA"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMyIsImlhdCI6MTU5MTgxNDQ4OSwiZXhwIjoxNTkxOTAwODg5fQ.vFqxd7OdbSpq7gvg4BsBua6bHL8G7PtSzSpw-Z-xGa_gtKTS9WRtjibQzlp1pLAny-Nva9K-Qo72mY1qwdjsLw"
 		http://localhost:8443/airbnb/user/4/popular
 	*/
 	@GetMapping(value = "user/{userId}/popular")

@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.di.airbnb.assemblers.image.ImageModel;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -25,28 +27,46 @@ public class PropertyModel {
 
 	@NotNull
 	private long id;
+
 	@NotBlank
 	private String name;
+
 	@NotBlank
 	private String propertyType;
+
 	@NotBlank
 	private String country;
+
 	@NotBlank
 	private String city;
+
 	@NotBlank
 	private String region;
+
 	@NotNull
 	private Long hostId;
+
 	@NotNull
 	private BigDecimal price;
+
+	@NotNull
+	private BigDecimal extraPricePerPerson;
+
 	@NotNull
 	private Integer beds;
+
 	@NotNull
 	private Integer bedrooms;
+
+	@NotNull
+	private Integer bathrooms;
+
 	@NotNull
 	private Integer minimumDays;
+
 	@NotNull
 	private Integer maximumDays;
+
 	@NotNull
 	private Double propertySize;
 
@@ -58,4 +78,5 @@ public class PropertyModel {
 	@NotNull
 	private Double longitude;
 
+	private ImageModel image;
 }

@@ -1,6 +1,7 @@
 package org.di.airbnb.dao;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -90,11 +91,11 @@ public class AirbnbDaoImpl {
 		return query.getResultList();
 	}
 
-	public List<SearchResult> getPropertiesBySearchQuery( final Instant from, final Instant to,
+	public List<Property> getPropertiesBySearchQuery( final Date from, final Date to,
 			final int numberOfPeople, final Pagination pagination ) {
 		return entityManager.createQuery(
-				"SELECT NEW org.di.airbnb.api.response.SearchResult(p.price, p.country, p.city, p.district) FROM Property p INNER JOIN Booking b ON b.propertyId = p.id WHERE :from > b.toDatetime AND :to < b.fromDatetime AND p.maximumTenants >= :numberOfPeople ",
-				SearchResult.class )
+				"FROM Property p INNER JOIN Booking b ON b.propertyId = p.id WHERE :from > b.toDatetime AND :to < b.fromDatetime AND p.maximumTenants >= :numberOfPeople ",
+				Property.class )
 				.setParameter( "numberOfPeople", numberOfPeople )
 				.setParameter( "from", from )
 				.setParameter( "to", to )

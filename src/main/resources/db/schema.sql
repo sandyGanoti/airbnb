@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS `property_to_rent` (
     `district` VARCHAR(128) NULL,
     `host_id`  BIGINT(20) NOT NULL,
     `price` DECIMAL NOT NULL,
+    `extra_price_per_person` DECIMAL NOT NULL,
     `beds` INTEGER NOT NULL,
     `bedrooms` INTEGER NOT NULL,
     `bathrooms` INTEGER NOT NULL,
@@ -139,9 +140,23 @@ CREATE TABLE IF NOT EXISTS `district` (
     CONSTRAINT fk_district_city FOREIGN KEY (city_id) REFERENCES city (id)
 );
 
-INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(1, "22", "jon", "doe", "jonDoe", "1234", "TENANT", now(), "jon@doe.com");
-INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(2, "222", "sandu", "doe", "sanduDoe", "1234", "TENANT", now(), "sandu@doe.com");
-INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(3, "333", "bourdou", "doe", "bourdouDoe", "1234", "TENANT_AND_HOST", now(), "bourdou@doe.com");
+-- CREATE TABLE IF NOT EXISTS `property_available_date` (
+--     `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+--     `property_id` BIGINT(20) NOT NULL,
+--     `created_at` DATETIME NOT NULL,
+--     `from` DATETIME NOT NULL,
+--     `to` DATETIME NOT NULL,
+--     PRIMARY KEY (id),
+--     KEY fk_messaging_sender_user (sender),
+--     CONSTRAINT fk_messaging_sender_user FOREIGN KEY (sender) REFERENCES user_ (id),
+--     KEY fk_messaging_recipient_user (recipient),
+--     CONSTRAINT fk_messaging_recipient_user FOREIGN KEY (recipient) REFERENCES user_ (id)
+-- );
+
+
+INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(1, "$2a$10$JXKXOqdQzQ5QgYGQKTOdbuHE9nCX3REzkJ86BewrDCEc39FyKzx.y", "user1", "user1", "user1", "1234", "TENANT", now(), "user1@user1.com");
+INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(2, "$2a$10$AnrFPILx2oOeFVgVgpovj.lQXi9oMMY2r8nyAq1mhO7LpCF9K8ZS2", "user2", "user2", "user2", "1234", "TENANT", now(), "user2@user2.com");
+INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(3, "$2a$10$JHyawNxERXu8XgSQsy/uXe/EdU8Nr3SCEgm0MxFN5pS2JRwk8bx6u", "user3", "user3", "user3", "1234", "TENANT_AND_HOST", now(), "user3@user3.com");
 
 INSERT INTO `property_to_rent`(id, name, property_type, country, city, district, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text, latitude, longitude) values(1, "A great place to stay by the sea", "ROOM", "Greece", "Athens", "Melissia", 1, 29.34, 2, 2, 2, 4,  4, 32, NULL, 40.71727401, -74.00898606);
 INSERT INTO `property_to_rent`(id, name, property_type, country, city, district, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text, latitude, longitude) values(2, "A nice house", "HOUSE", "Greece", "Athens", "Patisia", 2, 29.34, 5, 3, 2, 2, 3, 30, NULL, 40.71727401, -74.00898606);

@@ -26,6 +26,7 @@ public class Property {
 	private String district;
 	private Long hostId;
 	private BigDecimal price;
+	private BigDecimal extraPricePerPerson;
 	private Integer beds;
 	private Integer bedrooms;
 	private Integer bathrooms;
@@ -103,6 +104,15 @@ public class Property {
 
 	public void setPrice( final BigDecimal price ) {
 		this.price = price;
+	}
+
+	@Column(name = "extra_price_per_person")
+	public BigDecimal getExtraPricePerPerson() {
+		return extraPricePerPerson;
+	}
+
+	public void setExtraPricePerPerson( final BigDecimal extraPricePerPerson ) {
+		this.extraPricePerPerson = extraPricePerPerson;
 	}
 
 	public Integer getBeds() {
@@ -198,14 +208,16 @@ public class Property {
 				property.bedrooms ) && bathrooms.equals( property.bathrooms ) && minimumDays.equals(
 				property.minimumDays ) && maximumTenants.equals(
 				property.maximumTenants ) && propertySize.equals(
-				property.propertySize ) && freeText.equals( property.freeText ) && latitude.equals(
-				property.latitude ) && longitude.equals( property.longitude );
+				property.propertySize ) && extraPricePerPerson.equals(
+				property.extraPricePerPerson ) && freeText.equals(
+				property.freeText ) && latitude.equals( property.latitude ) && longitude.equals(
+				property.longitude );
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash( id, name, propertyType, country, city, district, hostId, price, beds,
-				bedrooms, bathrooms, minimumDays, maximumTenants, propertySize, freeText, latitude,
-				longitude );
+				bedrooms, bathrooms, minimumDays, extraPricePerPerson, maximumTenants, propertySize,
+				freeText, latitude, longitude );
 	}
 }

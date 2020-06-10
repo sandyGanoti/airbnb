@@ -10,14 +10,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.zip.Deflater;
 
 import javax.inject.Singleton;
 import javax.persistence.PersistenceException;
 import javax.validation.constraints.NotNull;
 
-import org.di.airbnb.api.request.PropertyCreationRequest;
-import org.di.airbnb.api.request.PropertyUpdateRequest;
+import org.di.airbnb.api.request.property.PropertyCreationRequest;
+import org.di.airbnb.api.request.property.PropertyUpdateRequest;
 import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
@@ -236,6 +237,7 @@ public class AirbnbManager {
 	public List<PropertyModel> getPopularPlaces( final long userId ) {
 		return modelMapper.map( airbnbDao.getPopularPlaces( userId ), List.class );
 	}
+
 	public List<CityModel> getCitiesByCountry( final long countryId ) {
 		return modelMapper.map( airbnbDao.getCitiesByCountry( countryId ), List.class );
 	}
@@ -436,8 +438,20 @@ public class AirbnbManager {
 	}
 
 	public List<SearchResult> findProperties( final SearchRequest searchRequest ) {
-		return airbnbDao.getPropertiesBySearchQuery( searchRequest.getFrom(), searchRequest.getTo(),
-				searchRequest.getNumberOfPeople(), searchRequest.getPagination() );
+		List<Property> properties = airbnbDao.getPropertiesBySearchQuery( searchRequest.getFrom(),
+				searchRequest.getTo(), searchRequest.getNumberOfPeople(),
+				searchRequest.getPagination() );
+		return properties.stream().map( property -> {
+			List<Rating> ratings = airbnbDao.getPropertyRatings( property.getId() );
+			double meanRating = 0;
+			if ( ratings != null ) {
+				meanRating = ratings.stream()
+						.mapToDouble( Rating::getMark )
+						.average()
+						.getAsDouble();
+			}
+			return new SearchResult( modelMapper.map( property, PropertyModel.class ), meanRating );
+		} ).collect( Collectors.toList() );
 	}
 
 }

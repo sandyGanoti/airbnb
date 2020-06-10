@@ -1,12 +1,10 @@
-package org.di.airbnb.api.request;
+package org.di.airbnb.api.request.property;
 
 import java.time.Instant;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-
-import org.di.airbnb.api.Location;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,9 +18,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class PropertyAvailabilityRequest {
-
-	@NotNull
-	private Location location;
+	@Positive
+	private long countryId;
+	@Positive
+	private long cityId;
+	@Positive
+	private long districtId;
 	@NotNull
 	@Future
 	private Instant from;
