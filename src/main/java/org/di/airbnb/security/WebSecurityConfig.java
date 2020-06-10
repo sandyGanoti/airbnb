@@ -60,8 +60,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure( HttpSecurity http ) throws Exception {
-		String crossOriginAllowedSites=" * ";
-
 		http.cors()
 				.and()
 				.csrf()
@@ -76,13 +74,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				//				.addFilter(new JWTAuthorizationFilter(authenticationManager()))
 				// this disables session creation on Spring Security
 				.sessionManagement()
-				.sessionCreationPolicy( SessionCreationPolicy.STATELESS ).and().headers()
-				.frameOptions()
-				.sameOrigin().addHeaderWriter((request,response)->{
-			response.setHeader("Cache-Control","no-cache, no-store, max-age=0, must-revalidate, private");
-			response.setHeader("Pragma","no-cache");
-			response.setHeader("Access-Control-Allow-Origin",crossOriginAllowedSites);
-		});
+				.sessionCreationPolicy( SessionCreationPolicy.STATELESS );
 
 		http.addFilterBefore( authenticationJwtTokenFilter(),
 				UsernamePasswordAuthenticationFilter.class );
