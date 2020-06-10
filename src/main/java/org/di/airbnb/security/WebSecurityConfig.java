@@ -60,11 +60,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure( HttpSecurity http ) throws Exception {
-//		http.cors()
-//				.and()
-//				.csrf()
-//				.disable()
-				http
+		String crossOriginAllowedSites=" * ";
+
+		http.cors()
+				.and()
+				.csrf()
+				.disable()
 				.authorizeRequests()
 				.antMatchers( HttpMethod.POST, "/airbnb/user/signup", "/airbnb/user/login" )
 				.permitAll()
@@ -75,7 +76,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				//				.addFilter(new JWTAuthorizationFilter(authenticationManager()))
 				// this disables session creation on Spring Security
 				.sessionManagement()
-				.sessionCreationPolicy( SessionCreationPolicy.STATELESS );
+				.sessionCreationPolicy( SessionCreationPolicy.STATELESS ).and().headers()
+				.frameOptions()
+				.sameOrigin().addHeaderWriter((request,response)->{
+			response.setHeader("Cache-Control","no-cache, no-store, max-age=0, must-revalidate, private");
+			response.setHeader("Pragma","no-cache");
+			response.setHeader("Access-Control-Allow-Origin",crossOriginAllowedSites);
+		});
 
 		http.addFilterBefore( authenticationJwtTokenFilter(),
 				UsernamePasswordAuthenticationFilter.class );
