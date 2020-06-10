@@ -63,8 +63,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 //				.cors()
 //				.and()
-				.csrf()
-				.disable()
+//				.csrf()
+//				.disable()
 				.authorizeRequests()
 				.antMatchers( HttpMethod.POST, "/airbnb/user/signup", "/airbnb/user/login" )
 				.permitAll()
