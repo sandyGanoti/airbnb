@@ -61,16 +61,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure( HttpSecurity http ) throws Exception {
 		http
-//				.cors()
-//				.and()
-//				.csrf()
-//				.disable()
+				.cors()
+				.and()
+				.csrf()
+				.disable()
 //				.authorizeRequests()
 //				.antMatchers( HttpMethod.POST, "/airbnb/user/signup", "/airbnb/user/login" )
 //				.permitAll()
-				.anyRequest()
-				.authenticated()
-				.and()
+//				.anyRequest()
+//				.authenticated()
+//				.and()
 				//				.addFilter(new JWTAuthenticationFilter(authenticationManager()))
 				//				.addFilter(new JWTAuthorizationFilter(authenticationManager()))
 				// this disables session creation on Spring Security
