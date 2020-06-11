@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.zip.Deflater;
 
 import javax.inject.Singleton;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
 import javax.validation.constraints.NotNull;
 
@@ -50,6 +51,7 @@ import org.di.airbnb.dao.repository.RatingRepository;
 import org.di.airbnb.dao.repository.RentingRulesRepository;
 import org.di.airbnb.dao.repository.UserRepository;
 import org.di.airbnb.exceptions.api.InvalidUserActionException;
+import org.di.airbnb.exceptions.api.PropertyNotFoundException;
 import org.di.airbnb.exceptions.api.UniqueConstraintViolationException;
 import org.di.airbnb.exceptions.api.UserNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -195,6 +197,9 @@ public class AirbnbManager {
 			throw new UniqueConstraintViolationException( "Username already exists" );
 		} else if ( causedByUniqueConstraint( e, "name" ) ) {
 			throw new UniqueConstraintViolationException( "Name already exists" );
+		} else if ( causedByUniqueConstraint( e, "host_id" ) ) {
+			throw new UniqueConstraintViolationException(
+					"There is already one property assigned to this host" );
 		} else {
 			throw e;
 		}
@@ -278,8 +283,12 @@ public class AirbnbManager {
 			final long hostId ) {
 		Property property = modelMapper.map( propertyCreationRequest, Property.class );
 		property.setHostId( hostId );
-		Property newlyCreatedProperty = propertyRepository.save( property );
-
+		Property newlyCreatedProperty = null;
+		try {
+			newlyCreatedProperty = propertyRepository.save( property );
+		} catch ( RuntimeException e ) {
+			handleException( e );
+		}
 		RentingRules rentingRules = modelMapper.map( propertyCreationRequest, RentingRules.class );
 		rentingRules.setPropertyId( newlyCreatedProperty.getId() );
 		rentingRulesRepository.save( rentingRules );
@@ -288,7 +297,11 @@ public class AirbnbManager {
 
 	//TODO: se ena transaction auto kai to apo panw
 	public void deleteProperty( final long userId, final long propertyId ) {
-		Property property = propertyRepository.getOne( propertyId );
+		Optional<Property> propertyOpt = propertyRepository.findById( propertyId );
+		if ( !propertyOpt.isPresent() ) {
+			throw new PropertyNotFoundException( "Property do not exist" );
+		}
+		Property property = propertyOpt.get();
 		if ( !property.getHostId().equals( userId ) ) {
 			throw new InvalidUserActionException();
 		}
@@ -300,7 +313,7 @@ public class AirbnbManager {
 	}
 
 	public void updateProperty( final @NotNull PropertyUpdateRequest propertyUpdateRequest,
-			final long userId, final long propertyId ) {
+			final long propertyId ) {
 		Optional<Property> propertyIsPresent = propertyRepository.findById( propertyId );
 		if ( propertyIsPresent.isPresent() ) {
 			Property property = propertyIsPresent.get();
@@ -325,6 +338,10 @@ public class AirbnbManager {
 			if ( propertyUpdateRequest.getPrice() != null && propertyUpdateRequest.getPrice()
 					.compareTo( BigDecimal.ZERO ) == 1 ) {
 				property.setPrice( propertyUpdateRequest.getPrice() );
+			}
+			if ( propertyUpdateRequest.getExtraPricePerPerson() != null && propertyUpdateRequest.getExtraPricePerPerson()
+					.compareTo( BigDecimal.ZERO ) == 1 ) {
+				property.setExtraPricePerPerson( propertyUpdateRequest.getExtraPricePerPerson() );
 			}
 			if ( propertyUpdateRequest.getBeds() != null && propertyUpdateRequest.getBeds()
 					.intValue() > 0 ) {
@@ -394,7 +411,7 @@ public class AirbnbManager {
 				handleException( e );
 			}
 		} else {
-			throw new UserNotFoundException( "User do not exist" );
+			throw new PropertyNotFoundException( "Property do not exist" );
 		}
 	}
 

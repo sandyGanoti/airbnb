@@ -298,7 +298,7 @@ public class AirbnbController {
 				getUsernameFromJwt( authorizationHeader ) ) ) {
 			throw new UserNotValidException( "User cannot perform that kind of action" );
 		}
-		airbnbManager.updateProperty( propertyUpdateRequest, userId, propertyId );
+		airbnbManager.updateProperty( propertyUpdateRequest, propertyId );
 
 		return new ResponseEntity<>( "Property updated", HttpStatus.CREATED );
 	}

@@ -39,6 +39,8 @@ public class PropertyCreationRequest {
 	@NotNull
 	private BigDecimal price;
 	@NotNull
+	private BigDecimal extraPricePerPerson;
+	@NotNull
 	private Integer beds;
 	@NotNull
 	private Integer bedrooms;

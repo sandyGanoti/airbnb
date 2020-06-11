@@ -1,11 +1,13 @@
 package org.di.airbnb.api.request.property;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.di.airbnb.assemblers.property.AvailableDate;
 import org.di.airbnb.constant.PropertyType;
 
 import lombok.AllArgsConstructor;
@@ -27,6 +29,7 @@ public class PropertyUpdateRequest {
 	private String city;
 	private String district;
 	private BigDecimal price;
+	private BigDecimal extraPricePerPerson;
 	private Integer beds;
 	private Integer bedrooms;
 	private Integer bathrooms;
