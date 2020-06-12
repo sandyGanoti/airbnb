@@ -332,7 +332,7 @@ public class AirbnbController {
 		http://localhost:8443/airbnb/user/1/messaging
 	*/
 	@GetMapping(value = "user/{userId}/messaging")
-	public ResponseEntity<HashMap<Long, List<MessagingModel>>> getNewMessages(
+	public ResponseEntity<HashMap<Long, List<MessagingModel>>> getMessages(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId ) {
 		if ( !airbnbManager.isUserAuthenticated( userId,
@@ -340,7 +340,7 @@ public class AirbnbController {
 			throw new UserNotValidException( "User cannot perform that kind of action" );
 		}
 
-		return new ResponseEntity<>( airbnbManager.getNewMessages( userId ), HttpStatus.OK );
+		return new ResponseEntity<>( airbnbManager.getMessages( userId ), HttpStatus.OK );
 	}
 
 	/*

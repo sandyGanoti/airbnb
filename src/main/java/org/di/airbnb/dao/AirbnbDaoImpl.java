@@ -84,10 +84,10 @@ public class AirbnbDaoImpl {
 
 	}
 
-	public List<Messaging> getNewMessages( final long recipientId ) {
+	public List<Messaging> getMessages( final long recipientId ) {
 		TypedQuery<Messaging> query = entityManager.createQuery(
-				"FROM Messaging WHERE readStatus = 0 AND recipient = :recipientId",
-				Messaging.class ).setParameter( "recipientId", recipientId );
+				"FROM Messaging WHERE recipient = :recipientId", Messaging.class )
+				.setParameter( "recipientId", recipientId );
 		return query.getResultList();
 	}
 

@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import java.util.zip.Deflater;
 
 import javax.inject.Singleton;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
 import javax.validation.constraints.NotNull;
 
@@ -415,10 +414,10 @@ public class AirbnbManager {
 		}
 	}
 
-	public HashMap<Long, List<MessagingModel>> getNewMessages( final long userId ) {
+	public HashMap<Long, List<MessagingModel>> getMessages( final long userId ) {
 		HashMap<Long, List<MessagingModel>> newMessages = new HashMap<>();
 
-		airbnbDao.getNewMessages( userId ).forEach( message -> {
+		airbnbDao.getMessages( userId ).forEach( message -> {
 			Long sender = message.getSender();
 			List<MessagingModel> messages = newMessages.get( sender );
 			if ( messages == null ) {
