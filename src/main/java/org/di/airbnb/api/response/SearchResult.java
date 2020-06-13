@@ -1,10 +1,6 @@
 package org.di.airbnb.api.response;
 
-import java.math.BigDecimal;
-
-import org.di.airbnb.assemblers.image.ImageModel;
 import org.di.airbnb.assemblers.property.PropertyModel;
-import org.di.airbnb.dao.entities.Image;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;

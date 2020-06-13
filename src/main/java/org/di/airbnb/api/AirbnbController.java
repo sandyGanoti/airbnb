@@ -273,12 +273,13 @@ public class AirbnbController {
 		airbnbManager.savePropertyImage( file, propertyId );
 		return new ResponseEntity<>( "Property image uploaded", HttpStatus.OK );
 	}
-/*
-	curl
-	-H "Content-Type: application/json"
-	-H "Authorization: Bearer  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTU5MjA2NDc1OCwiZXhwIjoxNTkyMTUxMTU4fQ.uZIutRzfWZJw0tirhhYvv7v2bkSxOl4y5P6Ye9F0-LucYE1wVNAlXA-ajdIbZ4lJXLBqoBzdD1nfN9l83e5Diw"
-	http://localhost:8443/airbnb/user/1/avatar
-*/
+
+	/*
+		curl
+		-H "Content-Type: application/json"
+		-H "Authorization: Bearer  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTU5MjA2NDc1OCwiZXhwIjoxNTkyMTUxMTU4fQ.uZIutRzfWZJw0tirhhYvv7v2bkSxOl4y5P6Ye9F0-LucYE1wVNAlXA-ajdIbZ4lJXLBqoBzdD1nfN9l83e5Diw"
+		http://localhost:8443/airbnb/user/1/avatar
+	*/
 	@GetMapping(path = { "/user/{userId}/avatar" })
 	public ResponseEntity<ImageModel> getAvatar( @PathVariable("userId") long userId )
 			throws IOException {
@@ -287,6 +288,7 @@ public class AirbnbController {
 		return retrievedImage.isPresent() ? new ResponseEntity<>( retrievedImage.get(),
 				HttpStatus.OK ) : new ResponseEntity<>( HttpStatus.NOT_FOUND );
 	}
+
 
 	/*
 	curl
