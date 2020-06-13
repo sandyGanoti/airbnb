@@ -2,9 +2,9 @@ package org.di.airbnb.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -82,6 +82,36 @@ public class AirbnbDaoImpl {
 		//			}
 		//			throw e;
 		//		}
+	}
+
+	@Transactional
+	public void updateAvatar( final Image image ) {
+		TransactionTemplate transactionTemplate = new TransactionTemplate(
+				platformTransactionManager );
+		transactionTemplate.execute( new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult( TransactionStatus status ) {
+				entityManager.createQuery(
+						"UPDATE Image set picture = :picture, name = :name, type = :type where typetheid = :userId" )
+						.setParameter( "picture", image.getPicture() )
+						.setParameter( "type", image.getType() )
+						.setParameter( "name", image.getName() )
+						.setParameter( "userId", image.gettTpetheid() )
+						.executeUpdate();
+				//				entityManager.createNativeQuery("TRUNCATE TABLE MyTable).executeUpdate();
+			}
+		} );
+	}
+
+	public Optional<Image> getAvatar( final long userId ) {
+		try {
+			return Optional.of( entityManager.createQuery( "FROM Image  where typetheid = :userId",
+					Image.class )
+					.setParameter( "userId", String.valueOf( userId ) )
+					.getSingleResult() );
+		} catch ( NoResultException e ) {
+			return Optional.empty();
+		}
 	}
 
 	public List<Booking> getPropertyBookingsByUser( final long userId, final long propertyId ) {

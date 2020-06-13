@@ -20,6 +20,7 @@ import org.di.airbnb.api.request.property.PropertyUpdateRequest;
 import org.di.airbnb.api.response.JwtResponse;
 import org.di.airbnb.api.response.SearchResult;
 import org.di.airbnb.assemblers.UsernamePasswordModel;
+import org.di.airbnb.assemblers.image.ImageModel;
 import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
 import org.di.airbnb.assemblers.location.DistrictModel;
@@ -271,6 +272,15 @@ public class AirbnbController {
 		}
 		airbnbManager.savePropertyImage( file, propertyId );
 		return new ResponseEntity<>( "Property image uploaded", HttpStatus.OK );
+	}
+
+	@GetMapping(path = { "/user/{userId}/avatar" })
+	public ResponseEntity<ImageModel> getAvatar( @PathVariable("userId") long userId )
+			throws IOException {
+		final Optional<ImageModel> retrievedImage = airbnbManager.getAvatar( userId );
+
+		return retrievedImage.isPresent() ? new ResponseEntity<>( retrievedImage.get(),
+				HttpStatus.OK ) : new ResponseEntity<>( HttpStatus.NOT_FOUND );
 	}
 
 	/*

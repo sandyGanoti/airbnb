@@ -11,10 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import javax.inject.Singleton;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.validation.constraints.NotNull;
 
@@ -24,6 +25,7 @@ import org.di.airbnb.api.request.UserUpdateRequest;
 import org.di.airbnb.api.request.property.PropertyCreationRequest;
 import org.di.airbnb.api.request.property.PropertyUpdateRequest;
 import org.di.airbnb.api.response.SearchResult;
+import org.di.airbnb.assemblers.image.ImageModel;
 import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
 import org.di.airbnb.assemblers.location.DistrictModel;
@@ -113,6 +115,23 @@ public class AirbnbManager {
 		} catch ( IOException e ) {
 		}
 		LOGGER.info( "Compressed Image Byte Size - " + outputStream.toByteArray().length );
+		return outputStream.toByteArray();
+	}
+
+	public static byte[] decompressBytes( byte[] data ) {
+		Inflater inflater = new Inflater();
+		inflater.setInput( data );
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream( data.length );
+		byte[] buffer = new byte[1024];
+		try {
+			while ( !inflater.finished() ) {
+				int count = inflater.inflate( buffer );
+				outputStream.write( buffer, 0, count );
+			}
+			outputStream.close();
+		} catch ( IOException ioe ) {
+		} catch ( DataFormatException e ) {
+		}
 		return outputStream.toByteArray();
 	}
 
@@ -260,19 +279,42 @@ public class AirbnbManager {
 	}
 
 	public void saveAvatar( final MultipartFile file, final long userId ) throws IOException {
-		Image image = new Image( file.getOriginalFilename(), file.getContentType(), String.valueOf( userId ),
-				compressBytes( file.getBytes() ) );
+		Image image = new Image( file.getOriginalFilename(), file.getContentType(),
+				String.valueOf( userId ), compressBytes( file.getBytes() ) );
+		Optional<Image> avatar = airbnbDao.getAvatar( userId );
+		if ( avatar.isPresent() ) {
+			Image userAvatar = avatar.get();
+			userAvatar.setName( image.getName() );
+			userAvatar.setType( image.getType() );
+			userAvatar.setPicture( image.getPicture() );
+			airbnbDao.updateAvatar( image );
+			LOGGER.error( "update existing" + userAvatar.getId() );
+		} else {
+			airbnbDao.saveAvatar( image );
+		}
 
-		airbnbDao.saveAvatar( image );
 		//		imageRepository.save( image );
 	}
 
 	public void savePropertyImage( final MultipartFile file, final long propertyId )
 			throws IOException {
-		Image image = new Image( file.getOriginalFilename(), file.getContentType(), String.valueOf( propertyId ),
-				compressBytes( file.getBytes() ) );
-//		imageRepository.save( image );
+		Image image = new Image( file.getOriginalFilename(), file.getContentType(),
+				String.valueOf( propertyId ), compressBytes( file.getBytes() ) );
+		//		imageRepository.save( image );
 		airbnbDao.saveAvatar( image );
+	}
+
+	public Optional<ImageModel> getAvatar( final long userId ) throws IOException {
+		Optional<Image> image = airbnbDao.getAvatar( userId );
+		Optional<ImageModel> imageModel = null;
+		if ( image.isPresent() ) {
+			ImageModel imageM = modelMapper.map( image.get(), ImageModel.class );
+			imageM.setPicByte( decompressBytes( imageM.getPicByte() ) );
+			imageModel = Optional.of( imageM );
+		} else {
+			imageModel = Optional.empty();
+		}
+		return imageModel;
 	}
 
 	public long createProperty( final PropertyCreationRequest propertyCreationRequest,
