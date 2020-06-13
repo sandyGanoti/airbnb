@@ -271,7 +271,8 @@ public class AirbnbManager {
 			throws IOException {
 		Image image = new Image( file.getOriginalFilename(), file.getContentType(), String.valueOf( propertyId ),
 				compressBytes( file.getBytes() ) );
-		imageRepository.save( image );
+//		imageRepository.save( image );
+		airbnbDao.saveAvatar( image );
 	}
 
 	public long createProperty( final PropertyCreationRequest propertyCreationRequest,

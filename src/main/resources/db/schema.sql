@@ -114,8 +114,6 @@ CREATE TABLE IF NOT EXISTS `image_table` (
     `type` VARCHAR(250) NOT NULL,
     `picture` blob NOT NULL,
     PRIMARY KEY (id)
---     KEY fk_image_user (image_owner_id),
---     CONSTRAINT fk_image_user FOREIGN KEY (image_owner_id) REFERENCES user_ (id)
 );
 
 CREATE TABLE IF NOT EXISTS `country` (

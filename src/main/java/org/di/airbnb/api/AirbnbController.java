@@ -237,9 +237,9 @@ public class AirbnbController {
 
 	/*
 	curl
-		-H "Content-Type: application/json"
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
-		-X POST -k http://localhost:8443/airbnb/user/5/avatar/upload
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTU5MjA1NDMwMSwiZXhwIjoxNTkyMTQwNzAxfQ.68wOXQUTOkKitWD4FFjlhhb9Uk_qfDKSXXmdNaq4OQvM_D5Y6wpC1FUjQX8hS4deO48sQyJnBB0X7YBX7k1ThA"
+		-X POST -k http://localhost:8443/airbnb/user/1/avatar/upload
+		-F "imageFile=@testPng.png"
 	*/
 	@PostMapping("user/{id}/avatar/upload")
 	public ResponseEntity<?> uploadAvatar(
@@ -254,8 +254,14 @@ public class AirbnbController {
 		return new ResponseEntity<>( "Avatar updated", HttpStatus.OK );
 	}
 
+	/*
+	curl
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTU5MjA1NDMwMSwiZXhwIjoxNTkyMTQwNzAxfQ.68wOXQUTOkKitWD4FFjlhhb9Uk_qfDKSXXmdNaq4OQvM_D5Y6wpC1FUjQX8hS4deO48sQyJnBB0X7YBX7k1ThA"
+		-X POST -k http://localhost:8443/airbnb/user/1/property/1/upload
+		-F "imageFile=@testPng.png"
+	*/
 	@PostMapping("user/{userId}/property/{propertyId}/upload")
-	public ResponseEntity.BodyBuilder uploadPropertyImage(
+	public ResponseEntity<?> uploadPropertyImage(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId, @PathVariable("propertyId") long propertyId,
 			@RequestParam("imageFile") MultipartFile file ) throws IOException {
@@ -264,7 +270,7 @@ public class AirbnbController {
 			throw new UserNotValidException( "User cannot perform that kind of action" );
 		}
 		airbnbManager.savePropertyImage( file, propertyId );
-		return ResponseEntity.status( HttpStatus.OK );
+		return new ResponseEntity<>( "Property image uploaded", HttpStatus.OK );
 	}
 
 	/*
