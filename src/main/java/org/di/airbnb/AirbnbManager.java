@@ -309,7 +309,7 @@ public class AirbnbManager {
 		Optional<ImageModel> imageModel = null;
 		if ( image.isPresent() ) {
 			ImageModel imageM = modelMapper.map( image.get(), ImageModel.class );
-			imageM.setPicByte( decompressBytes( imageM.getPicByte() ) );
+			imageM.setPicture( decompressBytes( imageM.getPicture() ) );
 			imageModel = Optional.of( imageM );
 		} else {
 			imageModel = Optional.empty();

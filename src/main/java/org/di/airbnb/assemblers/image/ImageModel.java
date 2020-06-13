@@ -17,5 +17,9 @@ import lombok.NoArgsConstructor;
 @JsonRootName(value = "image")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ImageModel {
-	private byte[] picByte;
+	private Long id;
+	private String name;
+	private String type;
+	private String typetheid;
+	private byte[] picture;
 }
