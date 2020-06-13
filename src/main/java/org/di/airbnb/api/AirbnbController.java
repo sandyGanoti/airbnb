@@ -11,12 +11,12 @@ import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.AirbnbManager;
 import org.di.airbnb.api.request.MessagingCreationRequest;
-import org.di.airbnb.api.request.property.PropertyCreationRequest;
-import org.di.airbnb.api.request.property.PropertyUpdateRequest;
 import org.di.airbnb.api.request.ReviewPropertyCreationRequest;
 import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
+import org.di.airbnb.api.request.property.PropertyCreationRequest;
+import org.di.airbnb.api.request.property.PropertyUpdateRequest;
 import org.di.airbnb.api.response.JwtResponse;
 import org.di.airbnb.api.response.SearchResult;
 import org.di.airbnb.assemblers.UsernamePasswordModel;
@@ -235,8 +235,14 @@ public class AirbnbController {
 				HttpStatus.OK ) : new ResponseEntity<>( HttpStatus.NOT_FOUND );
 	}
 
+	/*
+	curl
+		-H "Content-Type: application/json"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
+		-X POST -k http://localhost:8443/airbnb/user/5/avatar/upload
+	*/
 	@PostMapping("user/{id}/avatar/upload")
-	public ResponseEntity.BodyBuilder uploadAvatar(
+	public ResponseEntity<?> uploadAvatar(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("id") long userId, @RequestParam("imageFile") MultipartFile file )
 			throws IOException {
@@ -244,8 +250,8 @@ public class AirbnbController {
 				getUsernameFromJwt( authorizationHeader ) ) ) {
 			throw new UserNotValidException( "User cannot perform that kind of action" );
 		}
-		airbnbManager.saveAvatar( file );
-		return ResponseEntity.status( HttpStatus.OK );
+		airbnbManager.saveAvatar( file, userId );
+		return new ResponseEntity<>( "Avatar updated", HttpStatus.OK );
 	}
 
 	@PostMapping("user/{userId}/property/{propertyId}/upload")
@@ -257,7 +263,7 @@ public class AirbnbController {
 				getUsernameFromJwt( authorizationHeader ) ) ) {
 			throw new UserNotValidException( "User cannot perform that kind of action" );
 		}
-		airbnbManager.savePropertyImage( file );
+		airbnbManager.savePropertyImage( file, propertyId );
 		return ResponseEntity.status( HttpStatus.OK );
 	}
 
@@ -393,6 +399,7 @@ public class AirbnbController {
 		return new ResponseEntity<>( "Review submitted!", HttpStatus.CREATED );
 	}
 
+	//TODO: owner cannot review its own property
 	/*
 	curl
 		-H "Content-Type: application/json"
@@ -439,7 +446,7 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMyIsImlhdCI6MTU5MTgxNDQ4OSwiZXhwIjoxNTkxOTAwODg5fQ.vFqxd7OdbSpq7gvg4BsBua6bHL8G7PtSzSpw-Z-xGa_gtKTS9WRtjibQzlp1pLAny-Nva9K-Qo72mY1qwdjsLw"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTU5MTk1OTU2OSwiZXhwIjoxNTkyMDQ1OTY5fQ.ksvOzIWMz6-OxxQYh6HaY2GBoqyPB2gNTvZ6i17GHQopCXo4kP-i05LcM0t7ytf7iR2ntd4JfggMHO4z-vCTKQ"
 		http://localhost:8443/airbnb/user/4/popular
 	*/
 	@GetMapping(value = "user/{userId}/popular")
@@ -480,7 +487,7 @@ public class AirbnbController {
 	curl
 		-H "Content-Type: application/json"
 		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZGRkcHcxIiwiaWF0IjoxNTkxNjM4NzUxLCJleHAiOjE1OTE3MjUxNTF9.Y5oNQF0v4bZO0M7qFyddxmx6HfGXDYWxas_-39XezQDnMg60Idtxxcr08U9CTCEoktXf0VrTB6rHdvSthOkMLA"
-		http://localhost:8443/airbnb/country/1/cities
+		http://localhost:8443/airbnb/country/1/districts
 	*/
 	@GetMapping(value = "city/{cityId}/districts")
 	public ResponseEntity<List<DistrictModel>> getDistricts( @PathVariable("cityId") long cityId ) {

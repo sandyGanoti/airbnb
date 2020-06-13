@@ -14,14 +14,15 @@ import java.util.stream.Collectors;
 import java.util.zip.Deflater;
 
 import javax.inject.Singleton;
+import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.validation.constraints.NotNull;
 
-import org.di.airbnb.api.request.property.PropertyCreationRequest;
-import org.di.airbnb.api.request.property.PropertyUpdateRequest;
 import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
+import org.di.airbnb.api.request.property.PropertyCreationRequest;
+import org.di.airbnb.api.request.property.PropertyUpdateRequest;
 import org.di.airbnb.api.response.SearchResult;
 import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
@@ -40,15 +41,13 @@ import org.di.airbnb.dao.entities.Property;
 import org.di.airbnb.dao.entities.Rating;
 import org.di.airbnb.dao.entities.RentingRules;
 import org.di.airbnb.dao.entities.User;
-import org.di.airbnb.dao.repository.location.CityRepository;
-import org.di.airbnb.dao.repository.location.CountryRepository;
-import org.di.airbnb.dao.repository.location.DistrictRepository;
 import org.di.airbnb.dao.repository.ImageRepository;
 import org.di.airbnb.dao.repository.MessagingRepository;
 import org.di.airbnb.dao.repository.PropertyRepository;
 import org.di.airbnb.dao.repository.RatingRepository;
 import org.di.airbnb.dao.repository.RentingRulesRepository;
 import org.di.airbnb.dao.repository.UserRepository;
+import org.di.airbnb.dao.repository.location.CountryRepository;
 import org.di.airbnb.exceptions.api.InvalidUserActionException;
 import org.di.airbnb.exceptions.api.PropertyNotFoundException;
 import org.di.airbnb.exceptions.api.UniqueConstraintViolationException;
@@ -88,12 +87,6 @@ public class AirbnbManager {
 
 	@Autowired
 	private CountryRepository countryRepository;
-
-	@Autowired
-	private CityRepository cityRepository;
-
-	@Autowired
-	private DistrictRepository districtRepository;
 
 	@Autowired
 	private AirbnbDaoImpl airbnbDao;
@@ -266,14 +259,17 @@ public class AirbnbManager {
 		return Optional.of( propertyWithRentingRules );
 	}
 
-	public void saveAvatar( final MultipartFile file ) throws IOException {
-		Image image = new Image( file.getOriginalFilename(), file.getContentType(),
+	public void saveAvatar( final MultipartFile file, final long userId ) throws IOException {
+		Image image = new Image( file.getOriginalFilename(), file.getContentType(), String.valueOf( userId ),
 				compressBytes( file.getBytes() ) );
-		imageRepository.save( image );
+
+		airbnbDao.saveAvatar( image );
+		//		imageRepository.save( image );
 	}
 
-	public void savePropertyImage( final MultipartFile file ) throws IOException {
-		Image image = new Image( file.getOriginalFilename(), file.getContentType(),
+	public void savePropertyImage( final MultipartFile file, final long propertyId )
+			throws IOException {
+		Image image = new Image( file.getOriginalFilename(), file.getContentType(), String.valueOf( propertyId ),
 				compressBytes( file.getBytes() ) );
 		imageRepository.save( image );
 	}

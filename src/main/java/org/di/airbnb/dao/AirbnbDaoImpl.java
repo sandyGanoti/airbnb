@@ -1,28 +1,35 @@
 package org.di.airbnb.dao;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
-import org.di.airbnb.api.response.SearchResult;
 import org.di.airbnb.dao.entities.Booking;
+import org.di.airbnb.dao.entities.Image;
 import org.di.airbnb.dao.entities.Messaging;
 import org.di.airbnb.dao.entities.Property;
 import org.di.airbnb.dao.entities.Rating;
 import org.di.airbnb.dao.entities.RentingRules;
 import org.di.airbnb.dao.entities.location.City;
 import org.di.airbnb.dao.entities.location.District;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Repository
 public class AirbnbDaoImpl {
+	@Autowired
+	PlatformTransactionManager platformTransactionManager;
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -50,6 +57,31 @@ public class AirbnbDaoImpl {
 
 	public List<Property> getPopularPlaces( final long userId ) {
 		return entityManager.createQuery( "FROM Property p", Property.class ).getResultList();
+	}
+
+	@Transactional
+	public void saveAvatar( final Image image ) {
+		TransactionTemplate transactionTemplate = new TransactionTemplate(
+				platformTransactionManager );
+		transactionTemplate.execute( new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult( TransactionStatus status ) {
+				//				entityManager.createNativeQuery("TRUNCATE TABLE MyTable).executeUpdate();
+				entityManager.persist( image );
+			}
+		} );
+
+		//		try {
+		//			transaction = entityManager.getTransaction();
+		//			transaction.begin();
+		//			entityManager.persist( image );
+		//
+		//		} catch ( RuntimeException e ) {
+		//			if ( transaction != null && transaction.isActive() ) {
+		//				transaction.rollback();
+		//			}
+		//			throw e;
+		//		}
 	}
 
 	public List<Booking> getPropertyBookingsByUser( final long userId, final long propertyId ) {

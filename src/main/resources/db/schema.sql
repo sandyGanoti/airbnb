@@ -109,11 +109,13 @@ CREATE TABLE IF NOT EXISTS `messaging` (
 
 CREATE TABLE IF NOT EXISTS `image_table` (
     `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+    `typetheid` VARCHAR(250) NOT NULL,
     `name` VARCHAR(250) NOT NULL,
     `type` VARCHAR(250) NOT NULL,
-    `picByte` blob NOT NULL,
-    `owner_id` BIGINT(20) NOT NULL,
+    `picture` blob NOT NULL,
     PRIMARY KEY (id)
+--     KEY fk_image_user (image_owner_id),
+--     CONSTRAINT fk_image_user FOREIGN KEY (image_owner_id) REFERENCES user_ (id)
 );
 
 CREATE TABLE IF NOT EXISTS `country` (
@@ -171,6 +173,11 @@ INSERT INTO `renting_rules`(property_id, aircondition, tv, internet, living_room
 INSERT INTO `booking`(id, tenant_id, property_id, from_datetime, to_datetime, created_at) values(1, 1, 1, now(), now(), now());
 
 INSERT INTO `rating`(id, rater_id, property_id, host_id, text, mark, created_at) VALUES(1, 1, 1, 1, "free text review", 3, now());
+
+
+INSERT INTO `messaging`(id, sender, recipient, created_at, message_body, read_status) VALUES(1, 1, 1, now(), "la la", 0);
+INSERT INTO `messaging`(id, sender, recipient, created_at, message_body, read_status) VALUES(1, 1, 1, now(), "la la", 1);
+
 
 
 
