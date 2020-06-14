@@ -28,6 +28,15 @@ public class PropertyModel {
 	@NotNull
 	private long id;
 
+	@NotNull
+	private int countryId;
+
+	@NotNull
+	private int cityId;
+
+	@NotNull
+	private int districtId;
+
 	@NotBlank
 	private String name;
 

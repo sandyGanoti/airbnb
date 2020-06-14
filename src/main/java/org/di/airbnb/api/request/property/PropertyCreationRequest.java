@@ -25,17 +25,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class PropertyCreationRequest {
+	private long id;
+
 	@NotBlank
 	@Size(min = 1, max = 20)
 	private String name;
 	@NotNull
 	private PropertyType propertyType;
-	@NotBlank
-	private String country;
-	@NotBlank
-	private String city;
-	@NotBlank
-	private String district;
+	@NotNull
+	private int countryId;
+	@NotNull
+	private int cityId;
+	@NotNull
+	private int districtId;
 	@NotNull
 	private BigDecimal price;
 	@NotNull

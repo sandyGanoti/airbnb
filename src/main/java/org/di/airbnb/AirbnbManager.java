@@ -19,6 +19,7 @@ import javax.inject.Singleton;
 import javax.persistence.PersistenceException;
 import javax.validation.constraints.NotNull;
 
+import org.di.airbnb.api.request.BookingRequest;
 import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
@@ -37,13 +38,14 @@ import org.di.airbnb.assemblers.rating.RatingModel;
 import org.di.airbnb.assemblers.user.UserModel;
 import org.di.airbnb.constant.Role;
 import org.di.airbnb.dao.AirbnbDaoImpl;
+import org.di.airbnb.dao.entities.Booking;
 import org.di.airbnb.dao.entities.Image;
 import org.di.airbnb.dao.entities.Messaging;
 import org.di.airbnb.dao.entities.Property;
 import org.di.airbnb.dao.entities.Rating;
 import org.di.airbnb.dao.entities.RentingRules;
 import org.di.airbnb.dao.entities.User;
-import org.di.airbnb.dao.repository.ImageRepository;
+import org.di.airbnb.dao.repository.BookingRepository;
 import org.di.airbnb.dao.repository.MessagingRepository;
 import org.di.airbnb.dao.repository.PropertyRepository;
 import org.di.airbnb.dao.repository.RatingRepository;
@@ -71,31 +73,22 @@ public class AirbnbManager {
 
 	@Autowired
 	private UserRepository userRepository;
-
 	@Autowired
 	private PropertyRepository propertyRepository;
-
-	@Autowired
-	private ImageRepository imageRepository;
-
 	@Autowired
 	private RentingRulesRepository rentingRulesRepository;
-
 	@Autowired
 	private MessagingRepository messagingRepository;
-
+	@Autowired
+	private BookingRepository bookingRepository;
 	@Autowired
 	private RatingRepository ratingRepository;
-
 	@Autowired
 	private CountryRepository countryRepository;
-
 	@Autowired
 	private AirbnbDaoImpl airbnbDao;
-
 	@Autowired
 	private ModelMapper modelMapper;
-
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -364,14 +357,14 @@ public class AirbnbManager {
 			if ( propertyUpdateRequest.getPropertyType() != null ) {
 				property.setPropertyType( propertyUpdateRequest.getPropertyType() );
 			}
-			if ( !Strings.isNullOrEmpty( propertyUpdateRequest.getCountry() ) ) {
-				property.setCountry( propertyUpdateRequest.getCountry() );
+			if ( propertyUpdateRequest.getCountryId() != null ) {
+				property.setCountryId( propertyUpdateRequest.getCountryId() );
 			}
-			if ( !Strings.isNullOrEmpty( propertyUpdateRequest.getCity() ) ) {
-				property.setCity( propertyUpdateRequest.getCity() );
+			if ( propertyUpdateRequest.getCityId() != null ) {
+				property.setCityId( propertyUpdateRequest.getCityId() );
 			}
-			if ( !Strings.isNullOrEmpty( propertyUpdateRequest.getDistrict() ) ) {
-				property.setDistrict( propertyUpdateRequest.getDistrict() );
+			if ( propertyUpdateRequest.getDistrictId() != null ) {
+				property.setDistrictId( propertyUpdateRequest.getDistrictId() );
 			}
 			if ( propertyUpdateRequest.getPrice() != null && propertyUpdateRequest.getPrice()
 					.compareTo( BigDecimal.ZERO ) == 1 ) {
@@ -499,7 +492,7 @@ public class AirbnbManager {
 		return properties.stream().map( property -> {
 			List<Rating> ratings = airbnbDao.getPropertyRatings( property.getId() );
 			double meanRating = 0;
-			if ( ratings != null ) {
+			if ( ratings != null && !ratings.isEmpty() ) {
 				meanRating = ratings.stream()
 						.mapToDouble( Rating::getMark )
 						.average()
@@ -507,6 +500,18 @@ public class AirbnbManager {
 			}
 			return new SearchResult( modelMapper.map( property, PropertyModel.class ), meanRating );
 		} ).collect( Collectors.toList() );
+	}
+
+	public void bookProperty( final long userId, final BookingRequest bookingRequest ) {
+		Booking booking = new Booking();
+		booking.setCreatedAt( Instant.now() );
+		booking.setFromDatetime( bookingRequest.getFrom() );
+		booking.setPropertyId( bookingRequest.getPropertyId() );
+		booking.setToDatetime( bookingRequest.getTo() );
+		booking.setTenantId( userId );
+
+		bookingRepository.save( booking );
+
 	}
 
 }

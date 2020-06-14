@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.AirbnbManager;
+import org.di.airbnb.api.request.BookingRequest;
 import org.di.airbnb.api.request.MessagingCreationRequest;
 import org.di.airbnb.api.request.ReviewPropertyCreationRequest;
 import org.di.airbnb.api.request.SearchRequest;
@@ -289,7 +290,6 @@ public class AirbnbController {
 				HttpStatus.OK ) : new ResponseEntity<>( HttpStatus.NOT_FOUND );
 	}
 
-
 	/*
 	curl
 		-H "Content-Type: application/json"
@@ -462,6 +462,27 @@ public class AirbnbController {
 			@RequestBody @Valid @NotNull SearchRequest searchRequest ) {
 		return new ResponseEntity<>( airbnbManager.findProperties( searchRequest ),
 				HttpStatus.CREATED );
+	}
+
+	/*
+	curl
+		-H "Content-Type: application/json"
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZGRkcHcxIiwiaWF0IjoxNTkxNjM4NzUxLCJleHAiOjE1OTE3MjUxNTF9.Y5oNQF0v4bZO0M7qFyddxmx6HfGXDYWxas_-39XezQDnMg60Idtxxcr08U9CTCEoktXf0VrTB6rHdvSthOkMLA"
+		-d '{"from": "2020-06-08T18:10:08Z", "to": "2020-06-08T18:10:08Z", "numberOfPeople": 3, "country": "-", "city": "-", "district": "-", "pagination": {"limit": 0, "offset": 1}  }'
+		-X POST -k http://localhost:8443/airbnb/property/search
+	*/
+	@PostMapping(value = "user/{userId}/property/book")
+	public ResponseEntity<?> bookProperty(
+			@RequestHeader("Authorization") String authorizationHeader,
+			@PathVariable("userId") long userId,
+			@RequestBody @Valid @NotNull BookingRequest bookingRequest ) {
+		if ( !airbnbManager.isUserAuthenticated( userId,
+				getUsernameFromJwt( authorizationHeader ) ) ) {
+			throw new UserNotValidException( "User cannot perform that kind of action" );
+		}
+		airbnbManager.bookProperty( userId, bookingRequest );
+
+		return new ResponseEntity<>( HttpStatus.CREATED );
 	}
 
 	//TODO: fix the logic for popular places

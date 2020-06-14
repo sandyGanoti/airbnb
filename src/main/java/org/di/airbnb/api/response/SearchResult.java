@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@JsonRootName(value = "rating")
+@JsonRootName(value = "searchresult")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SearchResult {
 

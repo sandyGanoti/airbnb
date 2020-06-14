@@ -1,16 +1,16 @@
 package org.di.airbnb.api.request;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
-import org.di.airbnb.dao.Pagination;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,30 +23,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class SearchRequest {
+@JsonRootName(value = "booking")
+public class BookingRequest {
 
 	@NotNull
 	@DateTimeFormat(pattern = "dd.MM.yy")
 	@Temporal(value = TemporalType.TIMESTAMP)
-	private Date from;
-
+	private Instant from;
 	@NotNull
 	@DateTimeFormat(pattern = "dd.MM.yy")
 	@Temporal(value = TemporalType.TIMESTAMP)
-	private Date to;
-
+	private Instant to;
 	@NotNull
 	private Integer numberOfPeople;
-
 	@NotNull
-	private Long countryId;
-
-	@NotNull
-	private Long cityId;
-
-	@NotNull
-	private Long districtId;
-
-	@NotNull
-	private Pagination pagination;
+	private Long propertyId;
 }

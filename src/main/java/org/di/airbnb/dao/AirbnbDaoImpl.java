@@ -7,7 +7,6 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
@@ -156,35 +155,14 @@ public class AirbnbDaoImpl {
 	public List<Property> getPropertiesBySearchQuery( final Date from, final Date to,
 			final int numberOfPeople, final Pagination pagination ) {
 		return entityManager.createQuery(
-				"FROM Property p INNER JOIN Booking b ON b.propertyId = p.id WHERE :from > b.toDatetime AND :to < b.fromDatetime AND p.maximumTenants >= :numberOfPeople ",
+//				"FROM Property p WHERE :from > b.toDatetime AND :to < b.fromDatetime AND p.maximumTenants >= :numberOfPeople ",
+				"FROM Property p WHERE p.maximumTenants >= :numberOfPeople ",
+
 				Property.class )
 				.setParameter( "numberOfPeople", numberOfPeople )
-				.setParameter( "from", from )
-				.setParameter( "to", to )
+//				.setParameter( "from", from )
+//				.setParameter( "to", to )
 				.getResultList();
-	}
-
-	public List<Messaging> getChatBySenderIdAndRecipientId( final long senderId,
-			final long recipientId ) {
-		TypedQuery<Messaging> query = entityManager.createQuery(
-				"FROM Messaging WHERE recipient = :recipientId and sender = :senderId ORDER BY created_at ASC",
-				Messaging.class )
-				.setParameter( "recipientId", recipientId )
-				.setParameter( "senderId", senderId );
-		return query.getResultList();
-	}
-
-	@Transactional
-	public boolean readChatBySenderIdAndRecipientId( final long senderId, final long recipientId ) {
-		String queryString = new StringBuilder().append( "update Messaging " )
-				.append( "set read_status = 1 " )
-				.append( "where recipient = :recipientId " )
-				.append( "and sender = :senderId " )
-				.toString();
-		Query query = entityManager.createQuery( queryString )
-				.setParameter( "recipientId", recipientId )
-				.setParameter( "senderId", senderId );
-		return query.executeUpdate() > 0;
 	}
 
 }

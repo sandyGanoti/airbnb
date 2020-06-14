@@ -25,9 +25,9 @@ public class PropertyUpdateRequest {
 
 	private String name;
 	private PropertyType propertyType;
-	private String country;
-	private String city;
-	private String district;
+	private Integer countryId;
+	private Integer cityId;
+	private Integer districtId;
 	private BigDecimal price;
 	private BigDecimal extraPricePerPerson;
 	private Integer beds;

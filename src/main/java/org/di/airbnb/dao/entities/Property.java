@@ -21,9 +21,9 @@ public class Property {
 	private long id;
 	private String name;
 	private PropertyType propertyType;
-	private String country;
-	private String city;
-	private String district;
+	private int countryId;
+	private int cityId;
+	private int districtId;
 	private Long hostId;
 	private BigDecimal price;
 	private BigDecimal extraPricePerPerson;
@@ -65,28 +65,31 @@ public class Property {
 		this.propertyType = propertyType;
 	}
 
-	public String getCountry() {
-		return country;
+	@Column(name = "country_id")
+	public int getCountryId() {
+		return countryId;
 	}
 
-	public void setCountry( final String country ) {
-		this.country = country;
+	public void setCountryId( final int countryId ) {
+		this.countryId = countryId;
 	}
 
-	public String getCity() {
-		return city;
+	@Column(name = "city_id")
+	public int getCityId() {
+		return cityId;
 	}
 
-	public void setCity( final String city ) {
-		this.city = city;
+	public void setCityId( final int cityId ) {
+		this.cityId = cityId;
 	}
 
-	public String getDistrict() {
-		return district;
+	@Column(name = "district_id")
+	public int getDistrictId() {
+		return districtId;
 	}
 
-	public void setDistrict( final String district ) {
-		this.district = district;
+	public void setDistrictId( final int districtId ) {
+		this.districtId = districtId;
 	}
 
 	@Column(name = "host_id")
@@ -201,13 +204,11 @@ public class Property {
 		}
 		final Property property = (Property) o;
 		return id == property.id && name.equals(
-				property.name ) && propertyType == property.propertyType && country.equals(
-				property.country ) && city.equals( property.city ) && district.equals(
-				property.district ) && hostId.equals( property.hostId ) && price.equals(
-				property.price ) && beds.equals( property.beds ) && bedrooms.equals(
-				property.bedrooms ) && bathrooms.equals( property.bathrooms ) && minimumDays.equals(
-				property.minimumDays ) && maximumTenants.equals(
-				property.maximumTenants ) && propertySize.equals(
+				property.name ) && propertyType == property.propertyType && countryId == property.countryId && cityId == property.cityId && districtId == property.districtId && hostId
+				.equals( property.hostId ) && price.equals( property.price ) && beds.equals(
+				property.beds ) && bedrooms.equals( property.bedrooms ) && bathrooms.equals(
+				property.bathrooms ) && minimumDays.equals( property.minimumDays ) && maximumTenants
+				.equals( property.maximumTenants ) && propertySize.equals(
 				property.propertySize ) && extraPricePerPerson.equals(
 				property.extraPricePerPerson ) && freeText.equals(
 				property.freeText ) && latitude.equals( property.latitude ) && longitude.equals(
@@ -216,8 +217,8 @@ public class Property {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( id, name, propertyType, country, city, district, hostId, price, beds,
-				bedrooms, bathrooms, minimumDays, extraPricePerPerson, maximumTenants, propertySize,
-				freeText, latitude, longitude );
+		return Objects.hash( id, name, propertyType, countryId, cityId, districtId, hostId, price,
+				beds, bedrooms, bathrooms, minimumDays, extraPricePerPerson, maximumTenants,
+				propertySize, freeText, latitude, longitude );
 	}
 }
