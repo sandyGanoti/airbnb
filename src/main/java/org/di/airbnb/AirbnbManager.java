@@ -355,6 +355,11 @@ public class AirbnbManager {
 		propertyWithRentingRules.setRentingRulesModel(
 				modelMapper.map( rentingRules, RentingRulesModel.class ) );
 
+		propertyWithRentingRules.setImages( airbnbDao.getPropertyImages( propertyId )
+				.stream()
+				.map( image -> modelMapper.map( image, ImageModel.class ) )
+				.collect( Collectors.toList() ) );
+
 		return Optional.of( propertyWithRentingRules );
 	}
 

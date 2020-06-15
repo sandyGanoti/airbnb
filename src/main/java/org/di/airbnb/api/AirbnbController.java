@@ -459,8 +459,16 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-H "Authorization: Bearer  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyNCIsImlhdCI6MTU5MjE2NzYxNCwiZXhwIjoxNTkyMjU0MDE0fQ.FyOHZcP4Q6JUeG3SULiDmPPSQ8G8VS9pRiLQZE6GyLlVPQsInu3CMH9M9EBeA1SSOceQrbrGuUGwPjpxSEJjsg" -d '{"from": "2020-06-08", "to": "2020-06-08", "numberOfPeople": 3, "countryId": "1", "cityId": "1", "districtId": "1", "pagination": {"limit": 0, "offset": 1}  }'
+		-H "Authorization: Bearer  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyNCIsImlhdCI6MTU5MjE2NzYxNCwiZXhwIjoxNTkyMjU0MDE0fQ.FyOHZcP4Q6JUeG3SULiDmPPSQ8G8VS9pRiLQZE6GyLlVPQsInu3CMH9M9EBeA1SSOceQrbrGuUGwPjpxSEJjsg"
+		-d '{"from": "2020-06-08", "to": "2020-06-08", "numberOfPeople": 3, "countryId": "1", "cityId": "1", "districtId": "1", "pagination": {"limit": 0, "offset": 1}  }'
 		-X POST -k https://airbnb-sandu.herokuapp.com/airbnb/property/search
+
+
+	curl -H "Content-Type: application/json"
+	-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTU5MjI0ODYyNiwiZXhwIjoxNTkyMzM1MDI2fQ.Y2yFZZgKruGUrVqCTSEWDvbmqBdp_HkkS4tPlbVL7hapkl1DUenr-vsR15VHEhp5G1qBnMD8yZNB1uGuyYAKog"
+	-d '{"from": "2020-06-08", "to": "2020-06-08", "numberOfPeople": 3, "countryId": "1", "cityId": "1", "districtId": "1", "pagination": {"limit": 0, "offset": 1}  }'
+	-X POST -k http://localhost:8443/airbnb/property/search
+
 	*/
 	@PostMapping(value = "/property/search")
 	public ResponseEntity<List<SearchResult>> searchProperty(
