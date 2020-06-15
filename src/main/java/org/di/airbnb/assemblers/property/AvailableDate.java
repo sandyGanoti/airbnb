@@ -19,12 +19,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AvailableDate {
 
-	@DateTimeFormat(pattern = "dd.MM.yy")
+	@DateTimeFormat(pattern = "YYYY-MM-DD")
 	@Temporal(value= TemporalType.TIMESTAMP)
 	private Date from;
 
 	@Temporal(value=TemporalType.TIMESTAMP)
-	@DateTimeFormat(pattern = "dd.MM.yy")
+	@DateTimeFormat(pattern = "YYYY-MM-DD")
 	private Date to;
 
 }

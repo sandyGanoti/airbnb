@@ -30,11 +30,11 @@ public class PropertyCreationRequest {
 	@NotNull
 	private PropertyType propertyType;
 	@NotNull
-	private int countryId;
+	private Long countryId;
 	@NotNull
-	private int cityId;
+	private Long cityId;
 	@NotNull
-	private int districtId;
+	private Long districtId;
 	@NotNull
 	private BigDecimal price;
 	@NotNull
