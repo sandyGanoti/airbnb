@@ -32,7 +32,6 @@ import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
 import org.di.airbnb.assemblers.location.DistrictModel;
 import org.di.airbnb.assemblers.messaging.MessagingModel;
-import org.di.airbnb.assemblers.property.AvailableDate;
 import org.di.airbnb.assemblers.property.PopularPlace;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
@@ -411,12 +410,7 @@ public class AirbnbManager {
 			handleException( e );
 		}
 		final long newlyCreatedPropertyId = newlyCreatedProperty.getId();
-		List<AvailableDate> availableDates = propertyCreationRequest.getAvailableDates();
-		LOGGER.error( availableDates.get( 0 ).getAvailableFrom().toString() );
-		LOGGER.error( availableDates.get( 0 ).getAvailableTo().toString() );
-		availableDates.stream().forEach( availableDate -> {
-			LOGGER.error( availableDate.getAvailableFrom().toString() );
-			LOGGER.error( availableDate.getAvailableTo().toString() );
+		propertyCreationRequest.getAvailableDates().stream().forEach( availableDate -> {
 			propertyAvailabilityRepository.save( new PropertyAvailability( newlyCreatedPropertyId,
 					availableDate.getAvailableFrom(), availableDate.getAvailableTo() ) );
 		} );
