@@ -30,6 +30,7 @@ import org.di.airbnb.assemblers.property.PopularPlace;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
 import org.di.airbnb.assemblers.rating.RatingModel;
+import org.di.airbnb.assemblers.user.UserAvatarModel;
 import org.di.airbnb.assemblers.user.UserModel;
 import org.di.airbnb.dao.entities.User;
 import org.di.airbnb.exceptions.api.InvalidUserActionException;
@@ -241,6 +242,17 @@ public class AirbnbController {
 				propertyId );
 		return propertyModelOpt.isPresent() ? new ResponseEntity<>( propertyModelOpt.get(),
 				HttpStatus.OK ) : new ResponseEntity<>( HttpStatus.NOT_FOUND );
+	}
+
+	/*
+curl
+	-H "Content-Type: application/json"
+	-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzczEiLCJpYXQiOjE1OTE1Mjk3NjUsImV4cCI6MTU5MTYxNjE2NX0.yXEmqMgvHhGO3OQL8oxpdSaGtE2DfaXb65zWSF6iHU7YAiI_qU-K97-vvKEPsBdmPk_i623sWiuUlLkKyVFmJg"
+	http://localhost:8443/airbnb/property/1/host
+*/
+	@GetMapping(value = "property/{id}/host")
+	public ResponseEntity<UserAvatarModel> getPropertyHost( @PathVariable("id") long propertyId ) {
+		return new ResponseEntity<>( airbnbManager.getPropertyHost( propertyId ), HttpStatus.OK );
 	}
 
 	/*

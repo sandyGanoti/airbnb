@@ -37,6 +37,7 @@ import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
 import org.di.airbnb.assemblers.property.RentingRulesModel;
 import org.di.airbnb.assemblers.rating.RatingModel;
+import org.di.airbnb.assemblers.user.UserAvatarModel;
 import org.di.airbnb.assemblers.user.UserModel;
 import org.di.airbnb.constant.Role;
 import org.di.airbnb.dao.AirbnbDaoImpl;
@@ -340,6 +341,21 @@ public class AirbnbManager {
 
 	public List<DistrictModel> getDistrictsByCity( final long cityId ) {
 		return modelMapper.map( airbnbDao.getDistrictsByCity( cityId ), List.class );
+	}
+
+	public UserAvatarModel getPropertyHost( final long propertyId ) {
+		Property property = propertyRepository.getOne( propertyId );
+		if ( property == null ) {
+			throw new PropertyNotFoundException( "Property do not exist" );
+		}
+
+		User user = userRepository.getOne( property.getHostId() );
+		Optional<Image> avatarOpt = airbnbDao.getAvatar( user.getId() );
+		ImageModel imageModel = null;
+		if ( avatarOpt.isPresent() ) {
+			imageModel = modelMapper.map( avatarOpt.get(), ImageModel.class );
+		}
+		return new UserAvatarModel( user.getId(), imageModel );
 	}
 
 	public Optional<PropertyWithRentingRules> getPropertyById( final long propertyId ) {
