@@ -140,6 +140,16 @@ CREATE TABLE IF NOT EXISTS `district` (
     CONSTRAINT fk_district_city FOREIGN KEY (city_id) REFERENCES city (id)
 );
 
+CREATE TABLE IF NOT EXISTS `property_availability` (
+    `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+    `property_id` BIGINT(20) NOT NULL,
+    `available_from` DATETIME NOT NULL,
+    `available_to` DATETIME NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY fk_property_availability (property_id),
+    CONSTRAINT fk_property_availability FOREIGN KEY (property_id) REFERENCES property_to_rent (id)
+);
+
 INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(1, "$2a$10$JXKXOqdQzQ5QgYGQKTOdbuHE9nCX3REzkJ86BewrDCEc39FyKzx.y", "user1", "user1", "user1", "1234", "TENANT", now(), "user1@user1.com");
 INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(2, "$2a$10$AnrFPILx2oOeFVgVgpovj.lQXi9oMMY2r8nyAq1mhO7LpCF9K8ZS2", "user2", "user2", "user2", "1234", "TENANT", now(), "user2@user2.com");
 INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(3, "$2a$10$JHyawNxERXu8XgSQsy/uXe/EdU8Nr3SCEgm0MxFN5pS2JRwk8bx6u", "user3", "user3", "user3", "1234", "TENANT_AND_HOST", now(), "user3@user3.com");
@@ -158,23 +168,16 @@ INSERT INTO `booking`(id, tenant_id, property_id, from_datetime, to_datetime, cr
 
 INSERT INTO `rating`(id, rater_id, property_id, host_id, text, mark, created_at) VALUES(1, 1, 1, 1, "free text review", 3, now());
 
-
 INSERT INTO `messaging`(id, sender, recipient, created_at, message_body, read_status) VALUES(1, 1, 1, now(), "la la", 0);
 INSERT INTO `messaging`(id, sender, recipient, created_at, message_body, read_status) VALUES(1, 1, 1, now(), "la la", 1);
-
-
-
-
 
 INSERT INTO `country`(id, name) VALUES(1, "Greece");
 INSERT INTO `country`(id, name) VALUES(2, "England");
 INSERT INTO `country`(id, name) VALUES(3, "Scotland");
 
-
 INSERT INTO `city`(id, name, country_id) VALUES(1, "Athens", 1);
 INSERT INTO `city`(id, name, country_id) VALUES(2, "London", 2);
 INSERT INTO `city`(id, name, country_id) VALUES(3, "Edinburgh", 3);
-
 
 INSERT INTO `district`(id, name, city_id) VALUES(1, "Plaka",1);
 INSERT INTO `district`(id, name, city_id) VALUES(2, "Kolonaki",1);
@@ -184,7 +187,6 @@ INSERT INTO `district`(id, name, city_id) VALUES(5, "Gazi",1);
 INSERT INTO `district`(id, name, city_id) VALUES(6, "Thissio",1);
 INSERT INTO `district`(id, name, city_id) VALUES(7, "Metaxourgio",1);
 
-
 INSERT INTO `district`(id, name, city_id) VALUES(8, "Whitehall and Westminster",2);
 INSERT INTO `district`(id, name, city_id) VALUES(9, "Piccadilly and St James’s",2);
 INSERT INTO `district`(id, name, city_id) VALUES(10, "Soho and Trafalgar Square",2);
@@ -193,10 +195,8 @@ INSERT INTO `district`(id, name, city_id) VALUES(12, "Bloomsbury and Fitzrovia",
 INSERT INTO `district`(id, name, city_id) VALUES(13, "Holborn and Inns of Court",2);
 INSERT INTO `district`(id, name, city_id) VALUES(14, "The City",1);
 
-
 INSERT INTO `district`(id, name, city_id) VALUES(15, "Central Edinburgh",3);
 INSERT INTO `district`(id, name, city_id) VALUES(16, "Stockbridge",3);
 INSERT INTO `district`(id, name, city_id) VALUES(17, "Leith",3);
 INSERT INTO `district`(id, name, city_id) VALUES(18, "Morningside and Bruntsfield",3);
 INSERT INTO `district`(id, name, city_id) VALUES(19, "Newington and the South Bridge Area",3);
-

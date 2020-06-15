@@ -21,10 +21,10 @@ public class AvailableDate {
 
 	@DateTimeFormat(pattern = "YYYY-MM-DD")
 	@Temporal(value= TemporalType.TIMESTAMP)
-	private Date from;
+	private Date availableFrom;
 
 	@Temporal(value=TemporalType.TIMESTAMP)
 	@DateTimeFormat(pattern = "YYYY-MM-DD")
-	private Date to;
+	private Date availableTo;
 
 }

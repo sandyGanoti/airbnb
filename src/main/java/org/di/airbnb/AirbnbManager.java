@@ -32,6 +32,7 @@ import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
 import org.di.airbnb.assemblers.location.DistrictModel;
 import org.di.airbnb.assemblers.messaging.MessagingModel;
+import org.di.airbnb.assemblers.property.AvailableDate;
 import org.di.airbnb.assemblers.property.PopularPlace;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
@@ -44,6 +45,7 @@ import org.di.airbnb.dao.entities.Booking;
 import org.di.airbnb.dao.entities.Image;
 import org.di.airbnb.dao.entities.Messaging;
 import org.di.airbnb.dao.entities.Property;
+import org.di.airbnb.dao.entities.PropertyAvailability;
 import org.di.airbnb.dao.entities.Rating;
 import org.di.airbnb.dao.entities.RentingRules;
 import org.di.airbnb.dao.entities.User;
@@ -52,6 +54,7 @@ import org.di.airbnb.dao.entities.location.Country;
 import org.di.airbnb.dao.entities.location.District;
 import org.di.airbnb.dao.repository.BookingRepository;
 import org.di.airbnb.dao.repository.MessagingRepository;
+import org.di.airbnb.dao.repository.PropertyAvailabilityRepository;
 import org.di.airbnb.dao.repository.PropertyRepository;
 import org.di.airbnb.dao.repository.RatingRepository;
 import org.di.airbnb.dao.repository.RentingRulesRepository;
@@ -85,6 +88,8 @@ public class AirbnbManager {
 	private final LoadingCache<Long, District> districtCache;
 	private final LoadingCache<Long, Image> imageCache;
 
+	@Autowired
+	private PropertyAvailabilityRepository propertyAvailabilityRepository;
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
@@ -393,18 +398,31 @@ public class AirbnbManager {
 		return imageModel;
 	}
 
+	//TODO: do it in one transaction
 	public long createProperty( final PropertyCreationRequest propertyCreationRequest,
 			final long hostId ) {
 		Property property = modelMapper.map( propertyCreationRequest, Property.class );
 		property.setHostId( hostId );
+
 		Property newlyCreatedProperty = null;
 		try {
 			newlyCreatedProperty = propertyRepository.save( property );
 		} catch ( RuntimeException e ) {
 			handleException( e );
 		}
+		final long newlyCreatedPropertyId = newlyCreatedProperty.getId();
+		List<AvailableDate> availableDates = propertyCreationRequest.getAvailableDates();
+		LOGGER.error( availableDates.get( 0 ).getAvailableFrom().toString() );
+		LOGGER.error( availableDates.get( 0 ).getAvailableTo().toString() );
+		availableDates.stream().forEach( availableDate -> {
+			LOGGER.error( availableDate.getAvailableFrom().toString() );
+			LOGGER.error( availableDate.getAvailableTo().toString() );
+			propertyAvailabilityRepository.save( new PropertyAvailability( newlyCreatedPropertyId,
+					availableDate.getAvailableFrom(), availableDate.getAvailableTo() ) );
+		} );
+
 		RentingRules rentingRules = modelMapper.map( propertyCreationRequest, RentingRules.class );
-		rentingRules.setPropertyId( newlyCreatedProperty.getId() );
+		rentingRules.setPropertyId( newlyCreatedPropertyId );
 		rentingRulesRepository.save( rentingRules );
 		return newlyCreatedProperty.getId();
 	}
