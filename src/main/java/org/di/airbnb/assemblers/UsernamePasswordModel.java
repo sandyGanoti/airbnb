@@ -1,5 +1,6 @@
 package org.di.airbnb.assemblers;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -20,9 +21,9 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UsernamePasswordModel {
 
-	@NotNull
+	@NotBlank
 	private String username;
-	@NotNull
+	@NotBlank
 	private String password;
 
 }
