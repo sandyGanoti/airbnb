@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import javax.persistence.PersistenceException;
 import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.api.request.BookingRequest;
+import org.di.airbnb.api.request.ReviewPropertyCreationRequest;
 import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
@@ -588,10 +590,11 @@ public class AirbnbManager {
 		messagingRepository.save( messaging );
 	}
 
-	public void reviewProperty( final long raterId, final long propertyId, final int mark ) {
+	public void reviewProperty( final long raterId, final long propertyId, final ReviewPropertyCreationRequest reviewPropertyCreationRequest ) {
 		if ( !airbnbDao.getPropertyBookingsByUser( raterId, propertyId ).isEmpty() ) {
 			Rating rating = new Rating();
-			rating.setMark( mark );
+			rating.setMark( reviewPropertyCreationRequest.getMark() );
+			rating.setText( reviewPropertyCreationRequest.getReview() );
 			rating.setPropertyId( propertyId );
 			rating.setRaterId( raterId );
 			rating.setCreatedAt( Instant.now() );
@@ -622,7 +625,7 @@ public class AirbnbManager {
 
 	public void bookProperty( final long userId, final BookingRequest bookingRequest ) {
 		Booking booking = new Booking();
-		booking.setCreatedAt( Instant.now() );
+		booking.setCreatedAt( Date.from(Instant.now()) );
 		booking.setFromDatetime( bookingRequest.getFrom() );
 		booking.setPropertyId( bookingRequest.getPropertyId() );
 		booking.setToDatetime( bookingRequest.getTo() );

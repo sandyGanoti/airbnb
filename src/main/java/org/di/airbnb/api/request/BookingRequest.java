@@ -27,13 +27,13 @@ import lombok.NoArgsConstructor;
 public class BookingRequest {
 
 	@NotNull
-	@DateTimeFormat(pattern = "dd.MM.yy")
+	@DateTimeFormat(pattern = "YYYY-MM-DD")
 	@Temporal(value = TemporalType.TIMESTAMP)
-	private Instant from;
+	private Date from;
 	@NotNull
-	@DateTimeFormat(pattern = "dd.MM.yy")
+	@DateTimeFormat(pattern = "YYYY-MM-DD")
 	@Temporal(value = TemporalType.TIMESTAMP)
-	private Instant to;
+	private Date to;
 	@NotNull
 	private Integer numberOfPeople;
 	@NotNull

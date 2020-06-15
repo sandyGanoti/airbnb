@@ -2,6 +2,7 @@ package org.di.airbnb.dao.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -18,9 +19,9 @@ public class Booking implements Serializable {
 	private long id;
 	private long tenantId;
 	private long propertyId;
-	private Instant fromDatetime;
-	private Instant toDatetime;
-	private Instant createdAt;
+	private Date fromDatetime;
+	private Date toDatetime;
+	private Date createdAt;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,29 +52,29 @@ public class Booking implements Serializable {
 	}
 
 	@Column(name = "from_datetime")
-	public Instant getFromDatetime() {
+	public Date getFromDatetime() {
 		return fromDatetime;
 	}
 
-	public void setFromDatetime( final Instant fromDatetime ) {
+	public void setFromDatetime( final Date fromDatetime ) {
 		this.fromDatetime = fromDatetime;
 	}
 
 	@Column(name = "to_datetime")
-	public Instant getToDatetime() {
+	public Date getToDatetime() {
 		return toDatetime;
 	}
 
-	public void setToDatetime( final Instant toDatetime ) {
+	public void setToDatetime( final Date toDatetime ) {
 		this.toDatetime = toDatetime;
 	}
 
 	@Column(name = "created_at")
-	public Instant getCreatedAt() {
+	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt( final Instant createdAt ) {
+	public void setCreatedAt( final Date createdAt ) {
 		this.createdAt = createdAt;
 	}
 

@@ -27,5 +27,6 @@ public class ReviewPropertyCreationRequest {
 	@Min( 1 )
 	@Max( 5 )
 	private Integer mark;
+	private String review;
 
 }

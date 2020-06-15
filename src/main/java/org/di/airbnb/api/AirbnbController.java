@@ -432,7 +432,7 @@ curl
 		}
 		try {
 			airbnbManager.reviewProperty( userId, propertyId,
-					reviewPropertyCreationRequest.getMark() );
+					reviewPropertyCreationRequest );
 		} catch ( InvalidUserActionException e ) {
 			throw new UserNotValidException(
 					"User has to have booked the place before to try to review it." );
@@ -493,8 +493,8 @@ curl
 	curl
 		-H "Content-Type: application/json"
 		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZGRkcHcxIiwiaWF0IjoxNTkxNjM4NzUxLCJleHAiOjE1OTE3MjUxNTF9.Y5oNQF0v4bZO0M7qFyddxmx6HfGXDYWxas_-39XezQDnMg60Idtxxcr08U9CTCEoktXf0VrTB6rHdvSthOkMLA"
-		-d '{"from": "2020-06-08T18:10:08Z", "to": "2020-06-08T18:10:08Z", "numberOfPeople": 3, "country": "-", "city": "-", "district": "-", "pagination": {"limit": 0, "offset": 1}  }'
-		-X POST -k http://localhost:8443/airbnb/property/search
+		-d '{"from": "2020-06-08", "to": "2020-06-18", "numberOfPeople": 3, "propertyId": 1  }'
+		-X POST -k http://localhost:8443/airbnb/user/1/property/book
 	*/
 	@PostMapping(value = "user/{userId}/property/book")
 	public ResponseEntity<?> bookProperty(
