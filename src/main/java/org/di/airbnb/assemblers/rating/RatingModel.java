@@ -1,7 +1,5 @@
 package org.di.airbnb.assemblers.rating;
 
-import java.time.Instant;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -26,6 +24,5 @@ public class RatingModel {
 	private String text;
 	private long propertyId;
 	private int mark;
-	private Instant createdAt;
 
 }

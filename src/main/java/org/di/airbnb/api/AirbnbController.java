@@ -32,6 +32,7 @@ import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
 import org.di.airbnb.assemblers.rating.RatingModel;
 import org.di.airbnb.assemblers.user.UserAvatarModel;
 import org.di.airbnb.assemblers.user.UserModel;
+import org.di.airbnb.constant.Role;
 import org.di.airbnb.dao.entities.User;
 import org.di.airbnb.exceptions.api.InvalidUserActionException;
 import org.di.airbnb.exceptions.api.UserNotFoundException;
@@ -431,8 +432,7 @@ curl
 			throw new UserNotValidException( "User cannot perform that kind of action" );
 		}
 		try {
-			airbnbManager.reviewProperty( userId, propertyId,
-					reviewPropertyCreationRequest );
+			airbnbManager.reviewProperty( userId, propertyId, reviewPropertyCreationRequest );
 		} catch ( InvalidUserActionException e ) {
 			throw new UserNotValidException(
 					"User has to have booked the place before to try to review it." );
@@ -457,12 +457,30 @@ curl
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZGRkcHcxIiwiaWF0IjoxNTkxNjM4NzUxLCJleHAiOjE1OTE3MjUxNTF9.Y5oNQF0v4bZO0M7qFyddxmx6HfGXDYWxas_-39XezQDnMg60Idtxxcr08U9CTCEoktXf0VrTB6rHdvSthOkMLA"
+		-H "Authorization: Bearer  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyNCIsImlhdCI6MTU5MjI0NzU3MCwiZXhwIjoxNTkyMzMzOTcwfQ.k4j4UxZlh0skF01_xRi3hBmhE2lQYscBD_NccCqGX8aMXUOljPDJrIcVJdz5WEwHag6e30DRUCzwlU7kOPp6sw"
 		http://localhost:8443/airbnb/rating/user/1
 	*/
 	@GetMapping(value = "rating/user/{userId}")
 	public ResponseEntity<List<RatingModel>> getHostRating( @PathVariable("userId") long userId ) {
 		return new ResponseEntity<>( airbnbManager.getHostRatings( userId ), HttpStatus.OK );
+	}
+
+	/*
+	curl
+		-H "Content-Type: application/json"
+		-H "Authorization: Bearer  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyNCIsImlhdCI6MTU5MjI0NzU3MCwiZXhwIjoxNTkyMzMzOTcwfQ.k4j4UxZlh0skF01_xRi3hBmhE2lQYscBD_NccCqGX8aMXUOljPDJrIcVJdz5WEwHag6e30DRUCzwlU7kOPp6sw"
+		http://localhost:8443/airbnb/user/1/ishost
+	*/
+	@GetMapping(value = "/user/{userId}/ishost")
+	public ResponseEntity<?> isUserHost( @RequestHeader("Authorization") String authorizationHeader,
+			@PathVariable("userId") long userId ) {
+		if ( !airbnbManager.isUserAuthenticated( userId,
+				getUsernameFromJwt( authorizationHeader ) ) ) {
+			throw new UserNotValidException( "User cannot perform that kind of action" );
+		}
+		return new ResponseEntity<>(
+				airbnbManager.getUserInfo( userId ).get().getRole().equals( Role.TENANT_AND_HOST ),
+				HttpStatus.OK );
 	}
 
 	//TODO: fix the pagination
