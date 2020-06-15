@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -31,6 +32,7 @@ import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
 import org.di.airbnb.assemblers.location.DistrictModel;
 import org.di.airbnb.assemblers.messaging.MessagingModel;
+import org.di.airbnb.assemblers.property.PopularPlace;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
 import org.di.airbnb.assemblers.property.RentingRulesModel;
@@ -45,13 +47,18 @@ import org.di.airbnb.dao.entities.Property;
 import org.di.airbnb.dao.entities.Rating;
 import org.di.airbnb.dao.entities.RentingRules;
 import org.di.airbnb.dao.entities.User;
+import org.di.airbnb.dao.entities.location.City;
+import org.di.airbnb.dao.entities.location.Country;
+import org.di.airbnb.dao.entities.location.District;
 import org.di.airbnb.dao.repository.BookingRepository;
 import org.di.airbnb.dao.repository.MessagingRepository;
 import org.di.airbnb.dao.repository.PropertyRepository;
 import org.di.airbnb.dao.repository.RatingRepository;
 import org.di.airbnb.dao.repository.RentingRulesRepository;
 import org.di.airbnb.dao.repository.UserRepository;
+import org.di.airbnb.dao.repository.location.CityRepository;
 import org.di.airbnb.dao.repository.location.CountryRepository;
+import org.di.airbnb.dao.repository.location.DistrictRepository;
 import org.di.airbnb.exceptions.api.InvalidUserActionException;
 import org.di.airbnb.exceptions.api.PropertyNotFoundException;
 import org.di.airbnb.exceptions.api.UniqueConstraintViolationException;
@@ -65,11 +72,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 @Singleton
 @Service
 public class AirbnbManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger( AirbnbManager.class );
+	private final LoadingCache<Long, Country> countryCache;
+	private final LoadingCache<Long, City> cityCache;
+	private final LoadingCache<Long, District> districtCache;
+	private final LoadingCache<Long, Image> imageCache;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -86,11 +100,60 @@ public class AirbnbManager {
 	@Autowired
 	private CountryRepository countryRepository;
 	@Autowired
+	private CityRepository cityRepository;
+	@Autowired
+	private DistrictRepository districtRepository;
+	@Autowired
 	private AirbnbDaoImpl airbnbDao;
 	@Autowired
 	private ModelMapper modelMapper;
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+	public AirbnbManager() {
+		this.countryCache = CacheBuilder.newBuilder()
+				.expireAfterWrite( 20, TimeUnit.SECONDS )
+				.recordStats()
+				.softValues()
+				.build( new CacheLoader<Long, Country>() {
+					@Override
+					public Country load( final Long countryId ) {
+						return countryRepository.findById( countryId ).orElse( null );
+					}
+				} );
+		this.cityCache = CacheBuilder.newBuilder()
+				.expireAfterWrite( 20, TimeUnit.SECONDS )
+				.recordStats()
+				.softValues()
+				.build( new CacheLoader<Long, City>() {
+					@Override
+					public City load( final Long cityId ) {
+						return cityRepository.findById( cityId ).orElse( null );
+					}
+				} );
+		this.districtCache = CacheBuilder.newBuilder()
+				.expireAfterWrite( 20, TimeUnit.SECONDS )
+				.recordStats()
+				.softValues()
+				.build( new CacheLoader<Long, District>() {
+					@Override
+					public District load( final Long districtId ) {
+						return districtRepository.findById( districtId ).orElse( null );
+					}
+				} );
+		/* propertyId as key */
+		this.imageCache = CacheBuilder.newBuilder()
+				.expireAfterWrite( 10, TimeUnit.SECONDS )
+				.recordStats()
+				.softValues()
+				.build( new CacheLoader<Long, Image>() {
+					@Override
+					public Image load( final Long propertyId ) {
+						List<Image> images = airbnbDao.getPropertyImages( propertyId );
+						return images.isEmpty() ? new Image() : images.get( 0 );
+					}
+				} );
+	}
 
 	// compress the image bytes before storing it in the database
 	private static byte[] compressBytes( byte[] data ) {
@@ -243,8 +306,28 @@ public class AirbnbManager {
 		return modelMapper.map( countryRepository.findAll(), List.class );
 	}
 
-	public List<PropertyModel> getPopularPlaces( final long userId ) {
-		return modelMapper.map( airbnbDao.getPopularPlaces( userId ), List.class );
+	public List<PopularPlace> getPopularPlaces( final long userId ) {
+		List<Property> properties = airbnbDao.getPopularPlaces( userId );
+		return properties.stream().map( property -> {
+			PopularPlace popularPlace = new PopularPlace();
+			popularPlace.setId( property.getId() );
+			//			popularPlace.setCity( cityCache.getUnchecked( property.getCityId() ).getName() );
+			//			popularPlace.setCountry(
+			//					countryCache.getUnchecked( property.getCountryId() ).getName() );
+			//			popularPlace.setDistrict(
+			//					districtCache.getUnchecked( property.getDistrictId() ).getName() );
+			LOGGER.error( property.toString() );
+			popularPlace.setCountry(
+					countryRepository.getOne( property.getCountryId() ).getName() );
+			popularPlace.setCity( cityRepository.getOne( property.getCityId() ).getName() );
+			popularPlace.setDistrict(
+					districtRepository.getOne( property.getDistrictId() ).getName() );
+
+			popularPlace.setImage( modelMapper.map( imageCache.getUnchecked( property.getId() ),
+					ImageModel.class ) );
+			popularPlace.setMeanRating( getMeanRating( property.getId() ) );
+			return popularPlace;
+		} ).collect( Collectors.toList() );
 	}
 
 	public List<CityModel> getCitiesByCountry( final long countryId ) {
@@ -333,7 +416,7 @@ public class AirbnbManager {
 			throw new PropertyNotFoundException( "Property do not exist" );
 		}
 		Property property = propertyOpt.get();
-		if ( !property.getHostId().equals( userId ) ) {
+		if ( property.getHostId() != userId ) {
 			throw new InvalidUserActionException();
 		}
 		RentingRules rentingRules = airbnbDao.getPropertyRentingRules( propertyId );
@@ -485,20 +568,22 @@ public class AirbnbManager {
 		}
 	}
 
+	private double getMeanRating( final long propertyId ) {
+		List<Rating> ratings = airbnbDao.getPropertyRatings( propertyId );
+		double meanRating = 0;
+		if ( ratings != null && !ratings.isEmpty() ) {
+			meanRating = ratings.stream().mapToDouble( Rating::getMark ).average().getAsDouble();
+		}
+		return meanRating;
+	}
+
 	public List<SearchResult> findProperties( final SearchRequest searchRequest ) {
 		List<Property> properties = airbnbDao.getPropertiesBySearchQuery( searchRequest.getFrom(),
 				searchRequest.getTo(), searchRequest.getNumberOfPeople(),
 				searchRequest.getPagination() );
 		return properties.stream().map( property -> {
-			List<Rating> ratings = airbnbDao.getPropertyRatings( property.getId() );
-			double meanRating = 0;
-			if ( ratings != null && !ratings.isEmpty() ) {
-				meanRating = ratings.stream()
-						.mapToDouble( Rating::getMark )
-						.average()
-						.getAsDouble();
-			}
-			return new SearchResult( modelMapper.map( property, PropertyModel.class ), meanRating );
+			return new SearchResult( modelMapper.map( property, PropertyModel.class ),
+					getMeanRating( property.getId() ) );
 		} ).collect( Collectors.toList() );
 	}
 

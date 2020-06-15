@@ -3,15 +3,12 @@ package org.di.airbnb.api.request.property;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.di.airbnb.assemblers.property.AvailableDate;
 import org.di.airbnb.constant.PropertyType;
-
-import io.swagger.models.auth.In;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

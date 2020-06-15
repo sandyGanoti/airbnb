@@ -38,6 +38,14 @@ public class AirbnbDaoImpl {
 				.getResultList();
 	}
 
+	public List<Image> getPropertyImages( final long propertyId ) {
+		return entityManager.createQuery( "FROM Image i where typetheid = :propertyId",
+				Image.class )
+				.setParameter( "propertyId", String.valueOf( propertyId ) )
+				.getResultList();
+
+	}
+
 	public List<Booking> getTenantBookings( final long tenantId ) {
 		return entityManager.createQuery( "FROM Booking b where tenantId = :tenantId",
 				Booking.class ).setParameter( "tenantId", tenantId ).getResultList();
@@ -155,13 +163,12 @@ public class AirbnbDaoImpl {
 	public List<Property> getPropertiesBySearchQuery( final Date from, final Date to,
 			final int numberOfPeople, final Pagination pagination ) {
 		return entityManager.createQuery(
-//				"FROM Property p WHERE :from > b.toDatetime AND :to < b.fromDatetime AND p.maximumTenants >= :numberOfPeople ",
+				//				"FROM Property p WHERE :from > b.toDatetime AND :to < b.fromDatetime AND p.maximumTenants >= :numberOfPeople ",
 				"FROM Property p WHERE p.maximumTenants >= :numberOfPeople ",
 
-				Property.class )
-				.setParameter( "numberOfPeople", numberOfPeople )
-//				.setParameter( "from", from )
-//				.setParameter( "to", to )
+				Property.class ).setParameter( "numberOfPeople", numberOfPeople )
+				//				.setParameter( "from", from )
+				//				.setParameter( "to", to )
 				.getResultList();
 	}
 

@@ -21,10 +21,10 @@ public class Property {
 	private long id;
 	private String name;
 	private PropertyType propertyType;
-	private int countryId;
-	private int cityId;
-	private int districtId;
-	private Long hostId;
+	private long countryId;
+	private long cityId;
+	private long districtId;
+	private long hostId;
 	private BigDecimal price;
 	private BigDecimal extraPricePerPerson;
 	private Integer beds;
@@ -66,38 +66,38 @@ public class Property {
 	}
 
 	@Column(name = "country_id")
-	public int getCountryId() {
+	public long getCountryId() {
 		return countryId;
 	}
 
-	public void setCountryId( final int countryId ) {
+	public void setCountryId( final long countryId ) {
 		this.countryId = countryId;
 	}
 
 	@Column(name = "city_id")
-	public int getCityId() {
+	public long getCityId() {
 		return cityId;
 	}
 
-	public void setCityId( final int cityId ) {
+	public void setCityId( final long cityId ) {
 		this.cityId = cityId;
 	}
 
 	@Column(name = "district_id")
-	public int getDistrictId() {
+	public long getDistrictId() {
 		return districtId;
 	}
 
-	public void setDistrictId( final int districtId ) {
+	public void setDistrictId( final long districtId ) {
 		this.districtId = districtId;
 	}
 
 	@Column(name = "host_id")
-	public Long getHostId() {
+	public long getHostId() {
 		return hostId;
 	}
 
-	public void setHostId( final Long hostId ) {
+	public void setHostId( final long hostId ) {
 		this.hostId = hostId;
 	}
 
@@ -204,11 +204,11 @@ public class Property {
 		}
 		final Property property = (Property) o;
 		return id == property.id && name.equals(
-				property.name ) && propertyType == property.propertyType && countryId == property.countryId && cityId == property.cityId && districtId == property.districtId && hostId
-				.equals( property.hostId ) && price.equals( property.price ) && beds.equals(
-				property.beds ) && bedrooms.equals( property.bedrooms ) && bathrooms.equals(
-				property.bathrooms ) && minimumDays.equals( property.minimumDays ) && maximumTenants
-				.equals( property.maximumTenants ) && propertySize.equals(
+				property.name ) && propertyType == property.propertyType && countryId == property.countryId && cityId == property.cityId && districtId == property.districtId && hostId == property.hostId && price
+				.equals( property.price ) && beds.equals( property.beds ) && bedrooms.equals(
+				property.bedrooms ) && bathrooms.equals( property.bathrooms ) && minimumDays.equals(
+				property.minimumDays ) && maximumTenants.equals(
+				property.maximumTenants ) && propertySize.equals(
 				property.propertySize ) && extraPricePerPerson.equals(
 				property.extraPricePerPerson ) && freeText.equals(
 				property.freeText ) && latitude.equals( property.latitude ) && longitude.equals(
@@ -220,5 +220,10 @@ public class Property {
 		return Objects.hash( id, name, propertyType, countryId, cityId, districtId, hostId, price,
 				beds, bedrooms, bathrooms, minimumDays, extraPricePerPerson, maximumTenants,
 				propertySize, freeText, latitude, longitude );
+	}
+
+	@Override
+	public String toString() {
+		return "Property{" + "id=" + id + ", name='" + name + '\'' + ", propertyType=" + propertyType + ", countryId=" + countryId + ", cityId=" + cityId + ", districtId=" + districtId + ", hostId=" + hostId + ", price=" + price + ", extraPricePerPerson=" + extraPricePerPerson + ", beds=" + beds + ", bedrooms=" + bedrooms + ", bathrooms=" + bathrooms + ", minimumDays=" + minimumDays + ", maximumTenants=" + maximumTenants + ", propertySize=" + propertySize + ", freeText='" + freeText + '\'' + ", latitude=" + latitude + ", longitude=" + longitude + '}';
 	}
 }

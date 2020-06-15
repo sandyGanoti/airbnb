@@ -26,6 +26,7 @@ import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
 import org.di.airbnb.assemblers.location.DistrictModel;
 import org.di.airbnb.assemblers.messaging.MessagingModel;
+import org.di.airbnb.assemblers.property.PopularPlace;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
 import org.di.airbnb.assemblers.rating.RatingModel;
@@ -453,9 +454,8 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZGRkcHcxIiwiaWF0IjoxNTkxNjM4NzUxLCJleHAiOjE1OTE3MjUxNTF9.Y5oNQF0v4bZO0M7qFyddxmx6HfGXDYWxas_-39XezQDnMg60Idtxxcr08U9CTCEoktXf0VrTB6rHdvSthOkMLA"
-		-d '{"from": "2020-06-08T18:10:08Z", "to": "2020-06-08T18:10:08Z", "numberOfPeople": 3, "country": "-", "city": "-", "district": "-", "pagination": {"limit": 0, "offset": 1}  }'
-		-X POST -k http://localhost:8443/airbnb/property/search
+		-H "Authorization: Bearer  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyNCIsImlhdCI6MTU5MjE2NzYxNCwiZXhwIjoxNTkyMjU0MDE0fQ.FyOHZcP4Q6JUeG3SULiDmPPSQ8G8VS9pRiLQZE6GyLlVPQsInu3CMH9M9EBeA1SSOceQrbrGuUGwPjpxSEJjsg" -d '{"from": "2020-06-08", "to": "2020-06-08", "numberOfPeople": 3, "countryId": "1", "cityId": "1", "districtId": "1", "pagination": {"limit": 0, "offset": 1}  }'
+		-X POST -k https://airbnb-sandu.herokuapp.com/airbnb/property/search
 	*/
 	@PostMapping(value = "/property/search")
 	public ResponseEntity<List<SearchResult>> searchProperty(
@@ -490,11 +490,11 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTU5MTk1OTU2OSwiZXhwIjoxNTkyMDQ1OTY5fQ.ksvOzIWMz6-OxxQYh6HaY2GBoqyPB2gNTvZ6i17GHQopCXo4kP-i05LcM0t7ytf7iR2ntd4JfggMHO4z-vCTKQ"
-		http://localhost:8443/airbnb/user/4/popular
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTU5MjIyOTkxOSwiZXhwIjoxNTkyMzE2MzE5fQ.GDbRGwPpr6hzsQMT1Y3gvWuReEj7nnqVR6cVut8Onr-mZ5jfa480MmrsWrWFSJp9bbsjXmhwSrhQKUDBK_tM5g"
+		http://localhost:8443/airbnb/user/1/popular
 	*/
 	@GetMapping(value = "user/{userId}/popular")
-	public ResponseEntity<List<PropertyModel>> getPopularPlaces(
+	public ResponseEntity<List<PopularPlace>> getPopularPlaces(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId ) {
 		if ( !airbnbManager.isUserAuthenticated( userId,
