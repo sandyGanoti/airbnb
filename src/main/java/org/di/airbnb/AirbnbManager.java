@@ -28,13 +28,12 @@ import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
 import org.di.airbnb.api.request.property.PropertyCreationRequest;
 import org.di.airbnb.api.request.property.PropertyUpdateRequest;
-import org.di.airbnb.api.response.SearchResult;
 import org.di.airbnb.assemblers.image.ImageModel;
 import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
 import org.di.airbnb.assemblers.location.DistrictModel;
 import org.di.airbnb.assemblers.messaging.MessagingModel;
-import org.di.airbnb.assemblers.property.PopularPlace;
+import org.di.airbnb.assemblers.property.PropertyBasicInfo;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
 import org.di.airbnb.assemblers.property.RentingRulesModel;
@@ -313,27 +312,31 @@ public class AirbnbManager {
 		return modelMapper.map( countryRepository.findAll(), List.class );
 	}
 
-	public List<PopularPlace> getPopularPlaces( final long userId ) {
-		List<Property> properties = airbnbDao.getPopularPlaces( userId );
-		return properties.stream().map( property -> {
-			PopularPlace popularPlace = new PopularPlace();
-			popularPlace.setId( property.getId() );
-			//			popularPlace.setCity( cityCache.getUnchecked( property.getCityId() ).getName() );
-			//			popularPlace.setCountry(
-			//					countryCache.getUnchecked( property.getCountryId() ).getName() );
-			//			popularPlace.setDistrict(
-			//					districtCache.getUnchecked( property.getDistrictId() ).getName() );
-			LOGGER.error( property.toString() );
-			popularPlace.setCountry(
-					countryRepository.getOne( property.getCountryId() ).getName() );
-			popularPlace.setCity( cityRepository.getOne( property.getCityId() ).getName() );
-			popularPlace.setDistrict(
-					districtRepository.getOne( property.getDistrictId() ).getName() );
+	public List<PropertyBasicInfo> getPopularPlaces( final long userId ) {
+		return constructPropertyBasicInfo( airbnbDao.getPopularPlaces( userId ) );
+	}
 
-			popularPlace.setImage( modelMapper.map( imageCache.getUnchecked( property.getId() ),
-					ImageModel.class ) );
-			popularPlace.setMeanRating( getMeanRating( property.getId() ) );
-			return popularPlace;
+	private List<PropertyBasicInfo> constructPropertyBasicInfo( final List<Property> properties ) {
+		return properties.stream().map( property -> {
+			PropertyBasicInfo propertyBasicInfo = new PropertyBasicInfo();
+			propertyBasicInfo.setId( property.getId() );
+			propertyBasicInfo.setCity( cityCache.getUnchecked( property.getCityId() ).getName() );
+			propertyBasicInfo.setCountry(
+					countryCache.getUnchecked( property.getCountryId() ).getName() );
+			propertyBasicInfo.setDistrict(
+					districtCache.getUnchecked( property.getDistrictId() ).getName() );
+
+			//			propertyBasicInfo.setCountry(
+			//					countryRepository.getOne( property.getCountryId() ).getName() );
+			//			propertyBasicInfo.setCity( cityRepository.getOne( property.getCityId() ).getName() );
+			//			propertyBasicInfo.setDistrict(
+			//					districtRepository.getOne( property.getDistrictId() ).getName() );
+
+			propertyBasicInfo.setImage(
+					modelMapper.map( imageCache.getUnchecked( property.getId() ),
+							ImageModel.class ) );
+			propertyBasicInfo.setMeanRating( getMeanRating( property.getId() ) );
+			return propertyBasicInfo;
 		} ).collect( Collectors.toList() );
 	}
 
@@ -590,7 +593,8 @@ public class AirbnbManager {
 		messagingRepository.save( messaging );
 	}
 
-	public void reviewProperty( final long raterId, final long propertyId, final ReviewPropertyCreationRequest reviewPropertyCreationRequest ) {
+	public void reviewProperty( final long raterId, final long propertyId,
+			final ReviewPropertyCreationRequest reviewPropertyCreationRequest ) {
 		if ( !airbnbDao.getPropertyBookingsByUser( raterId, propertyId ).isEmpty() ) {
 			Rating rating = new Rating();
 			rating.setMark( reviewPropertyCreationRequest.getMark() );
@@ -613,19 +617,16 @@ public class AirbnbManager {
 		return meanRating;
 	}
 
-	public List<SearchResult> findProperties( final SearchRequest searchRequest ) {
+	public List<PropertyBasicInfo> findProperties( final SearchRequest searchRequest ) {
 		List<Property> properties = airbnbDao.getPropertiesBySearchQuery( searchRequest.getFrom(),
 				searchRequest.getTo(), searchRequest.getNumberOfPeople(),
 				searchRequest.getPagination() );
-		return properties.stream().map( property -> {
-			return new SearchResult( modelMapper.map( property, PropertyModel.class ),
-					getMeanRating( property.getId() ) );
-		} ).collect( Collectors.toList() );
+		return constructPropertyBasicInfo( properties );
 	}
 
 	public void bookProperty( final long userId, final BookingRequest bookingRequest ) {
 		Booking booking = new Booking();
-		booking.setCreatedAt( Date.from(Instant.now()) );
+		booking.setCreatedAt( Date.from( Instant.now() ) );
 		booking.setFromDatetime( bookingRequest.getFrom() );
 		booking.setPropertyId( bookingRequest.getPropertyId() );
 		booking.setToDatetime( bookingRequest.getTo() );

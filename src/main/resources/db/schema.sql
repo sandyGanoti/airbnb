@@ -169,7 +169,7 @@ INSERT INTO `booking`(id, tenant_id, property_id, from_datetime, to_datetime, cr
 INSERT INTO `rating`(id, rater_id, property_id, host_id, text, mark, created_at) VALUES(1, 1, 1, 1, "free text review", 3, now());
 
 INSERT INTO `messaging`(id, sender, recipient, created_at, message_body, read_status) VALUES(1, 1, 1, now(), "la la", 0);
-INSERT INTO `messaging`(id, sender, recipient, created_at, message_body, read_status) VALUES(1, 1, 1, now(), "la la", 1);
+INSERT INTO `messaging`(id, sender, recipient, created_at, message_body, read_status) VALUES(2, 1, 1, now(), "la la", 1);
 
 INSERT INTO `country`(id, name) VALUES(1, "Greece");
 INSERT INTO `country`(id, name) VALUES(2, "England");

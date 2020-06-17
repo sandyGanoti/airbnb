@@ -162,6 +162,8 @@ public class AirbnbDaoImpl {
 
 	public List<Property> getPropertiesBySearchQuery( final Date from, final Date to,
 			final int numberOfPeople, final Pagination pagination ) {
+
+
 		return entityManager.createQuery(
 				//				"FROM Property p WHERE :from > b.toDatetime AND :to < b.fromDatetime AND p.maximumTenants >= :numberOfPeople ",
 				"FROM Property p WHERE p.maximumTenants >= :numberOfPeople ",

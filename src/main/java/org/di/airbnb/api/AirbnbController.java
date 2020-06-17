@@ -19,14 +19,13 @@ import org.di.airbnb.api.request.UserUpdateRequest;
 import org.di.airbnb.api.request.property.PropertyCreationRequest;
 import org.di.airbnb.api.request.property.PropertyUpdateRequest;
 import org.di.airbnb.api.response.JwtResponse;
-import org.di.airbnb.api.response.SearchResult;
 import org.di.airbnb.assemblers.UsernamePasswordModel;
 import org.di.airbnb.assemblers.image.ImageModel;
 import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
 import org.di.airbnb.assemblers.location.DistrictModel;
 import org.di.airbnb.assemblers.messaging.MessagingModel;
-import org.di.airbnb.assemblers.property.PopularPlace;
+import org.di.airbnb.assemblers.property.PropertyBasicInfo;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
 import org.di.airbnb.assemblers.rating.RatingModel;
@@ -501,7 +500,7 @@ curl
 
 	*/
 	@PostMapping(value = "/property/search")
-	public ResponseEntity<List<SearchResult>> searchProperty(
+	public ResponseEntity<List<PropertyBasicInfo>> searchProperty(
 			@RequestBody @Valid @NotNull SearchRequest searchRequest ) {
 		return new ResponseEntity<>( airbnbManager.findProperties( searchRequest ),
 				HttpStatus.CREATED );
@@ -537,7 +536,7 @@ curl
 		http://localhost:8443/airbnb/user/1/popular
 	*/
 	@GetMapping(value = "user/{userId}/popular")
-	public ResponseEntity<List<PopularPlace>> getPopularPlaces(
+	public ResponseEntity<List<PropertyBasicInfo>> getPopularPlaces(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId ) {
 		if ( !airbnbManager.isUserAuthenticated( userId,
