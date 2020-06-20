@@ -571,13 +571,14 @@ public class AirbnbManager {
 		HashMap<Long, List<MessagingModel>> newMessages = new HashMap<>();
 
 		airbnbDao.getMessages( userId ).forEach( message -> {
-			Long sender = message.getSender();
-			List<MessagingModel> messages = newMessages.get( sender );
+			Long key = !message.getSender()
+					.equals( userId ) ? message.getSender() : message.getRecipient();
+			List<MessagingModel> messages = newMessages.get( key );
 			if ( messages == null ) {
 				messages = new ArrayList<>();
 			}
 			messages.add( modelMapper.map( message, MessagingModel.class ) );
-			newMessages.put( sender, messages );
+			newMessages.put( key, messages );
 		} );
 
 		return newMessages;
