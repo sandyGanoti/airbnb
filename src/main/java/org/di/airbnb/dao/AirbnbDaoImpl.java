@@ -1,6 +1,6 @@
 package org.di.airbnb.dao;
 
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +10,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
+import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.dao.entities.Booking;
 import org.di.airbnb.dao.entities.Image;
 import org.di.airbnb.dao.entities.Messaging;
@@ -160,18 +161,20 @@ public class AirbnbDaoImpl {
 		return query.getResultList();
 	}
 
-	public List<Property> getPropertiesBySearchQuery( final Date from, final Date to,
-			final int numberOfPeople, final Pagination pagination ) {
+	public List<Property> getPropertiesBySearchQuery( final SearchRequest searchRequest ) {
+		TypedQuery<Long> query = entityManager.createQuery(
+				"SELECT notBooked.propertyId FROM Booking notBooked WHERE notBooked.propertyId NOT IN (SELECT b.propertyId from Booking b WHERE (b.fromDatetime >= :fromDate and b.toDatetime <= :toDate) or (:fromDate >= b.fromDatetime and :toDate <= b.toDatetime) or (:toDate >= b.fromDatetime and :fromDate <= b.toDatetime) )",
+				Long.class )
+				.setParameter( "fromDate", searchRequest.getFrom() )
+				.setParameter( "toDate", searchRequest.getTo() );
 
-
-		return entityManager.createQuery(
-				//				"FROM Property p WHERE :from > b.toDatetime AND :to < b.fromDatetime AND p.maximumTenants >= :numberOfPeople ",
-				"FROM Property p WHERE p.maximumTenants >= :numberOfPeople ",
-
-				Property.class ).setParameter( "numberOfPeople", numberOfPeople )
-				//				.setParameter( "from", from )
-				//				.setParameter( "to", to )
-				.getResultList();
+		/* not booked property ids */
+		List<Long> propertyIds = query.getResultList();
+		if ( propertyIds.isEmpty() ) {
+			return Collections.emptyList();
+		}
+		return entityManager.createQuery( "FROM Property p WHERE p.id IN :propertyIds",
+				Property.class ).setParameter( "propertyIds", propertyIds ).getResultList();
 	}
 
 }

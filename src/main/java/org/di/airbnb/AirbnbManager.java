@@ -619,9 +619,7 @@ public class AirbnbManager {
 	}
 
 	public List<PropertyBasicInfo> findProperties( final SearchRequest searchRequest ) {
-		List<Property> properties = airbnbDao.getPropertiesBySearchQuery( searchRequest.getFrom(),
-				searchRequest.getTo(), searchRequest.getNumberOfPeople(),
-				searchRequest.getPagination() );
+		List<Property> properties = airbnbDao.getPropertiesBySearchQuery( searchRequest );
 		return constructPropertyBasicInfo( properties );
 	}
 
