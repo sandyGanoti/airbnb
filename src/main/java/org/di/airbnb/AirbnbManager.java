@@ -284,7 +284,13 @@ public class AirbnbManager {
 	}
 
 	public List<PropertyModel> getPropertiesByHost( final long hostId ) {
-		return modelMapper.map( airbnbDao.getPropertiesByHost( hostId ), List.class );
+		List<PropertyModel> properties = modelMapper.map( airbnbDao.getPropertiesByHost( hostId ),
+				List.class );
+		properties.forEach( property -> {
+			Image image = imageCache.getUnchecked( property.getId() );
+			property.setImage( image != null ? modelMapper.map( image, ImageModel.class ) : null );
+		} );
+		return properties;
 	}
 
 	public List<PropertyModel> getUserBookings( final long hostId ) {
@@ -325,17 +331,11 @@ public class AirbnbManager {
 					countryCache.getUnchecked( property.getCountryId() ).getName() );
 			propertyBasicInfo.setDistrict(
 					districtCache.getUnchecked( property.getDistrictId() ).getName() );
-
-			//			propertyBasicInfo.setCountry(
-			//					countryRepository.getOne( property.getCountryId() ).getName() );
-			//			propertyBasicInfo.setCity( cityRepository.getOne( property.getCityId() ).getName() );
-			//			propertyBasicInfo.setDistrict(
-			//					districtRepository.getOne( property.getDistrictId() ).getName() );
-
 			propertyBasicInfo.setImage(
 					modelMapper.map( imageCache.getUnchecked( property.getId() ),
 							ImageModel.class ) );
 			propertyBasicInfo.setMeanRating( getMeanRating( property.getId() ) );
+			propertyBasicInfo.setPropertyName( property.getName() );
 			return propertyBasicInfo;
 		} ).collect( Collectors.toList() );
 	}

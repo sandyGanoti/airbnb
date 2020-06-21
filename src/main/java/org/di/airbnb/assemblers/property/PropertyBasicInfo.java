@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 public class PropertyBasicInfo {
 
 	private long id;
+	private String propertyName;
 	private ImageModel image;
 	private double price;
 	private String country;
