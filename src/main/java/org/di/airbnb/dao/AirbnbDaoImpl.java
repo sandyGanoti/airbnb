@@ -162,9 +162,20 @@ public class AirbnbDaoImpl {
 	}
 
 	public List<Property> getPropertiesBySearchQuery( final SearchRequest searchRequest ) {
-		TypedQuery<Long> query = entityManager.createQuery(
-				"SELECT notBooked.propertyId FROM Booking notBooked WHERE notBooked.propertyId NOT IN (SELECT b.propertyId from Booking b WHERE (b.fromDatetime >= :fromDate and b.toDatetime <= :toDate) or (:fromDate >= b.fromDatetime and :toDate <= b.toDatetime) or (:toDate >= b.fromDatetime and :fromDate <= b.toDatetime) )",
+		List<Long> availablePropertyIds = entityManager.createQuery(
+				"SELECT pa.propertyId FROM PropertyAvailability pa WHERE (:fromDate BETWEEN pa.availableFrom and pa.availableTo) and (:toDate BETWEEN pa.availableFrom and  pa.availableTo)",
 				Long.class )
+				.setParameter( "fromDate", searchRequest.getFrom() )
+				.setParameter( "toDate", searchRequest.getTo() )
+				.getResultList();
+		if ( availablePropertyIds.isEmpty() ) {
+			return Collections.emptyList();
+		}
+
+		TypedQuery<Long> query = entityManager.createQuery(
+				"SELECT notBooked.propertyId FROM Booking notBooked WHERE notBooked.propertyId IN :availablePropertyIds AND notBooked.propertyId NOT IN (SELECT b.propertyId from Booking b WHERE (b.fromDatetime >= :fromDate and b.toDatetime <= :toDate) or (:fromDate >= b.fromDatetime and :toDate <= b.toDatetime) or (:toDate >= b.fromDatetime and :fromDate <= b.toDatetime) )",
+				Long.class )
+				.setParameter( "availablePropertyIds", availablePropertyIds )
 				.setParameter( "fromDate", searchRequest.getFrom() )
 				.setParameter( "toDate", searchRequest.getTo() );
 
@@ -175,6 +186,10 @@ public class AirbnbDaoImpl {
 		}
 		return entityManager.createQuery( "FROM Property p WHERE p.id IN :propertyIds",
 				Property.class ).setParameter( "propertyIds", propertyIds ).getResultList();
+
+		//TODO: FIRST CHECK from the availability and collect the ids from there
+		// TODO: Also check the other filters as well!
+
 	}
 
 }
