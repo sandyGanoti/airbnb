@@ -33,10 +33,13 @@ public class AirbnbDaoImpl {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public List<Property> getPropertiesByHost( final long hostId ) {
-		return entityManager.createQuery( "FROM Property p where hostId = :hostId", Property.class )
-				.setParameter( "hostId", hostId )
-				.getResultList();
+	public Optional<Property> getPropertyByHost( final long hostId ) {
+		try {
+			return Optional.of( entityManager.createQuery( "FROM Property p where hostId = :hostId",
+					Property.class ).setParameter( "hostId", hostId ).getSingleResult() );
+		} catch ( NoResultException e ) {
+			return Optional.empty();
+		}
 	}
 
 	public List<Image> getPropertyImages( final long propertyId ) {
@@ -190,6 +193,7 @@ public class AirbnbDaoImpl {
 		//TODO: FIRST CHECK from the availability and collect the ids from there
 		// TODO: Also check the other filters as well!
 
+		//TODO: SAME CHECK should be done on booking process as well!
 	}
 
 }

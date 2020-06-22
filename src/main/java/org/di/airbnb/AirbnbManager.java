@@ -283,14 +283,16 @@ public class AirbnbManager {
 		return pendingUser.isPresent() && pendingUser.get().getUsername().equals( username );
 	}
 
-	public List<PropertyModel> getPropertiesByHost( final long hostId ) {
-		List<PropertyModel> properties = modelMapper.map( airbnbDao.getPropertiesByHost( hostId ),
-				List.class );
-		properties.forEach( property -> {
-			Image image = imageCache.getUnchecked( property.getId() );
-			property.setImage( image != null ? modelMapper.map( image, ImageModel.class ) : null );
-		} );
-		return properties;
+	public Optional<PropertyModel> getPropertyByHost( final long hostId ) {
+		PropertyModel propertyModel = null;
+		Optional<Property> property = airbnbDao.getPropertyByHost( hostId );
+		if ( property.isPresent() ) {
+			propertyModel = modelMapper.map( property.get(), PropertyModel.class );
+			Image image = imageCache.getUnchecked( propertyModel.getId() );
+			propertyModel.setImage(
+					image != null ? modelMapper.map( image, ImageModel.class ) : null );
+		}
+		return propertyModel == null ? Optional.empty() : Optional.of( propertyModel );
 	}
 
 	public List<PropertyModel> getUserBookings( final long hostId ) {

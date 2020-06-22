@@ -192,14 +192,16 @@ public class AirbnbController {
 	*/
 	@GetMapping(value = "host/{id}/properties")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<List<PropertyModel>> getPropertiesByHost(
+	public ResponseEntity<PropertyModel> getPropertiesByHost(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("id") long userId ) {
 		if ( !airbnbManager.isUserAuthenticated( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
 			throw new UserNotValidException( "User cannot perform that kind of action" );
 		}
-		return new ResponseEntity<>( airbnbManager.getPropertiesByHost( userId ), HttpStatus.OK );
+		Optional<PropertyModel> propertyModel = airbnbManager.getPropertyByHost( userId );
+		return propertyModel.isPresent() ? new ResponseEntity<>( propertyModel.get(),
+				HttpStatus.OK ) : new ResponseEntity<>( HttpStatus.NOT_FOUND );
 	}
 
 	private String getUsernameFromJwt( String authorizationHeader ) {
