@@ -355,7 +355,7 @@ curl
 
 	//TODO: DO not actually delete!! Make it not available for search, booking etc!
 	// it cause how else will you keep the
-
+// SOS. Na ftiaksw na kanei delete kai ap to availability
 	/*
 	curl
 		-X "DELETE"  http://localhost:8443/airbnb/user/4/property/8/delete

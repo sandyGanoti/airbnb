@@ -11,6 +11,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
+import org.di.airbnb.AirbnbManager;
 import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.dao.entities.Booking;
 import org.di.airbnb.dao.entities.Image;
@@ -20,6 +21,8 @@ import org.di.airbnb.dao.entities.Rating;
 import org.di.airbnb.dao.entities.RentingRules;
 import org.di.airbnb.dao.entities.location.City;
 import org.di.airbnb.dao.entities.location.District;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -29,6 +32,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 @Repository
 public class AirbnbDaoImpl {
+	private static final Logger LOGGER = LoggerFactory.getLogger( AirbnbDaoImpl.class );
 	@Autowired
 	PlatformTransactionManager platformTransactionManager;
 	@PersistenceContext
@@ -172,6 +176,7 @@ public class AirbnbDaoImpl {
 				.setParameter( "fromDate", searchRequest.getFrom() )
 				.setParameter( "toDate", searchRequest.getTo() )
 				.getResultList();
+		LOGGER.error( String.valueOf( availablePropertyIds.size() ) );
 		if ( availablePropertyIds.isEmpty() ) {
 			return Collections.emptyList();
 		}
@@ -182,8 +187,11 @@ public class AirbnbDaoImpl {
 				.setParameter( "fromDate", searchRequest.getFrom() )
 				.setParameter( "toDate", searchRequest.getTo() );
 
+
 		/* not booked property ids */
 		List<Long> propertyIds = query.getResultList();
+		LOGGER.error( String.valueOf( propertyIds.size() ) );
+
 		if ( propertyIds.isEmpty() ) {
 			return Collections.emptyList();
 		}
@@ -193,6 +201,9 @@ public class AirbnbDaoImpl {
 				ids.add( propertyId );
 			}
 		} );
+		if ( propertyIds.isEmpty() ) {
+			return Collections.emptyList();
+		}
 		return entityManager.createQuery( "FROM Property p WHERE p.id IN :propertyIds",
 				Property.class ).setParameter( "propertyIds", ids ).getResultList();
 
