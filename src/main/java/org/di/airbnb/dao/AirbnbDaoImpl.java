@@ -201,7 +201,7 @@ public class AirbnbDaoImpl {
 				ids.add( propertyId );
 			}
 		} );
-		if ( propertyIds.isEmpty() ) {
+		if ( ids.isEmpty() ) {
 			return Collections.emptyList();
 		}
 		return entityManager.createQuery( "FROM Property p WHERE p.id IN :propertyIds",
