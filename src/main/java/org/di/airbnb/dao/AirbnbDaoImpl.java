@@ -176,7 +176,7 @@ public class AirbnbDaoImpl {
 				.setParameter( "fromDate", searchRequest.getFrom() )
 				.setParameter( "toDate", searchRequest.getTo() )
 				.getResultList();
-		LOGGER.error( String.valueOf( availablePropertyIds.size() ) );
+		LOGGER.error(  availablePropertyIds.toString() );
 		if ( availablePropertyIds.isEmpty() ) {
 			return Collections.emptyList();
 		}
@@ -190,7 +190,7 @@ public class AirbnbDaoImpl {
 
 		/* not booked property ids */
 		List<Long> propertyIds = query.getResultList();
-		LOGGER.error( String.valueOf( propertyIds.size() ) );
+		LOGGER.error( propertyIds.toString() );
 
 		if ( propertyIds.isEmpty() ) {
 			return Collections.emptyList();
@@ -201,7 +201,7 @@ public class AirbnbDaoImpl {
 				ids.add( propertyId );
 			}
 		} );
-		LOGGER.error( String.valueOf( ids.size() ) );
+		LOGGER.error( ids.toString() );
 		if ( ids.isEmpty() ) {
 			return Collections.emptyList();
 		}
