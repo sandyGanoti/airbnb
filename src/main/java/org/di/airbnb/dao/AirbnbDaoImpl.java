@@ -201,6 +201,7 @@ public class AirbnbDaoImpl {
 				ids.add( propertyId );
 			}
 		} );
+		LOGGER.error( String.valueOf( ids.size() ) );
 		if ( ids.isEmpty() ) {
 			return Collections.emptyList();
 		}
