@@ -20,6 +20,7 @@ import org.di.airbnb.api.request.property.PropertyCreationRequest;
 import org.di.airbnb.api.request.property.PropertyUpdateRequest;
 import org.di.airbnb.api.response.JwtResponse;
 import org.di.airbnb.assemblers.UsernamePasswordModel;
+import org.di.airbnb.assemblers.booking.BookingModel;
 import org.di.airbnb.assemblers.image.ImageModel;
 import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
@@ -221,7 +222,7 @@ public class AirbnbController {
 	*/
 	@GetMapping(value = "user/{id}/bookings")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<List<PropertyModel>> getUserBookings(
+	public ResponseEntity<List<BookingModel>> getUserBookings(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("id") long userId ) {
 		if ( !airbnbManager.isUserAuthenticated( userId,
@@ -352,13 +353,16 @@ curl
 		return new ResponseEntity<>( "Property updated", HttpStatus.CREATED );
 	}
 
+	//TODO: DO not actually delete!! Make it not available for search, booking etc!
+	// it cause how else will you keep the
+
 	/*
 	curl
 		-X "DELETE"  http://localhost:8443/airbnb/user/4/property/8/delete
 		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkcHcxIiwiaWF0IjoxNTkxNTQzNjk3LCJleHAiOjE1OTE2MzAwOTd9.C-2VSjy-q4w845llI5fQstGX-dmDZkHbuPBNWhMch98XO9A9kv2MaYhru53A8mCzsfoG-HjqQz3nWO_ttWWjTg"
 	*/
 	@DeleteMapping(value = "user/{userId}/property/{propertyId}/delete")
-	public ResponseEntity<?> deleteAuction(
+	public ResponseEntity<?> deleteProperty(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId, @PathVariable("propertyId") long propertyId ) {
 		if ( !airbnbManager.isUserAuthenticated( userId,

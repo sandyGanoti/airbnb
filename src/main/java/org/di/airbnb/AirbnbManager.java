@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -28,6 +30,7 @@ import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
 import org.di.airbnb.api.request.property.PropertyCreationRequest;
 import org.di.airbnb.api.request.property.PropertyUpdateRequest;
+import org.di.airbnb.assemblers.booking.BookingModel;
 import org.di.airbnb.assemblers.image.ImageModel;
 import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
@@ -295,8 +298,21 @@ public class AirbnbManager {
 		return propertyModel == null ? Optional.empty() : Optional.of( propertyModel );
 	}
 
-	public List<PropertyModel> getUserBookings( final long hostId ) {
-		return modelMapper.map( airbnbDao.getTenantBookings( hostId ), List.class );
+	public List<BookingModel> getUserBookings( final long hostId ) {
+		List<Booking> bookings = airbnbDao.getTenantBookings( hostId );
+		if ( bookings.isEmpty() ) {
+			return Collections.emptyList();
+		}
+
+		List<Property> properties = propertyRepository.findAllById(
+				bookings.stream().map( Booking::getPropertyId ).collect( Collectors.toList() ) );
+		Map<Long, String> propertyName = properties.stream()
+				.collect( Collectors.toMap( Property::getId, Property::getName ) );
+		return bookings.stream()
+				.map( booking -> new BookingModel( booking.getId(), booking.getTenantId(),
+						booking.getPropertyId(), booking.getFromDatetime(), booking.getToDatetime(),
+						booking.getCreatedAt(), propertyName.get( booking.getPropertyId() ) ) )
+				.collect( Collectors.toList() );
 	}
 
 	public Optional<UserModel> getUserInfo( final long userId ) {

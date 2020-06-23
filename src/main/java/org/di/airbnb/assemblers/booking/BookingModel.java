@@ -1,6 +1,6 @@
 package org.di.airbnb.assemblers.booking;
 
-import java.time.Instant;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -23,8 +23,8 @@ public class BookingModel {
 	private long id;
 	private long tenantId;
 	private long propertyId;
-	private Instant fromDatetime;
-	private Instant toDatetime;
-	private Instant createdAt;
-
+	private Date fromDatetime;
+	private Date toDatetime;
+	private Date createdAt;
+	private String propertyName;
 }
