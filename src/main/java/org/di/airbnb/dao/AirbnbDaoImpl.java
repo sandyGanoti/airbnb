@@ -1,5 +1,6 @@
 package org.di.airbnb.dao;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -176,9 +177,8 @@ public class AirbnbDaoImpl {
 		}
 
 		TypedQuery<Long> query = entityManager.createQuery(
-				"SELECT notBooked.propertyId FROM Booking notBooked WHERE notBooked.propertyId IN :availablePropertyIds AND notBooked.propertyId NOT IN (SELECT b.propertyId from Booking b WHERE (b.fromDatetime >= :fromDate and b.toDatetime <= :toDate) or (:fromDate >= b.fromDatetime and :toDate <= b.toDatetime) or (:toDate >= b.fromDatetime and :fromDate <= b.toDatetime) )",
+				"SELECT notBooked.propertyId FROM Booking notBooked WHERE notBooked.propertyId NOT IN (SELECT b.propertyId from Booking b WHERE (b.fromDatetime >= :fromDate and b.toDatetime <= :toDate) or (:fromDate >= b.fromDatetime and :toDate <= b.toDatetime) or (:toDate >= b.fromDatetime and :fromDate <= b.toDatetime) )",
 				Long.class )
-				.setParameter( "availablePropertyIds", availablePropertyIds )
 				.setParameter( "fromDate", searchRequest.getFrom() )
 				.setParameter( "toDate", searchRequest.getTo() );
 
@@ -187,8 +187,14 @@ public class AirbnbDaoImpl {
 		if ( propertyIds.isEmpty() ) {
 			return Collections.emptyList();
 		}
+		List<Long> ids = new ArrayList<>();
+		propertyIds.forEach( propertyId -> {
+			if ( availablePropertyIds.contains( propertyId ) ) {
+				ids.add( propertyId );
+			}
+		} );
 		return entityManager.createQuery( "FROM Property p WHERE p.id IN :propertyIds",
-				Property.class ).setParameter( "propertyIds", propertyIds ).getResultList();
+				Property.class ).setParameter( "propertyIds", ids ).getResultList();
 
 		//TODO: FIRST CHECK from the availability and collect the ids from there
 		// TODO: Also check the other filters as well!
