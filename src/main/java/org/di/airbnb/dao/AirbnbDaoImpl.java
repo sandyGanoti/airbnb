@@ -72,7 +72,7 @@ public class AirbnbDaoImpl {
 	}
 
 	public List<Property> getPopularPlaces( final long userId ) {
-		return entityManager.createQuery( "FROM Property p", Property.class ).getResultList();
+		return entityManager.createQuery( "FROM Property p where historic=0", Property.class ).getResultList();
 	}
 
 	@Transactional

@@ -616,6 +616,7 @@ public class AirbnbManager {
 		messagingRepository.save( messaging );
 	}
 
+	//TODO: add a review only if there is no review after the most recent booking
 	public void reviewProperty( final long raterId, final long propertyId,
 			final ReviewPropertyCreationRequest reviewPropertyCreationRequest ) {
 		if ( !airbnbDao.getPropertyBookingsByUser( raterId, propertyId ).isEmpty() ) {
@@ -646,6 +647,11 @@ public class AirbnbManager {
 	}
 
 	public void bookProperty( final long userId, final BookingRequest bookingRequest ) {
+		Property property = propertyRepository.getOne( bookingRequest.getPropertyId() );
+		if ( property == null || property.isHistoric() ) {
+			throw new PropertyNotFoundException( "Property do not exist" );
+		}
+
 		Booking booking = new Booking();
 		booking.setCreatedAt( Date.from( Instant.now() ) );
 		booking.setFromDatetime( bookingRequest.getFrom() );

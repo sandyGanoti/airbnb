@@ -355,7 +355,7 @@ curl
 
 	//TODO: DO not actually delete!! Make it not available for search, booking etc!
 	// it cause how else will you keep the
-// SOS. Na ftiaksw na kanei delete kai ap to availability
+	// SOS. Na ftiaksw na kanei delete kai ap to availability
 	/*
 	curl
 		-X "DELETE"  http://localhost:8443/airbnb/user/4/property/8/delete
@@ -585,97 +585,5 @@ curl
 	public ResponseEntity<List<DistrictModel>> getDistricts( @PathVariable("cityId") long cityId ) {
 		return new ResponseEntity<>( airbnbManager.getDistrictsByCity( cityId ), HttpStatus.OK );
 	}
-
-	//	/******* MESSAGES ********/
-	//	//	curl -k https://localhost:8443/messages/unread/recipient --header 'X-User-Id':1
-	//	@GetMapping(value = "/messages/unread/recipient")
-	//	@ResponseStatus(HttpStatus.OK)
-	//	public boolean isNewMessage( @RequestHeader("X-User-Id") String userId ) {
-	//		UserSubModel user;
-	//		try {
-	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
-	//		} catch ( EntityNotFoundException e ) {
-	//			throw new UserNotFoundException( String.format( "User with id %d not found", userId ) );
-	//		}
-	//
-	//		return messagingService.isNewMessage( user.getId() );
-	//	}
-	//
-	//	//	curl -k https://localhost:8443/users/messages/sent/info --header 'X-User-Id':1
-	//	@GetMapping(value = "users/messages/sent/info")
-	//	@ResponseStatus(HttpStatus.OK)
-	//	public List<MessagingLimitedDTO> getSentInfoBySender(
-	//			@RequestHeader("X-User-Id") String userId ) {
-	//		UserSubModel user;
-	//		try {
-	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
-	//		} catch ( EntityNotFoundException e ) {
-	//			throw new UserNotFoundException( String.format( "User with id %d not found", userId ) );
-	//		}
-	//		return messagingService.getSentInfoBySenderId( user.getId() );
-	//	}
-	//
-	//	//	curl -k https://localhost:8443/users/messages/incoming/info --header 'X-User-Id':1
-	//	@GetMapping(value = "users/messages/incoming/info")
-	//	@ResponseStatus(HttpStatus.OK)
-	//	public List<MessagingLimitedDTO> getIncomingInfoBySender(
-	//			@RequestHeader("X-User-Id") String userId ) {
-	//		UserSubModel user;
-	//		try {
-	//			user = userRepository.getUserInfo( Long.parseLong( userId ) );
-	//		} catch ( EntityNotFoundException e ) {
-	//			throw new UserNotFoundException( String.format( "User with id %d not found", userId ) );
-	//		}
-	//
-	//		return messagingService.getIncomingInfoByRecipientId( user.getId() );
-	//	}
-	//
-	//	//	curl -k https://localhost:8443/messages/to/3 --header 'X-User-Id':1
-	//	@GetMapping(value = "messages/to/{recipientId}")
-	//	@ResponseStatus(HttpStatus.OK)
-	//	public List<MessagingDTO> getChatBySenderAndRecipient(
-	//			@RequestHeader("X-User-Id") String userId,
-	//			@PathVariable("recipientId") Long recipientId ) {
-	//		try {
-	//			userRepository.getUserInfo( Long.parseLong( userId ) );
-	//			userRepository.getUserInfo( recipientId );
-	//		} catch ( EntityNotFoundException e ) {
-	//			throw new UserNotFoundException( String.format( "User with id %d not found", userId ) );
-	//		}
-	//
-	//		return messagingService.getChatBySenderIdAndRecipientId( Long.parseLong( userId ),
-	//				recipientId );
-	//	}
-	//
-	//	//	set messages of a chat as READ
-	//	//	curl -H "Content-Type: application/json" --header 'X-User-Id':1 -X POST -k https://localhost:8443/messages/read/to/2
-	//	@PostMapping(value = "messages/read/to/{recipientId}")
-	//	@ResponseStatus(HttpStatus.OK)
-	//	public boolean readChatBySenderAndRecipient( @RequestHeader("X-User-Id") String userId,
-	//			@PathVariable("recipientId") Long recipientId ) {
-	//		try {
-	//			userRepository.getUserInfo( Long.parseLong( userId ) );
-	//			userRepository.getUserInfo( recipientId );
-	//		} catch ( EntityNotFoundException e ) {
-	//			throw new UserNotFoundException( String.format( "User with id %d not found", userId ) );
-	//		}
-	//
-	//		return messagingService.readChatBySenderIdAndRecipientId( Long.parseLong( userId ),
-	//				recipientId );
-	//	}
-	//
-	//	//	curl -d '{"sender": 1, "recipient": 3, "messageBody": "hopus"}'  --header 'X-User-Id':1  -H "Content-Type: application/json"  -X POST -k https://localhost:8443/message
-	//	@PostMapping(value = "message")
-	//	@ResponseStatus(HttpStatus.CREATED)
-	//	public Long createMessage( @RequestHeader("X-User-Id") String userId,
-	//			@RequestBody MessagingDTO messagingDTO ) {
-	//		try {
-	//			userRepository.getUserInfo( Long.parseLong( userId ) );
-	//		} catch ( EntityNotFoundException e ) {
-	//			throw new UserNotFoundException( String.format( "User with id %d not found", userId ) );
-	//		}
-	//
-	//		return messagingService.create( messagingDTO );
-	//	}
 
 }
