@@ -383,7 +383,7 @@ public class AirbnbManager {
 
 	public Optional<PropertyWithRentingRules> getPropertyById( final long propertyId ) {
 		Property property = propertyRepository.getOne( propertyId );
-		if ( property == null ) {
+		if ( property == null || property.isHistoric() ) {
 			return Optional.empty();
 		}
 		RentingRules rentingRules = airbnbDao.getPropertyRentingRules( propertyId );
@@ -422,6 +422,10 @@ public class AirbnbManager {
 
 	public void savePropertyImage( final MultipartFile file, final long propertyId )
 			throws IOException {
+		Property property = propertyRepository.getOne( propertyId );
+		if ( property == null || property.isHistoric() ) {
+			throw new PropertyNotFoundException( "Property do not exist" );
+		}
 		Image image = new Image( file.getOriginalFilename(), file.getContentType(),
 				String.valueOf( propertyId ), compressBytes( file.getBytes() ) );
 		//		imageRepository.save( image );
@@ -475,11 +479,8 @@ public class AirbnbManager {
 		if ( property.getHostId() != userId ) {
 			throw new InvalidUserActionException();
 		}
-		RentingRules rentingRules = airbnbDao.getPropertyRentingRules( propertyId );
-		if ( rentingRules != null ) {
-			rentingRulesRepository.delete( rentingRules );
-		}
-		propertyRepository.delete( property );
+		property.setHistoric( true );
+		propertyRepository.save( property );
 	}
 
 	public void updateProperty( final @NotNull PropertyUpdateRequest propertyUpdateRequest,
@@ -487,6 +488,9 @@ public class AirbnbManager {
 		Optional<Property> propertyIsPresent = propertyRepository.findById( propertyId );
 		if ( propertyIsPresent.isPresent() ) {
 			Property property = propertyIsPresent.get();
+			if ( property.isHistoric() ) {
+				throw new PropertyNotFoundException( "Property do not exist" );
+			}
 			RentingRules rentingRules = airbnbDao.getPropertyRentingRules( propertyId );
 
 			if ( !Strings.isNullOrEmpty( propertyUpdateRequest.getName() ) ) {

@@ -195,7 +195,7 @@ public class Property {
 		this.longitude = longitude;
 	}
 
-	public Boolean getHistoric() {
+	public Boolean isHistoric() {
 		return historic;
 	}
 
