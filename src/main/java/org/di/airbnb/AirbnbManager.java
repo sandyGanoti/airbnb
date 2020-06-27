@@ -282,7 +282,7 @@ public class AirbnbManager {
 		}
 	}
 
-	public boolean isUserAuthenticated( final long userId, final String username ) {
+	public boolean isUserAuthorized( final long userId, final String username ) {
 		Optional<User> pendingUser = userRepository.findById( userId );
 		return pendingUser.isPresent() && pendingUser.get().getUsername().equals( username );
 	}
@@ -623,6 +623,13 @@ public class AirbnbManager {
 	//TODO: add a review only if there is no review after the most recent booking
 	public void reviewProperty( final long raterId, final long propertyId,
 			final ReviewPropertyCreationRequest reviewPropertyCreationRequest ) {
+		Property property = propertyRepository.getOne( propertyId );
+		if ( property == null || property.isHistoric() ) {
+			throw new PropertyNotFoundException( "Property you are trying to review do not exist" );
+		}
+		if ( property.getHostId() == raterId ) {
+			throw new InvalidUserActionException( "Host cannot review its own property" );
+		}
 		if ( !airbnbDao.getPropertyBookingsByUser( raterId, propertyId ).isEmpty() ) {
 			Rating rating = new Rating();
 			rating.setMark( reviewPropertyCreationRequest.getMark() );

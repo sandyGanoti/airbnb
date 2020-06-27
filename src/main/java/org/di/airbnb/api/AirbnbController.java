@@ -35,6 +35,7 @@ import org.di.airbnb.assemblers.user.UserModel;
 import org.di.airbnb.constant.Role;
 import org.di.airbnb.dao.entities.User;
 import org.di.airbnb.exceptions.api.InvalidUserActionException;
+import org.di.airbnb.exceptions.api.UserAnauthorizedException;
 import org.di.airbnb.exceptions.api.UserNotFoundException;
 import org.di.airbnb.exceptions.api.UserNotValidException;
 import org.di.airbnb.security.JwtUtils;
@@ -107,6 +108,8 @@ public class AirbnbController {
 			@RequestBody @Valid @NotNull UsernamePasswordModel loginRequest ) {
 		Optional<User> userOpt = airbnbManager.getUserByUsername( loginRequest.getUsername() );
 		if ( !userOpt.isPresent() ) {
+			LOGGER.info( String.format( "User with username %s not found",
+					loginRequest.getUsername() ) );
 			throw new UserNotFoundException( "User do not exist" );
 		} else {
 			return ResponseEntity.ok( new JwtResponse(
@@ -137,8 +140,9 @@ public class AirbnbController {
 			@PathVariable("id") long userId,
 			@RequestBody @NotNull UserUpdateRequest userUpdateRequest ) {
 		final String usernameFromJwt = getUsernameFromJwt( authorizationHeader );
-		if ( !airbnbManager.isUserAuthenticated( userId, usernameFromJwt ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+		if ( !airbnbManager.isUserAuthorized( userId, usernameFromJwt ) ) {
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 		airbnbManager.updateUser( userUpdateRequest, userId );
 
@@ -161,8 +165,9 @@ public class AirbnbController {
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("id") long userId ) {
 		final String usernameFromJwt = getUsernameFromJwt( authorizationHeader );
-		if ( !airbnbManager.isUserAuthenticated( userId, usernameFromJwt ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+		if ( !airbnbManager.isUserAuthorized( userId, usernameFromJwt ) ) {
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 		airbnbManager.updateUserToBeHost( userId );
 		return new ResponseEntity<>( HttpStatus.OK );
@@ -181,6 +186,7 @@ public class AirbnbController {
 		if ( user.isPresent() ) {
 			return new ResponseEntity<>( user.get(), HttpStatus.OK );
 		} else {
+			LOGGER.info( String.format( "User with id: %s cannot be found", userId ) );
 			return new ResponseEntity<>( HttpStatus.NOT_FOUND );
 		}
 	}
@@ -196,9 +202,10 @@ public class AirbnbController {
 	public ResponseEntity<PropertyModel> getPropertiesByHost(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("id") long userId ) {
-		if ( !airbnbManager.isUserAuthenticated( userId,
+		if ( !airbnbManager.isUserAuthorized( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 		Optional<PropertyModel> propertyModel = airbnbManager.getPropertyByHost( userId );
 		return propertyModel.isPresent() ? new ResponseEntity<>( propertyModel.get(),
@@ -225,9 +232,10 @@ public class AirbnbController {
 	public ResponseEntity<List<BookingModel>> getUserBookings(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("id") long userId ) {
-		if ( !airbnbManager.isUserAuthenticated( userId,
+		if ( !airbnbManager.isUserAuthorized( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 		return new ResponseEntity<>( airbnbManager.getUserBookings( userId ), HttpStatus.OK );
 	}
@@ -269,9 +277,10 @@ curl
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("id") long userId, @RequestParam("imageFile") MultipartFile file )
 			throws IOException {
-		if ( !airbnbManager.isUserAuthenticated( userId,
+		if ( !airbnbManager.isUserAuthorized( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 		airbnbManager.saveAvatar( file, userId );
 		return new ResponseEntity<>( "Avatar updated", HttpStatus.OK );
@@ -288,9 +297,10 @@ curl
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId, @PathVariable("propertyId") long propertyId,
 			@RequestParam("imageFile") MultipartFile file ) throws IOException {
-		if ( !airbnbManager.isUserAuthenticated( userId,
+		if ( !airbnbManager.isUserAuthorized( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 		airbnbManager.savePropertyImage( file, propertyId );
 		return new ResponseEntity<>( "Property image uploaded", HttpStatus.OK );
@@ -323,9 +333,10 @@ curl
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId,
 			@RequestBody @Valid @NotNull PropertyCreationRequest propertyCreationRequest ) {
-		if ( !airbnbManager.isUserAuthenticated( userId,
+		if ( !airbnbManager.isUserAuthorized( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 		long createdPropertyId = airbnbManager.createProperty( propertyCreationRequest, userId );
 
@@ -344,9 +355,10 @@ curl
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId, @PathVariable("propertyId") long propertyId,
 			@RequestBody @NotNull PropertyUpdateRequest propertyUpdateRequest ) {
-		if ( !airbnbManager.isUserAuthenticated( userId,
+		if ( !airbnbManager.isUserAuthorized( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 		airbnbManager.updateProperty( propertyUpdateRequest, propertyId );
 
@@ -365,9 +377,10 @@ curl
 	public ResponseEntity<?> deleteProperty(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId, @PathVariable("propertyId") long propertyId ) {
-		if ( !airbnbManager.isUserAuthenticated( userId,
+		if ( !airbnbManager.isUserAuthorized( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 		try {
 			airbnbManager.deleteProperty( userId, propertyId );
@@ -388,9 +401,10 @@ curl
 	public ResponseEntity<HashMap<Long, List<MessagingModel>>> getMessages(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId ) {
-		if ( !airbnbManager.isUserAuthenticated( userId,
+		if ( !airbnbManager.isUserAuthorized( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 
 		return new ResponseEntity<>( airbnbManager.getMessages( userId ), HttpStatus.OK );
@@ -408,9 +422,10 @@ curl
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId, @PathVariable("recipientId") long recipientId,
 			@RequestBody @Valid @NotNull MessagingCreationRequest messagingCreationRequest ) {
-		if ( !airbnbManager.isUserAuthenticated( userId,
+		if ( !airbnbManager.isUserAuthorized( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 		if ( userId == recipientId ) {
 			throw new UserNotValidException( "User cannot send a message to itself." );
@@ -432,9 +447,10 @@ curl
 			@PathVariable("userId") long userId, @PathVariable("propertyId") long propertyId,
 			@RequestBody @Valid @NotNull ReviewPropertyCreationRequest reviewPropertyCreationRequest ) {
 
-		if ( !airbnbManager.isUserAuthenticated( userId,
+		if ( !airbnbManager.isUserAuthorized( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 		try {
 			airbnbManager.reviewProperty( userId, propertyId, reviewPropertyCreationRequest );
@@ -479,9 +495,10 @@ curl
 	@GetMapping(value = "/user/{userId}/ishost")
 	public ResponseEntity<?> isUserHost( @RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId ) {
-		if ( !airbnbManager.isUserAuthenticated( userId,
+		if ( !airbnbManager.isUserAuthorized( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 		return new ResponseEntity<>(
 				airbnbManager.getUserInfo( userId ).get().getRole().equals( Role.TENANT_AND_HOST ),
@@ -524,9 +541,10 @@ curl
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId,
 			@RequestBody @Valid @NotNull BookingRequest bookingRequest ) {
-		if ( !airbnbManager.isUserAuthenticated( userId,
+		if ( !airbnbManager.isUserAuthorized( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 		airbnbManager.bookProperty( userId, bookingRequest );
 
@@ -545,9 +563,10 @@ curl
 	public ResponseEntity<List<PropertyBasicInfo>> getPopularPlaces(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId ) {
-		if ( !airbnbManager.isUserAuthenticated( userId,
+		if ( !airbnbManager.isUserAuthorized( userId,
 				getUsernameFromJwt( authorizationHeader ) ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
 		}
 
 		return new ResponseEntity<>( airbnbManager.getPopularPlaces( userId ), HttpStatus.OK );

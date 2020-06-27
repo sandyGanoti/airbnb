@@ -7,9 +7,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.FORBIDDEN)
 public class InvalidUserActionException extends RuntimeException {
 
-  private static final long serialVersionUID = 3400248338734389783L;
+	private static final long serialVersionUID = 3400248338734389783L;
 
-  public InvalidUserActionException() {
-    super();
-  }
+	public InvalidUserActionException() {
+		super();
+	}
+
+	public InvalidUserActionException( String message ) {
+		super( message );
+	}
 }
