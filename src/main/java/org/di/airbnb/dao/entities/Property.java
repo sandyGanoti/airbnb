@@ -36,6 +36,7 @@ public class Property {
 	private String freeText;
 	private Double latitude;
 	private Double longitude;
+	private Boolean historic;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -194,6 +195,14 @@ public class Property {
 		this.longitude = longitude;
 	}
 
+	public Boolean getHistoric() {
+		return historic;
+	}
+
+	public void setHistoric( final Boolean historic ) {
+		this.historic = historic;
+	}
+
 	@Override
 	public boolean equals( final Object o ) {
 		if ( this == o ) {
@@ -203,27 +212,27 @@ public class Property {
 			return false;
 		}
 		final Property property = (Property) o;
-		return id == property.id && name.equals(
-				property.name ) && propertyType == property.propertyType && countryId == property.countryId && cityId == property.cityId && districtId == property.districtId && hostId == property.hostId && price
-				.equals( property.price ) && beds.equals( property.beds ) && bedrooms.equals(
+		return id == property.id && countryId == property.countryId && cityId == property.cityId && districtId == property.districtId && hostId == property.hostId && name
+				.equals( property.name ) && propertyType == property.propertyType && price.equals(
+				property.price ) && extraPricePerPerson.equals(
+				property.extraPricePerPerson ) && beds.equals( property.beds ) && bedrooms.equals(
 				property.bedrooms ) && bathrooms.equals( property.bathrooms ) && minimumDays.equals(
 				property.minimumDays ) && maximumTenants.equals(
 				property.maximumTenants ) && propertySize.equals(
-				property.propertySize ) && extraPricePerPerson.equals(
-				property.extraPricePerPerson ) && freeText.equals(
-				property.freeText ) && latitude.equals( property.latitude ) && longitude.equals(
-				property.longitude );
+				property.propertySize ) && freeText.equals( property.freeText ) && latitude.equals(
+				property.latitude ) && longitude.equals( property.longitude ) && historic.equals(
+				property.historic );
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash( id, name, propertyType, countryId, cityId, districtId, hostId, price,
-				beds, bedrooms, bathrooms, minimumDays, extraPricePerPerson, maximumTenants,
-				propertySize, freeText, latitude, longitude );
+				extraPricePerPerson, beds, bedrooms, bathrooms, minimumDays, maximumTenants,
+				propertySize, freeText, latitude, longitude, historic );
 	}
 
 	@Override
 	public String toString() {
-		return "Property{" + "id=" + id + ", name='" + name + '\'' + ", propertyType=" + propertyType + ", countryId=" + countryId + ", cityId=" + cityId + ", districtId=" + districtId + ", hostId=" + hostId + ", price=" + price + ", extraPricePerPerson=" + extraPricePerPerson + ", beds=" + beds + ", bedrooms=" + bedrooms + ", bathrooms=" + bathrooms + ", minimumDays=" + minimumDays + ", maximumTenants=" + maximumTenants + ", propertySize=" + propertySize + ", freeText='" + freeText + '\'' + ", latitude=" + latitude + ", longitude=" + longitude + '}';
+		return "Property{" + "id=" + id + ", name='" + name + '\'' + ", propertyType=" + propertyType + ", countryId=" + countryId + ", cityId=" + cityId + ", districtId=" + districtId + ", hostId=" + hostId + ", price=" + price + ", extraPricePerPerson=" + extraPricePerPerson + ", beds=" + beds + ", bedrooms=" + bedrooms + ", bathrooms=" + bathrooms + ", minimumDays=" + minimumDays + ", maximumTenants=" + maximumTenants + ", propertySize=" + propertySize + ", freeText='" + freeText + '\'' + ", latitude=" + latitude + ", longitude=" + longitude + ", historic=" + historic + '}';
 	}
 }

@@ -40,7 +40,7 @@ public class AirbnbDaoImpl {
 
 	public Optional<Property> getPropertyByHost( final long hostId ) {
 		try {
-			return Optional.of( entityManager.createQuery( "FROM Property p where hostId = :hostId",
+			return Optional.of( entityManager.createQuery( "FROM Property p where hostId = :hostId and historic=0",
 					Property.class ).setParameter( "hostId", hostId ).getSingleResult() );
 		} catch ( NoResultException e ) {
 			return Optional.empty();
@@ -182,31 +182,29 @@ public class AirbnbDaoImpl {
 		}
 
 		TypedQuery<Long> query = entityManager.createQuery(
-				"SELECT notBooked.propertyId FROM Booking notBooked WHERE notBooked.propertyId NOT IN (SELECT b.propertyId from Booking b WHERE (b.fromDatetime >= :fromDate and b.toDatetime <= :toDate) or (:fromDate >= b.fromDatetime and :toDate <= b.toDatetime) or (:toDate >= b.fromDatetime and :fromDate <= b.toDatetime) )",
+				"SELECT notBooked.propertyId FROM Booking notBooked RIGHT JOIN Property p ON p.id=notBooked.propertyId WHERE p.id IN :availablePropertyIds and notBooked.propertyId NOT IN "
+						+ "(SELECT b.propertyId from Booking b WHERE "
+						+ "(b.fromDatetime >= :fromDate and b.toDatetime <= :toDate) or "
+						+ "(:fromDate >= b.fromDatetime and :toDate <= b.toDatetime) or "
+						+ "(:toDate >= b.fromDatetime and :fromDate <= b.toDatetime) )",
 				Long.class )
 				.setParameter( "fromDate", searchRequest.getFrom() )
-				.setParameter( "toDate", searchRequest.getTo() );
+				.setParameter( "toDate", searchRequest.getTo() )
+				.setParameter( "availablePropertyIds", availablePropertyIds);
 
 
 		/* not booked property ids */
 		List<Long> propertyIds = query.getResultList();
 		LOGGER.error( propertyIds.toString() );
-
 		if ( propertyIds.isEmpty() ) {
 			return Collections.emptyList();
 		}
-		List<Long> ids = new ArrayList<>();
-		propertyIds.forEach( propertyId -> {
-			if ( availablePropertyIds.contains( propertyId ) ) {
-				ids.add( propertyId );
-			}
-		} );
-		LOGGER.error( ids.toString() );
-		if ( ids.isEmpty() ) {
-			return Collections.emptyList();
-		}
+
+
+
+
 		return entityManager.createQuery( "FROM Property p WHERE p.id IN :propertyIds",
-				Property.class ).setParameter( "propertyIds", ids ).getResultList();
+				Property.class ).setParameter( "propertyIds", propertyIds ).getResultList();
 
 		//TODO: FIRST CHECK from the availability and collect the ids from there
 		// TODO: Also check the other filters as well!

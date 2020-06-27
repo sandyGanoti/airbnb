@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `property_to_rent` (
     `free_text` TEXT DEFAULT NULL,
     `latitude` DECIMAL(10, 8) NOT NULL,
     `longitude` DECIMAL(11, 8) NOT NULL,
+    `historic` TINYINT(1) DEFAULT FALSE,
     PRIMARY KEY(`id`),
     UNIQUE KEY (`name`),
     UNIQUE KEY (`host_id`),
@@ -154,10 +155,10 @@ INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number,
 INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(2, "$2a$10$AnrFPILx2oOeFVgVgpovj.lQXi9oMMY2r8nyAq1mhO7LpCF9K8ZS2", "user2", "user2", "user2", "1234", "TENANT", now(), "user2@user2.com");
 INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(3, "$2a$10$JHyawNxERXu8XgSQsy/uXe/EdU8Nr3SCEgm0MxFN5pS2JRwk8bx6u", "user3", "user3", "user3", "1234", "TENANT_AND_HOST", now(), "user3@user3.com");
 
-INSERT INTO `property_to_rent`(id, name, property_type, country_id, city_id, district_id, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text, latitude, longitude) values(1, "A great place to stay by the sea", "ROOM", 1, 1, 2, 1, 29.34, 2, 2, 2, 4,  4, 32, NULL, 40.71727401, -74.00898606);
-INSERT INTO `property_to_rent`(id, name, property_type, country_id, city_id, district_id, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text, latitude, longitude) values(2, "A nice house", "HOUSE", 1, 1, 1, 2, 29.34, 5, 3, 2, 2, 3, 30, NULL, 40.71727401, -74.00898606);
-INSERT INTO `property_to_rent`(id, name, property_type, country_id, city_id, district_id, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text, latitude, longitude) values(3, "Another nice house", "HOUSE", 1, 1, 3, 3, 200, 1, 1, 1, 1, 1, 28, "A nice place to stay", 40.71727401, -74.00898606);
-INSERT INTO `property_to_rent`(id, name, property_type, country_id, city_id, district_id, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text, latitude, longitude) values(4, "A beautiful house", "ROOM", 1, 1, 4, 1, 32, 1, 1, 3, 1, 3, 34, "Another nice place to stay", 40.71727401, -74.00898606);
+INSERT INTO `property_to_rent`(id, name, property_type, country_id, city_id, district_id, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text, latitude, longitude, historic) values(1, "A great place to stay by the sea", "ROOM", 1, 1, 2, 1, 29.34, 2, 2, 2, 4,  4, 32, NULL, 40.71727401, -74.00898606, 1);
+INSERT INTO `property_to_rent`(id, name, property_type, country_id, city_id, district_id, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text, latitude, longitude, historic) values(2, "A nice house", "HOUSE", 1, 1, 1, 2, 29.34, 5, 3, 2, 2, 3, 30, NULL, 40.71727401, -74.00898606, 1);
+INSERT INTO `property_to_rent`(id, name, property_type, country_id, city_id, district_id, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text, latitude, longitude, historic) values(3, "Another nice house", "HOUSE", 1, 1, 3, 3, 200, 1, 1, 1, 1, 1, 28, "A nice place to stay", 40.71727401, -74.00898606, 1);
+INSERT INTO `property_to_rent`(id, name, property_type, country_id, city_id, district_id, host_id, price, beds, bedrooms, bathrooms, minimum_days, maximum_tenants, property_size, free_text, latitude, longitude, historic) values(4, "A beautiful house", "ROOM", 1, 1, 4, 1, 32, 1, 1, 3, 1, 3, 34, "Another nice place to stay", 40.71727401, -74.00898606, 1);
 
 INSERT INTO `renting_rules`(property_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking_friendly, free_text) VALUES (1, 1, 1, 1, 1, 1, 1, 1, 1, NULL);
 INSERT INTO `renting_rules`(property_id, aircondition, tv, internet, living_room, kitchen, party_friendly, pet_friendly, smoking_friendly, free_text) VALUES (2, 1, 1, 0, 1, 0, 0, 1, 0, NULL);
