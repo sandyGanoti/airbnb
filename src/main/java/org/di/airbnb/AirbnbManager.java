@@ -70,6 +70,7 @@ import org.di.airbnb.exceptions.api.InvalidUserActionException;
 import org.di.airbnb.exceptions.api.PropertyNotFoundException;
 import org.di.airbnb.exceptions.api.UniqueConstraintViolationException;
 import org.di.airbnb.exceptions.api.UserNotFoundException;
+import org.di.airbnb.exceptions.api.UserNotValidException;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -448,6 +449,9 @@ public class AirbnbManager {
 	//TODO: do it in one transaction
 	public long createProperty( final PropertyCreationRequest propertyCreationRequest,
 			final long hostId ) {
+		if ( airbnbDao.ownsProperty( hostId ) ) {
+			throw new UserNotValidException( "User cannot perform that kind of action" );
+		}
 		Property property = modelMapper.map( propertyCreationRequest, Property.class );
 		property.setHostId( hostId );
 

@@ -42,8 +42,7 @@ CREATE TABLE IF NOT EXISTS `property_to_rent` (
     PRIMARY KEY(`id`),
     UNIQUE KEY (`name`),
     UNIQUE KEY (`host_id`),
-    KEY fk_property_user (host_id),
-    CONSTRAINT fk_property_user FOREIGN KEY (host_id) REFERENCES user_ (id)
+    KEY fk_property_user (host_id)
 );
 
 CREATE TABLE IF NOT EXISTS `renting_rules` (

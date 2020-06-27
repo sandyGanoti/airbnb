@@ -1,6 +1,5 @@
 package org.di.airbnb.dao;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +10,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
-import org.di.airbnb.AirbnbManager;
 import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.dao.entities.Booking;
 import org.di.airbnb.dao.entities.Image;
@@ -40,8 +38,10 @@ public class AirbnbDaoImpl {
 
 	public Optional<Property> getPropertyByHost( final long hostId ) {
 		try {
-			return Optional.of( entityManager.createQuery( "FROM Property p where hostId = :hostId and historic=0",
-					Property.class ).setParameter( "hostId", hostId ).getSingleResult() );
+			return Optional.of( entityManager.createQuery(
+					"FROM Property p where hostId = :hostId and historic=0", Property.class )
+					.setParameter( "hostId", hostId )
+					.getSingleResult() );
 		} catch ( NoResultException e ) {
 			return Optional.empty();
 		}
@@ -72,7 +72,8 @@ public class AirbnbDaoImpl {
 	}
 
 	public List<Property> getPopularPlaces( final long userId ) {
-		return entityManager.createQuery( "FROM Property p where historic=0", Property.class ).getResultList();
+		return entityManager.createQuery( "FROM Property p where historic=0", Property.class )
+				.getResultList();
 	}
 
 	@Transactional
@@ -130,6 +131,18 @@ public class AirbnbDaoImpl {
 		}
 	}
 
+	public Boolean ownsProperty( final long userId ) {
+		try {
+			entityManager.createQuery(
+					"FROM Property where hostId = :userId and historic = 0", Property.class )
+					.setParameter( "userId", String.valueOf( userId ) )
+					.getSingleResult();
+			return true;
+		} catch ( NoResultException e ) {
+			return false;
+		}
+	}
+
 	public List<Booking> getPropertyBookingsByUser( final long userId, final long propertyId ) {
 		return entityManager.createQuery(
 				"FROM Booking b where tenantId = :userId and propertyId = :propertyId",
@@ -176,21 +189,17 @@ public class AirbnbDaoImpl {
 				.setParameter( "fromDate", searchRequest.getFrom() )
 				.setParameter( "toDate", searchRequest.getTo() )
 				.getResultList();
-		LOGGER.error(  availablePropertyIds.toString() );
+		LOGGER.error( availablePropertyIds.toString() );
 		if ( availablePropertyIds.isEmpty() ) {
 			return Collections.emptyList();
 		}
 
 		TypedQuery<Long> query = entityManager.createQuery(
-				"SELECT notBooked.propertyId FROM Booking notBooked RIGHT JOIN Property p ON p.id=notBooked.propertyId WHERE p.id IN :availablePropertyIds and notBooked.propertyId NOT IN "
-						+ "(SELECT b.propertyId from Booking b WHERE "
-						+ "(b.fromDatetime >= :fromDate and b.toDatetime <= :toDate) or "
-						+ "(:fromDate >= b.fromDatetime and :toDate <= b.toDatetime) or "
-						+ "(:toDate >= b.fromDatetime and :fromDate <= b.toDatetime) )",
+				"SELECT notBooked.propertyId FROM Booking notBooked RIGHT JOIN Property p ON p.id=notBooked.propertyId WHERE p.id IN :availablePropertyIds and notBooked.propertyId NOT IN " + "(SELECT b.propertyId from Booking b WHERE " + "(b.fromDatetime >= :fromDate and b.toDatetime <= :toDate) or " + "(:fromDate >= b.fromDatetime and :toDate <= b.toDatetime) or " + "(:toDate >= b.fromDatetime and :fromDate <= b.toDatetime) )",
 				Long.class )
 				.setParameter( "fromDate", searchRequest.getFrom() )
 				.setParameter( "toDate", searchRequest.getTo() )
-				.setParameter( "availablePropertyIds", availablePropertyIds);
+				.setParameter( "availablePropertyIds", availablePropertyIds );
 
 
 		/* not booked property ids */
@@ -199,9 +208,6 @@ public class AirbnbDaoImpl {
 		if ( propertyIds.isEmpty() ) {
 			return Collections.emptyList();
 		}
-
-
-
 
 		return entityManager.createQuery( "FROM Property p WHERE p.id IN :propertyIds",
 				Property.class ).setParameter( "propertyIds", propertyIds ).getResultList();
