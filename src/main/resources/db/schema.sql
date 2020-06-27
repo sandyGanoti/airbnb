@@ -109,7 +109,8 @@ CREATE TABLE IF NOT EXISTS `messaging` (
 
 CREATE TABLE IF NOT EXISTS `image_table` (
     `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-    `typetheid` VARCHAR(250) NOT NULL,
+    `user` BIGINT(20) NULL,
+    `property` BIGINT(20) NULL,
     `name` VARCHAR(250) NOT NULL,
     `type` VARCHAR(250) NOT NULL,
     `picture` blob NOT NULL,

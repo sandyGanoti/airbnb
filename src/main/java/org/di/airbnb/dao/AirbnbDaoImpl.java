@@ -48,9 +48,8 @@ public class AirbnbDaoImpl {
 	}
 
 	public List<Image> getPropertyImages( final long propertyId ) {
-		return entityManager.createQuery( "FROM Image i where typetheid = :propertyId",
-				Image.class )
-				.setParameter( "propertyId", String.valueOf( propertyId ) )
+		return entityManager.createQuery( "FROM Image i where property = :propertyId", Image.class )
+				.setParameter( "propertyId", propertyId )
 				.getResultList();
 
 	}
@@ -109,11 +108,11 @@ public class AirbnbDaoImpl {
 			@Override
 			protected void doInTransactionWithoutResult( TransactionStatus status ) {
 				entityManager.createQuery(
-						"UPDATE Image set picture = :picture, name = :name, type = :type where typetheid = :userId" )
+						"UPDATE Image set picture = :picture, name = :name, type = :type where user = :user" )
 						.setParameter( "picture", image.getPicture() )
 						.setParameter( "type", image.getType() )
 						.setParameter( "name", image.getName() )
-						.setParameter( "userId", image.gettTpetheid() )
+						.setParameter( "user", image.getUser() )
 						.executeUpdate();
 				//				entityManager.createNativeQuery("TRUNCATE TABLE MyTable).executeUpdate();
 			}
@@ -122,10 +121,10 @@ public class AirbnbDaoImpl {
 
 	public Optional<Image> getAvatar( final long userId ) {
 		try {
-			return Optional.of( entityManager.createQuery( "FROM Image  where typetheid = :userId",
-					Image.class )
-					.setParameter( "userId", String.valueOf( userId ) )
-					.getSingleResult() );
+			return Optional.of(
+					entityManager.createQuery( "FROM Image  where user = :user", Image.class )
+							.setParameter( "user", userId )
+							.getSingleResult() );
 		} catch ( NoResultException e ) {
 			return Optional.empty();
 		}
@@ -133,8 +132,8 @@ public class AirbnbDaoImpl {
 
 	public Boolean ownsProperty( final long userId ) {
 		try {
-			entityManager.createQuery(
-					"FROM Property where hostId = :userId and historic = 0", Property.class )
+			entityManager.createQuery( "FROM Property where hostId = :userId and historic = 0",
+					Property.class )
 					.setParameter( "userId", String.valueOf( userId ) )
 					.getSingleResult();
 			return true;

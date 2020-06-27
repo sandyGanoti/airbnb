@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 public class UserUpdateRequest {
 
+	private String username;
 	private String password;
 	private String firstName;
 	private String lastName;

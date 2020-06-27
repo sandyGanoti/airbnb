@@ -10,6 +10,6 @@ public class UserAnauthorizedException extends RuntimeException {
   private static final long serialVersionUID = 3400248338734389783L;
 
   public UserAnauthorizedException() {
-    super("User is not authorized for this kinf of action");
+    super("User is not authorized for this kind of action");
   }
 }

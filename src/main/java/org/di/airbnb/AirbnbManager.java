@@ -20,7 +20,7 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 import javax.inject.Singleton;
-import javax.persistence.PersistenceException;
+import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
 
 import org.di.airbnb.api.request.BookingRequest;
@@ -30,6 +30,7 @@ import org.di.airbnb.api.request.UserCreationRequest;
 import org.di.airbnb.api.request.UserUpdateRequest;
 import org.di.airbnb.api.request.property.PropertyCreationRequest;
 import org.di.airbnb.api.request.property.PropertyUpdateRequest;
+import org.di.airbnb.api.request.validator.InputValidator;
 import org.di.airbnb.assemblers.booking.BookingModel;
 import org.di.airbnb.assemblers.image.ImageModel;
 import org.di.airbnb.assemblers.location.CityModel;
@@ -67,6 +68,7 @@ import org.di.airbnb.dao.repository.location.CityRepository;
 import org.di.airbnb.dao.repository.location.CountryRepository;
 import org.di.airbnb.dao.repository.location.DistrictRepository;
 import org.di.airbnb.exceptions.api.InvalidUserActionException;
+import org.di.airbnb.exceptions.api.NotValidInputException;
 import org.di.airbnb.exceptions.api.PropertyNotFoundException;
 import org.di.airbnb.exceptions.api.UniqueConstraintViolationException;
 import org.di.airbnb.exceptions.api.UserNotFoundException;
@@ -93,6 +95,8 @@ public class AirbnbManager {
 	private final LoadingCache<Long, District> districtCache;
 	private final LoadingCache<Long, Image> imageCache;
 
+	@Autowired
+	private InputValidator inputValidator;
 	@Autowired
 	private PropertyAvailabilityRepository propertyAvailabilityRepository;
 	@Autowired
@@ -224,23 +228,53 @@ public class AirbnbManager {
 		Optional<User> userIsPresent = userRepository.findById( userId );
 		if ( userIsPresent.isPresent() ) {
 			User user = userIsPresent.get();
-			if ( !Strings.isNullOrEmpty( userUpdateRequest.getEmail() ) ) {
-				user.setEmail( userUpdateRequest.getEmail() );
+			{
+				String email = userUpdateRequest.getEmail().trim();
+				if ( !Strings.isNullOrEmpty( email ) ) {
+					if ( !inputValidator.validateEmail( email ) ) {
+						throw new NotValidInputException();
+					}
+					user.setEmail( email );
+				}
 			}
-			if ( !Strings.isNullOrEmpty( userUpdateRequest.getFirstName() ) ) {
-				user.setFirstName( userUpdateRequest.getFirstName() );
+			{
+				String firstName = userUpdateRequest.getFirstName().trim();
+				if ( !Strings.isNullOrEmpty( firstName ) ) {
+					if ( !inputValidator.validateName( firstName ) ) {
+						throw new NotValidInputException();
+					}
+					user.setFirstName( firstName );
+				}
 			}
-			if ( !Strings.isNullOrEmpty( userUpdateRequest.getLastName() ) ) {
-				user.setLastName( userUpdateRequest.getLastName() );
+			{
+				String lastName = userUpdateRequest.getLastName().trim();
+				if ( !Strings.isNullOrEmpty( lastName ) ) {
+					if ( !inputValidator.validateName( lastName ) ) {
+						throw new NotValidInputException();
+					}
+					user.setLastName( lastName );
+				}
 			}
-			if ( !Strings.isNullOrEmpty( userUpdateRequest.getEmail() ) ) {
-				user.setEmail( userUpdateRequest.getEmail() );
+			{
+				String password = userUpdateRequest.getPassword().trim();
+				if ( !Strings.isNullOrEmpty( password ) ) {
+					user.setPassword( bCryptPasswordEncoder.encode( password ) );
+				}
 			}
-			if ( !Strings.isNullOrEmpty( userUpdateRequest.getPassword() ) ) {
-				user.setPassword( bCryptPasswordEncoder.encode( userUpdateRequest.getPassword() ) );
+			{
+				String phoneNumber = userUpdateRequest.getPhoneNumber().trim();
+				if ( !Strings.isNullOrEmpty( phoneNumber ) ) {
+					user.setPhoneNumber( phoneNumber );
+				}
 			}
-			if ( !Strings.isNullOrEmpty( userUpdateRequest.getPhoneNumber() ) ) {
-				user.setPhoneNumber( userUpdateRequest.getPhoneNumber() );
+			{
+				String username = userUpdateRequest.getUsername().trim();
+				if ( !Strings.isNullOrEmpty( username ) ) {
+					if ( !inputValidator.validateUsername( username ) ) {
+						throw new NotValidInputException();
+					}
+					user.setUsername( username );
+				}
 			}
 			try {
 				userRepository.save( user );
@@ -318,9 +352,11 @@ public class AirbnbManager {
 
 	public Optional<UserModel> getUserInfo( final long userId ) {
 		try {
-			return Optional.of(
-					modelMapper.map( userRepository.getOne( userId ), UserModel.class ) );
-		} catch ( PersistenceException e ) {
+			User user = userRepository.getOne( userId );
+			LOGGER.error( user.toString() );
+			return user != null ? Optional.of( modelMapper.map( user, UserModel.class ) ) : Optional
+					.empty();
+		} catch ( EntityNotFoundException e ) {
 			return Optional.empty();
 		}
 	}
@@ -405,7 +441,7 @@ public class AirbnbManager {
 
 	public void saveAvatar( final MultipartFile file, final long userId ) throws IOException {
 		Image image = new Image( file.getOriginalFilename(), file.getContentType(),
-				String.valueOf( userId ), compressBytes( file.getBytes() ) );
+				userId , compressBytes( file.getBytes() ) );
 		Optional<Image> avatar = airbnbDao.getAvatar( userId );
 		if ( avatar.isPresent() ) {
 			Image userAvatar = avatar.get();
@@ -421,14 +457,16 @@ public class AirbnbManager {
 		//		imageRepository.save( image );
 	}
 
-	public void savePropertyImage( final MultipartFile file, final long propertyId )
-			throws IOException {
+	public void savePropertyImage( final MultipartFile file, final long propertyId,
+			final long userId ) throws IOException {
 		Property property = propertyRepository.getOne( propertyId );
 		if ( property == null || property.isHistoric() ) {
 			throw new PropertyNotFoundException( "Property do not exist" );
 		}
-		Image image = new Image( file.getOriginalFilename(), file.getContentType(),
-				String.valueOf( propertyId ), compressBytes( file.getBytes() ) );
+		if ( property.getHostId() != userId ) {
+			throw new UserNotValidException( "User is not the host of this property." );
+		}
+		Image image = new Image( file.getOriginalFilename(), file.getContentType(), compressBytes( file.getBytes() ), propertyId );
 		//		imageRepository.save( image );
 		airbnbDao.saveAvatar( image );
 	}
@@ -481,6 +519,7 @@ public class AirbnbManager {
 		}
 		Property property = propertyOpt.get();
 		if ( property.getHostId() != userId ) {
+			LOGGER.error( "User cannot delete a property he does not own." );
 			throw new InvalidUserActionException();
 		}
 		property.setHistoric( true );

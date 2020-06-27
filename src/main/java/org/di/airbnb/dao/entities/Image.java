@@ -18,21 +18,29 @@ import javax.persistence.Table;
 public class Image {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private long id;
 	private String name;
 	private String type;
-	private String typetheid;
+	private long user;
+	private long property;
 	private byte[] picture;
 
 	public Image() {
 		super();
 	}
 
-	public Image( final String name, final String type, final String imageOwnerId,
-			final byte[] picture ) {
+	public Image( final String name, final String type, final long user, final byte[] picture ) {
 		this.name = name;
 		this.type = type;
-		this.typetheid = imageOwnerId;
+		this.user = user;
+		this.picture = picture;
+	}
+
+	public Image( final String name, final String type, final byte[] picture,
+			final long property ) {
+		this.name = name;
+		this.type = type;
+		this.property = property;
 		this.picture = picture;
 	}
 
@@ -71,12 +79,20 @@ public class Image {
 		this.picture = picture;
 	}
 
-	public String gettTpetheid() {
-		return typetheid;
+	public long getUser() {
+		return user;
 	}
 
-	public void setTypetheid( final String imageOwnerId ) {
-		this.typetheid = imageOwnerId;
+	public void setUser( final long user ) {
+		this.user = user;
+	}
+
+	public long getProperty() {
+		return property;
+	}
+
+	public void setProperty( final long property ) {
+		this.property = property;
 	}
 
 	@Override
@@ -88,14 +104,14 @@ public class Image {
 			return false;
 		}
 		final Image image = (Image) o;
-		return id.equals( image.id ) && typetheid == image.typetheid && name.equals(
+		return id == image.id && user == image.user && property == image.property && name.equals(
 				image.name ) && type.equals( image.type ) && Arrays.equals( picture,
 				image.picture );
 	}
 
 	@Override
 	public int hashCode() {
-		int result = Objects.hash( id, name, type, typetheid );
+		int result = Objects.hash( id, name, type, user, property );
 		result = 31 * result + Arrays.hashCode( picture );
 		return result;
 	}

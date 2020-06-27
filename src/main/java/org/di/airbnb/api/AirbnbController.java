@@ -69,9 +69,9 @@ public class AirbnbController {
 	private static final Logger LOGGER = LoggerFactory.getLogger( AirbnbController.class );
 
 	@Autowired
-	AuthenticationManager authenticationManager;
+	private AuthenticationManager authenticationManager;
 	@Autowired
-	JwtUtils jwtUtils;
+	private JwtUtils jwtUtils;
 	@Resource
 	private AirbnbManager airbnbManager;
 
@@ -83,7 +83,7 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-d '{"username": "user2", "password": "user2", "firstName": "hopus", "lastName": "bourdou", "phoneNumber": "123456789", "isHost": "True","email": "sandudsw@sandu"  }'
+		-d '{"username": "user4", "password": "user4", "firstName": "user4", "lastName": "user4", "phoneNumber": "123456789", "isHost": "True","email": "user4@user4"  }'
 		-X POST -k http://localhost:8443/airbnb/user/signup
 	*/
 	@PostMapping(value = "user/signup")
@@ -99,8 +99,8 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-d '{"username": "user1", "password": "user1" }'
-	 	-X POST -k http://localhost:8443/airbnb/user/login
+		-d '{"username": "user4", "password": "user4" }'
+		-X POST -k http://localhost:8443/airbnb/user/login
 	 */
 	@PostMapping(value = "user/login")
 	@ResponseStatus(HttpStatus.OK)
@@ -129,9 +129,9 @@ public class AirbnbController {
 	/*
 	curl
 		-H "Content-Type: application/json"
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
-		-d '{"username": "", "password": "", "firstName": "", "lastName": "", "phoneNumber": "12121212", "country": "UK","email": "sandu@sandu"  }'
-		-X POST -k http://localhost:8443/airbnb/user/38/update
+		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyNCIsImlhdCI6MTU5MzI2NTQyNiwiZXhwIjoxNTkzMzUxODI2fQ.s2H_V8tf4gBPyTwagdAoO1H4bavtZmAt8Z5TpWDwCoHl5zzyQvBPw_Jyhf-IO1lYc0RlRg-uyT0cj_bmmvnDXQ"
+		-d '{"username": "", "password": "", "firstName": "firstNameUpdated", "lastName": "aValidLastName", "phoneNumber": "12121212", "email": "sandu@sandu"  }'
+		-X POST -k http://localhost:8443/airbnb/user/4/update
 	*/
 	@PostMapping(value = "user/{id}/update")
 	@ResponseStatus(HttpStatus.CREATED)
@@ -268,7 +268,7 @@ curl
 
 	/*
 	curl
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTU5MjA1NDMwMSwiZXhwIjoxNTkyMTQwNzAxfQ.68wOXQUTOkKitWD4FFjlhhb9Uk_qfDKSXXmdNaq4OQvM_D5Y6wpC1FUjQX8hS4deO48sQyJnBB0X7YBX7k1ThA"
+		-H "Authorization: Bearer  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTU5MzI4NTU3MCwiZXhwIjoxNTkzMzcxOTcwfQ.3bJWHP6xVzVD9zPe-Ak2znYvtCsnhQBsPyhHw6RsC2zL9_EHXAmmeTUMUfRinCSafK6BX_VpyEDAm6WHJGS-NQ"
 		-X POST -k http://localhost:8443/airbnb/user/1/avatar/upload
 		-F "imageFile=@testPng.png"
 	*/
@@ -288,8 +288,8 @@ curl
 
 	/*
 	curl
-		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTU5MjA1NDMwMSwiZXhwIjoxNTkyMTQwNzAxfQ.68wOXQUTOkKitWD4FFjlhhb9Uk_qfDKSXXmdNaq4OQvM_D5Y6wpC1FUjQX8hS4deO48sQyJnBB0X7YBX7k1ThA"
-		-X POST -k http://localhost:8443/airbnb/user/1/property/1/upload
+		-H "Authorization: Bearer  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMiIsImlhdCI6MTU5MzI4NjA0OSwiZXhwIjoxNTkzMzcyNDQ5fQ.ImUnNOQ0lJ84aQb0Od_jMBU-_fZS8582J8h725nt4JB8YEoK_9NJltL7vRH6DD9fR4awH9dy3EG-H_tTWtWDKg"
+		-X POST -k http://localhost:8443/airbnb/user/2/property/2/upload
 		-F "imageFile=@testPng.png"
 	*/
 	@PostMapping("user/{userId}/property/{propertyId}/upload")
@@ -302,7 +302,7 @@ curl
 			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
 			throw new UserAnauthorizedException();
 		}
-		airbnbManager.savePropertyImage( file, propertyId );
+		airbnbManager.savePropertyImage( file, propertyId, userId );
 		return new ResponseEntity<>( "Property image uploaded", HttpStatus.OK );
 	}
 
@@ -505,6 +505,7 @@ curl
 				HttpStatus.OK );
 	}
 
+	//TODO: 1
 	//TODO: fix the pagination
 	// TODO: load image
 	// TODO: load meanRating
@@ -529,6 +530,7 @@ curl
 				HttpStatus.CREATED );
 	}
 
+	//TODO: 2
 	/*
 	curl
 		-H "Content-Type: application/json"
@@ -598,7 +600,7 @@ curl
 	curl
 		-H "Content-Type: application/json"
 		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZGRkcHcxIiwiaWF0IjoxNTkxNjM4NzUxLCJleHAiOjE1OTE3MjUxNTF9.Y5oNQF0v4bZO0M7qFyddxmx6HfGXDYWxas_-39XezQDnMg60Idtxxcr08U9CTCEoktXf0VrTB6rHdvSthOkMLA"
-		http://localhost:8443/airbnb/country/1/districts
+		http://localhost:8443/airbnb/city/1/districts
 	*/
 	@GetMapping(value = "city/{cityId}/districts")
 	public ResponseEntity<List<DistrictModel>> getDistricts( @PathVariable("cityId") long cityId ) {
