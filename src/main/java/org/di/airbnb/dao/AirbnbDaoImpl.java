@@ -133,9 +133,7 @@ public class AirbnbDaoImpl {
 	public Boolean ownsProperty( final long userId ) {
 		try {
 			entityManager.createQuery( "FROM Property where hostId = :userId and historic = 0",
-					Property.class )
-					.setParameter( "userId", userId )
-					.getSingleResult();
+					Property.class ).setParameter( "userId", userId ).getSingleResult();
 			return true;
 		} catch ( NoResultException e ) {
 			return false;
@@ -194,7 +192,12 @@ public class AirbnbDaoImpl {
 		}
 
 		TypedQuery<Long> query = entityManager.createQuery(
-				"SELECT notBooked.propertyId FROM Booking notBooked RIGHT JOIN Property p ON p.id=notBooked.propertyId WHERE p.id IN :availablePropertyIds and notBooked.propertyId NOT IN " + "(SELECT b.propertyId from Booking b WHERE " + "(b.fromDatetime >= :fromDate and b.toDatetime <= :toDate) or " + "(:fromDate >= b.fromDatetime and :toDate <= b.toDatetime) or " + "(:toDate >= b.fromDatetime and :fromDate <= b.toDatetime) )",
+				"select p.id from Property p where p.id in :availablePropertyIds and p.id not in (select propertyId from Booking) " +
+						"or p.id in (select p.id from Property p join Booking b on p.id=b.propertyId  where b.propertyId not in " +
+						"(select bb.propertyId from Booking bb where (:fromDate between bb.fromDatetime and bb.toDatetime) or" +
+						"(:toDate between bb.fromDatetime and bb.toDatetime) or " +
+						"(bb.fromDatetime between :fromDate and :toDate) or " +
+						"(bb.toDatetime between :fromDate and :toDate) ) )",
 				Long.class )
 				.setParameter( "fromDate", searchRequest.getFrom() )
 				.setParameter( "toDate", searchRequest.getTo() )

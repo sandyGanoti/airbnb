@@ -366,9 +366,6 @@ curl
 		return new ResponseEntity<>( "Property updated", HttpStatus.CREATED );
 	}
 
-	//TODO: DO not actually delete!! Make it not available for search, booking etc!
-	// it cause how else will you keep the
-	// SOS. Na ftiaksw na kanei delete kai ap to availability
 	/*
 	curl
 		-X "DELETE"  http://localhost:8443/airbnb/user/4/property/8/delete
@@ -462,7 +459,6 @@ curl
 		return new ResponseEntity<>( "Review submitted!", HttpStatus.CREATED );
 	}
 
-	//TODO: owner cannot review its own property
 	/*
 	curl
 		-H "Content-Type: application/json"
@@ -531,7 +527,7 @@ curl
 				HttpStatus.CREATED );
 	}
 
-	//TODO: 2
+	//TODO: booking
 	/*
 	curl
 		-H "Content-Type: application/json"
