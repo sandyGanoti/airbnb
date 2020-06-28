@@ -440,8 +440,8 @@ public class AirbnbManager {
 	}
 
 	public void saveAvatar( final MultipartFile file, final long userId ) throws IOException {
-		Image image = new Image( file.getOriginalFilename(), file.getContentType(),
-				userId , compressBytes( file.getBytes() ) );
+		Image image = new Image( file.getOriginalFilename(), file.getContentType(), userId,
+				compressBytes( file.getBytes() ) );
 		Optional<Image> avatar = airbnbDao.getAvatar( userId );
 		if ( avatar.isPresent() ) {
 			Image userAvatar = avatar.get();
@@ -466,7 +466,8 @@ public class AirbnbManager {
 		if ( property.getHostId() != userId ) {
 			throw new UserNotValidException( "User is not the host of this property." );
 		}
-		Image image = new Image( file.getOriginalFilename(), file.getContentType(), compressBytes( file.getBytes() ), propertyId );
+		Image image = new Image( file.getOriginalFilename(), file.getContentType(),
+				compressBytes( file.getBytes() ), propertyId );
 		//		imageRepository.save( image );
 		airbnbDao.saveAvatar( image );
 	}
@@ -529,12 +530,15 @@ public class AirbnbManager {
 	}
 
 	public void updateProperty( final @NotNull PropertyUpdateRequest propertyUpdateRequest,
-			final long propertyId ) {
+			final long propertyId, final long hostId ) {
 		Optional<Property> propertyIsPresent = propertyRepository.findById( propertyId );
 		if ( propertyIsPresent.isPresent() ) {
 			Property property = propertyIsPresent.get();
 			if ( property.isHistoric() ) {
 				throw new PropertyNotFoundException( "Property do not exist" );
+			}
+			if ( property.getHostId() != hostId ) {
+				throw new InvalidUserActionException( "Host should own the property" );
 			}
 			RentingRules rentingRules = airbnbDao.getPropertyRentingRules( propertyId );
 
