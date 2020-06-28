@@ -325,7 +325,15 @@ curl
 	curl
 		-H "Content-Type: application/json"
 		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkcHcxIiwiaWF0IjoxNTkxNTQzNjk3LCJleHAiOjE1OTE2MzAwOTd9.C-2VSjy-q4w845llI5fQstGX-dmDZkHbuPBNWhMch98XO9A9kv2MaYhru53A8mCzsfoG-HjqQz3nWO_ttWWjTg"
-		-d '{"name": "name", "propertyType": "ROOM", "countryId": 1, "cityId": 1, "districtId": 1,"price": 1.2, "beds": 1, "bedrooms": 1, "bathrooms": 1, "minimumDays": 1, "maximumTenants": 1, "propertySize": 1, "freeText": "la la", "aircondition": "True",  "tv": "True", "internet": "True", "livingRoom": "True", "kitchen": "True", "partyFriendly": "True", "petFriendly": "True", "smokingFriendly": "True", "extraFreeText": "", "longitude": -74.00898606, "latitude": 40.71727401, "availableDates": [{"from": "", "to": }]  }'
+		 -d '{
+		 "name": "name", "propertyType": "ROOM", "countryId": 1, "cityId": 1, "districtId": 1,
+		 "price": 1.2, "extraPricePerPerson": 2,"beds": 1, "bedrooms": 1, "bathrooms": 1,
+		 "minimumDays": 1, "maximumTenants": 1, "propertySize": 1, "freeText": "la la",
+		 "aircondition": "True",  "tv": "True", "internet": "True", "livingRoom": "True",
+		 "kitchen": "True", "partyFriendly": "True", "petFriendly": "True",
+		 "smokingFriendly": "True", "extraFreeText": "", "longitude": -74.00898606,
+		 "latitude": 40.71727401, "availableDates": [{"from": "2010-12-12", "to": "2020-01-12"}]
+		  }'
 		-X POST -k http://localhost:8443/airbnb/user/4/property/create
 	*/
 	@PostMapping(value = "user/{userId}/property/create")

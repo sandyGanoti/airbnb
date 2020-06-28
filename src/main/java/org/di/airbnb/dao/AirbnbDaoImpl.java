@@ -134,7 +134,7 @@ public class AirbnbDaoImpl {
 		try {
 			entityManager.createQuery( "FROM Property where hostId = :userId and historic = 0",
 					Property.class )
-					.setParameter( "userId", String.valueOf( userId ) )
+					.setParameter( "userId", userId )
 					.getSingleResult();
 			return true;
 		} catch ( NoResultException e ) {

@@ -492,6 +492,7 @@ public class AirbnbManager {
 		}
 		Property property = modelMapper.map( propertyCreationRequest, Property.class );
 		property.setHostId( hostId );
+		property.setHistoric( false );
 
 		Property newlyCreatedProperty = null;
 		try {
@@ -501,6 +502,7 @@ public class AirbnbManager {
 		}
 		final long newlyCreatedPropertyId = newlyCreatedProperty.getId();
 		propertyCreationRequest.getAvailableDates().stream().forEach( availableDate -> {
+			LOGGER.error( availableDate.toString() );
 			propertyAvailabilityRepository.save( new PropertyAvailability( newlyCreatedPropertyId,
 					availableDate.getAvailableFrom(), availableDate.getAvailableTo() ) );
 		} );
