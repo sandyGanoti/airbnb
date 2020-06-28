@@ -53,6 +53,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -131,9 +132,9 @@ public class AirbnbController {
 		-H "Content-Type: application/json"
 		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyNCIsImlhdCI6MTU5MzI2NTQyNiwiZXhwIjoxNTkzMzUxODI2fQ.s2H_V8tf4gBPyTwagdAoO1H4bavtZmAt8Z5TpWDwCoHl5zzyQvBPw_Jyhf-IO1lYc0RlRg-uyT0cj_bmmvnDXQ"
 		-d '{"username": "", "password": "", "firstName": "firstNameUpdated", "lastName": "aValidLastName", "phoneNumber": "12121212", "email": "sandu@sandu"  }'
-		-X POST -k http://localhost:8443/airbnb/user/4/update
+		-X PUT -k http://localhost:8443/airbnb/user/4/update
 	*/
-	@PostMapping(value = "user/{id}/update")
+	@PutMapping(value = "user/{id}/update")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<JwtResponse> updateUserInfo(
 			@RequestHeader("Authorization") String authorizationHeader,
@@ -158,9 +159,9 @@ public class AirbnbController {
 	curl
 		-H "Content-Type: application/json"
 		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWJ5IiwiaWF0IjoxNTkxMzg2MTQ5LCJleHAiOjE1OTE0NzI1NDl9.wpUlVD_LGB8ymLXyQGklooCPhkLY2WnpknWqTMfKI_j1lEnNXwfDSFYwY4yaMIH7i1FDx1n2JfRZvg8Fu4R8jQ"
-		-X POST -k http://localhost:8443/airbnb/user/5/beHost
+		-X PUT -k http://localhost:8443/airbnb/user/5/beHost
 	*/
-	@PostMapping(value = "user/{id}/beHost")
+	@PutMapping(value = "user/{id}/beHost")
 	public ResponseEntity<?> updateUserToBeHost(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("id") long userId ) {
@@ -348,9 +349,9 @@ curl
 		-H "Content-Type: application/json"
 		-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkcHcxIiwiaWF0IjoxNTkxNTQzNjk3LCJleHAiOjE1OTE2MzAwOTd9.C-2VSjy-q4w845llI5fQstGX-dmDZkHbuPBNWhMch98XO9A9kv2MaYhru53A8mCzsfoG-HjqQz3nWO_ttWWjTg"
 		-d '{"name": "la la la la", "propertyType": "HOUSE", "country": "a", "city": "a", "district": "a","price": 1.2, "beds": 1, "bedrooms": 1, "bathrooms": 1, "minimumDays": 1, "maximumTenants": 1, "propertySize": 1, "freeText": "la la", "aircondition": "True",  "tv": "True", "internet": "True", "livingRoom": "True", "kitchen": "True", "partyFriendly": "True", "petFriendly": "True", "smokingFriendly": "True", "extraFreeText": ""  }'
-		-X POST -k http://localhost:8443/airbnb/user/4/property/7/update
+		-X PUT -k http://localhost:8443/airbnb/user/4/property/7/update
 	*/
-	@PostMapping(value = "user/{userId}/property/{propertyId}/update")
+	@PutMapping(value = "user/{userId}/property/{propertyId}/update")
 	public ResponseEntity<?> updateProperty(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId, @PathVariable("propertyId") long propertyId,
