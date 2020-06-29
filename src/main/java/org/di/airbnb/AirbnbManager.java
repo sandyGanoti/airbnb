@@ -687,6 +687,10 @@ public class AirbnbManager {
 			throw new InvalidUserActionException();
 		}
 	}
+//TODO: implement that
+	public void trackUserActivity( final long userId, final long propertyId ) {
+
+	}
 
 	private double getMeanRating( final long propertyId ) {
 		List<Rating> ratings = airbnbDao.getPropertyRatings( propertyId );

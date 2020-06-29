@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import org.di.airbnb.AirbnbManager;
 import org.di.airbnb.api.request.BookingRequest;
 import org.di.airbnb.api.request.MessagingCreationRequest;
+import org.di.airbnb.api.request.PropertyDetailsAccessed;
 import org.di.airbnb.api.request.ReviewPropertyCreationRequest;
 import org.di.airbnb.api.request.SearchRequest;
 import org.di.airbnb.api.request.UserCreationRequest;
@@ -525,6 +526,21 @@ curl
 			@RequestBody @Valid @NotNull SearchRequest searchRequest ) {
 		return new ResponseEntity<>( airbnbManager.findProperties( searchRequest ),
 				HttpStatus.CREATED );
+	}
+
+
+	@PostMapping(value = "user/property")
+	public ResponseEntity<?> trackUserActivity(
+			@RequestHeader("Authorization") String authorizationHeader,
+			@PathVariable("userId") long userId,
+			@RequestBody @Valid @NotNull PropertyDetailsAccessed propertyDetailsAccessed ) {
+		if ( !airbnbManager.isUserAuthorized( userId,
+				getUsernameFromJwt( authorizationHeader ) ) ) {
+			LOGGER.info( String.format( "User with id: %s is not authorized", userId ) );
+			throw new UserAnauthorizedException();
+		}
+		airbnbManager.trackUserActivity( userId, propertyDetailsAccessed.getPropertyId() );
+		return new ResponseEntity<>( HttpStatus.NO_CONTENT );
 	}
 
 	//TODO: booking
