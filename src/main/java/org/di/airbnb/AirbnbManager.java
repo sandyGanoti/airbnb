@@ -308,9 +308,6 @@ public class AirbnbManager {
 			throw new UniqueConstraintViolationException( "Username already exists" );
 		} else if ( causedByUniqueConstraint( e, "name" ) ) {
 			throw new UniqueConstraintViolationException( "Name already exists" );
-		} else if ( causedByUniqueConstraint( e, "host_id" ) ) {
-			throw new UniqueConstraintViolationException(
-					"There is already one property assigned to this host" );
 		} else {
 			throw e;
 		}
@@ -489,7 +486,7 @@ public class AirbnbManager {
 	public long createProperty( final PropertyCreationRequest propertyCreationRequest,
 			final long hostId ) {
 		if ( airbnbDao.ownsProperty( hostId ) ) {
-			throw new UserNotValidException( "User cannot perform that kind of action" );
+			throw new UserNotValidException( "There is already one property assigned to this host" );
 		}
 		Property property = modelMapper.map( propertyCreationRequest, Property.class );
 		property.setHostId( hostId );

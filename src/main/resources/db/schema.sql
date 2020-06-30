@@ -41,7 +41,6 @@ CREATE TABLE IF NOT EXISTS `property_to_rent` (
     `historic` TINYINT(1) DEFAULT FALSE,
     PRIMARY KEY(`id`),
     UNIQUE KEY (`name`),
-    UNIQUE KEY (`host_id`),
     KEY fk_property_user (host_id)
 );
 
