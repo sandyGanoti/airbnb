@@ -388,8 +388,10 @@ public class AirbnbManager {
 					districtCache.getUnchecked( property.getDistrictId() ).getName() );
 			ImageModel imageModel = modelMapper.map( imageCache.getUnchecked( property.getId() ),
 					ImageModel.class );
-			imageModel.setPicture( decompressBytes( imageModel.getPicture() ) );
-			propertyBasicInfo.setImage( imageModel );
+			if ( imageModel.getPicture()!=null) {
+				imageModel.setPicture( decompressBytes( imageModel.getPicture() ) );
+				propertyBasicInfo.setImage( imageModel );
+			}
 			propertyBasicInfo.setMeanRating( getMeanRating( property.getId() ) );
 			propertyBasicInfo.setPropertyName( property.getName() );
 			return propertyBasicInfo;
