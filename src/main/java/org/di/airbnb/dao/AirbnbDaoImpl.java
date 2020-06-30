@@ -192,7 +192,7 @@ public class AirbnbDaoImpl {
 		}
 
 		TypedQuery<Long> query = entityManager.createQuery(
-				"select p.id from Property p where p.id in :availablePropertyIds and p.historic=0 and p.id not in (select propertyId from Booking) " +
+				"select p.id from Property p where p.id in :availablePropertyIds and p.historic=0 and p.propertyType= :propertyType and p.maximumTenants >= :numberOfPeople and p.id not in (select propertyId from Booking) " +
 						"or p.id in (select p.id from Property p join Booking b on p.id=b.propertyId  where b.propertyId not in " +
 						"(select bb.propertyId from Booking bb where (:fromDate between bb.fromDatetime and bb.toDatetime) or" +
 						"(:toDate between bb.fromDatetime and bb.toDatetime) or " +
@@ -201,6 +201,8 @@ public class AirbnbDaoImpl {
 				Long.class )
 				.setParameter( "fromDate", searchRequest.getFrom() )
 				.setParameter( "toDate", searchRequest.getTo() )
+				.setParameter( "propertyType", searchRequest.getPropertyType() )
+				.setParameter( "numberOfPeople", searchRequest.getNumberOfPeople() )
 				.setParameter( "availablePropertyIds", availablePropertyIds );
 
 
