@@ -1,14 +1,12 @@
 package org.di.airbnb.api.request;
 
-import java.time.Instant;
 import java.util.Date;
 
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
+import org.di.airbnb.constant.PropertyType;
 import org.di.airbnb.dao.Pagination;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -49,4 +47,7 @@ public class SearchRequest {
 
 	@NotNull
 	private Pagination pagination;
+
+	@NotNull
+	private PropertyType propertyType;
 }
