@@ -324,8 +324,11 @@ public class AirbnbManager {
 		if ( property.isPresent() ) {
 			propertyModel = modelMapper.map( property.get(), PropertyModel.class );
 			Image image = imageCache.getUnchecked( propertyModel.getId() );
-			propertyModel.setImage(
-					image != null ? modelMapper.map( image, ImageModel.class ) : null );
+			if ( image != null ) {
+				ImageModel imageModel = modelMapper.map( image, ImageModel.class );
+				imageModel.setPicture( decompressBytes( imageModel.getPicture() ) );
+				propertyModel.setImage( imageModel );
+			}
 		}
 		return propertyModel == null ? Optional.empty() : Optional.of( propertyModel );
 	}
@@ -383,9 +386,10 @@ public class AirbnbManager {
 					countryCache.getUnchecked( property.getCountryId() ).getName() );
 			propertyBasicInfo.setDistrict(
 					districtCache.getUnchecked( property.getDistrictId() ).getName() );
-			propertyBasicInfo.setImage(
-					modelMapper.map( imageCache.getUnchecked( property.getId() ),
-							ImageModel.class ) );
+			ImageModel imageModel = modelMapper.map( imageCache.getUnchecked( property.getId() ),
+					ImageModel.class );
+			imageModel.setPicture( decompressBytes( imageModel.getPicture() ) );
+			propertyBasicInfo.setImage( imageModel );
 			propertyBasicInfo.setMeanRating( getMeanRating( property.getId() ) );
 			propertyBasicInfo.setPropertyName( property.getName() );
 			return propertyBasicInfo;
@@ -411,6 +415,7 @@ public class AirbnbManager {
 		ImageModel imageModel = null;
 		if ( avatarOpt.isPresent() ) {
 			imageModel = modelMapper.map( avatarOpt.get(), ImageModel.class );
+			imageModel.setPicture( decompressBytes( imageModel.getPicture() ) );
 		}
 		return new UserAvatarModel( user.getId(), imageModel );
 	}
@@ -428,10 +433,12 @@ public class AirbnbManager {
 		propertyWithRentingRules.setRentingRulesModel(
 				modelMapper.map( rentingRules, RentingRulesModel.class ) );
 
-		propertyWithRentingRules.setImages( airbnbDao.getPropertyImages( propertyId )
-				.stream()
-				.map( image -> modelMapper.map( image, ImageModel.class ) )
-				.collect( Collectors.toList() ) );
+		propertyWithRentingRules.setImages(
+				airbnbDao.getPropertyImages( propertyId ).stream().map( image -> {
+					ImageModel imageModel = modelMapper.map( image, ImageModel.class );
+					imageModel.setPicture( decompressBytes( imageModel.getPicture() ) );
+					return imageModel;
+				} ).collect( Collectors.toList() ) );
 
 		return Optional.of( propertyWithRentingRules );
 	}
@@ -486,7 +493,8 @@ public class AirbnbManager {
 	public long createProperty( final PropertyCreationRequest propertyCreationRequest,
 			final long hostId ) {
 		if ( airbnbDao.ownsProperty( hostId ) ) {
-			throw new UserNotValidException( "There is already one property assigned to this host" );
+			throw new UserNotValidException(
+					"There is already one property assigned to this host" );
 		}
 		Property property = modelMapper.map( propertyCreationRequest, Property.class );
 		property.setHostId( hostId );
@@ -684,7 +692,8 @@ public class AirbnbManager {
 			throw new InvalidUserActionException();
 		}
 	}
-//TODO: implement that
+
+	//TODO: implement that
 	public void trackUserActivity( final long userId, final long propertyId ) {
 
 	}
