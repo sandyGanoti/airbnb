@@ -35,6 +35,7 @@ import org.di.airbnb.assemblers.user.UserAvatarModel;
 import org.di.airbnb.assemblers.user.UserModel;
 import org.di.airbnb.constant.Role;
 import org.di.airbnb.dao.entities.User;
+import org.di.airbnb.exceptions.api.InvalidReviewingException;
 import org.di.airbnb.exceptions.api.InvalidUserActionException;
 import org.di.airbnb.exceptions.api.UserAnauthorizedException;
 import org.di.airbnb.exceptions.api.UserNotFoundException;
@@ -454,6 +455,8 @@ curl
 		try {
 			airbnbManager.reviewProperty( userId, propertyId, reviewPropertyCreationRequest );
 		} catch ( InvalidUserActionException e ) {
+			throw new UserNotValidException( "Host cannot review its own property" );
+		} catch ( InvalidReviewingException e ) {
 			throw new UserNotValidException(
 					"User has to have booked the place before to try to review it." );
 		}
@@ -527,7 +530,6 @@ curl
 		return new ResponseEntity<>( airbnbManager.findProperties( searchRequest ),
 				HttpStatus.CREATED );
 	}
-
 
 	@PostMapping(value = "user/property")
 	public ResponseEntity<?> trackUserActivity(

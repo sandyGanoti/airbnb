@@ -67,6 +67,7 @@ import org.di.airbnb.dao.repository.UserRepository;
 import org.di.airbnb.dao.repository.location.CityRepository;
 import org.di.airbnb.dao.repository.location.CountryRepository;
 import org.di.airbnb.dao.repository.location.DistrictRepository;
+import org.di.airbnb.exceptions.api.InvalidReviewingException;
 import org.di.airbnb.exceptions.api.InvalidUserActionException;
 import org.di.airbnb.exceptions.api.NotValidInputException;
 import org.di.airbnb.exceptions.api.PropertyNotFoundException;
@@ -682,6 +683,10 @@ public class AirbnbManager {
 		if ( property.getHostId() == raterId ) {
 			throw new InvalidUserActionException( "Host cannot review its own property" );
 		}
+		LOGGER.info( String.valueOf( raterId ) );
+		LOGGER.info( String.valueOf( propertyId ) );
+		LOGGER.info( String.valueOf( reviewPropertyCreationRequest ) );
+
 		if ( !airbnbDao.getPropertyBookingsByUser( raterId, propertyId ).isEmpty() ) {
 			Rating rating = new Rating();
 			rating.setMark( reviewPropertyCreationRequest.getMark() );
@@ -691,7 +696,7 @@ public class AirbnbManager {
 			rating.setCreatedAt( Instant.now() );
 			ratingRepository.save( rating );
 		} else {
-			throw new InvalidUserActionException();
+			throw new InvalidReviewingException();
 		}
 	}
 
