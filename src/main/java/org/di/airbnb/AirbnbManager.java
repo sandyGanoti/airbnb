@@ -331,6 +331,7 @@ public class AirbnbManager {
 				propertyModel.setImage( imageModel );
 			}
 		}
+		
 		return propertyModel == null ? Optional.empty() : Optional.of( propertyModel );
 	}
 
@@ -389,7 +390,7 @@ public class AirbnbManager {
 					districtCache.getUnchecked( property.getDistrictId() ).getName() );
 			ImageModel imageModel = modelMapper.map( imageCache.getUnchecked( property.getId() ),
 					ImageModel.class );
-			if ( imageModel.getPicture()!=null) {
+			if ( imageModel.getPicture() != null ) {
 				imageModel.setPicture( decompressBytes( imageModel.getPicture() ) );
 				propertyBasicInfo.setImage( imageModel );
 			}
