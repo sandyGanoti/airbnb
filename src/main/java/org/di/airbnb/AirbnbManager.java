@@ -325,7 +325,7 @@ public class AirbnbManager {
 		if ( property.isPresent() ) {
 			propertyModel = modelMapper.map( property.get(), PropertyModel.class );
 			Image image = imageCache.getUnchecked( propertyModel.getId() );
-			if ( image != null ) {
+			if ( image.getPicture() != null ) {
 				ImageModel imageModel = modelMapper.map( image, ImageModel.class );
 				imageModel.setPicture( decompressBytes( imageModel.getPicture() ) );
 				propertyModel.setImage( imageModel );

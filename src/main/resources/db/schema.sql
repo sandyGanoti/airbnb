@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `image_table` (
     `property` BIGINT(20) NULL,
     `name` VARCHAR(250) NOT NULL,
     `type` VARCHAR(250) NOT NULL,
-    `picture` blob NOT NULL,
+    `picture` longblob NOT NULL,
     PRIMARY KEY (id)
 );
 
