@@ -84,12 +84,7 @@ CREATE TABLE IF NOT EXISTS `rating` (
     `text` TEXT DEFAULT NULL,
     `mark` INTEGER NOT NULL,
     `created_at` DATETIME NOT NULL,
-    PRIMARY KEY(id),
-    KEY fk_rating_user (rater_id),
-    CONSTRAINT fk_rating_user FOREIGN KEY (rater_id) REFERENCES user_ (id),
-    KEY fk_rating_property (property_id),
-    CONSTRAINT fk_rating_property FOREIGN KEY (property_id) REFERENCES property_to_rent (id),
-    CONSTRAINT rating_at UNIQUE (rater_id, property_id, created_at)
+    PRIMARY KEY(id)
 );
 
 CREATE TABLE IF NOT EXISTS `messaging` (

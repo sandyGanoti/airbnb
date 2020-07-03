@@ -26,7 +26,7 @@ import org.di.airbnb.assemblers.image.ImageModel;
 import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
 import org.di.airbnb.assemblers.location.DistrictModel;
-import org.di.airbnb.assemblers.messaging.MessagingModel;
+import org.di.airbnb.assemblers.messaging.MessagingDetails;
 import org.di.airbnb.assemblers.property.PropertyBasicInfo;
 import org.di.airbnb.assemblers.property.PropertyModel;
 import org.di.airbnb.assemblers.property.PropertyWithRentingRules;
@@ -398,7 +398,7 @@ curl
 		http://localhost:8443/airbnb/user/1/messaging
 	*/
 	@GetMapping(value = "user/{userId}/messaging")
-	public ResponseEntity<HashMap<Long, List<MessagingModel>>> getMessages(
+	public ResponseEntity<HashMap<Long, List<MessagingDetails>>> getMessages(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId ) {
 		if ( !airbnbManager.isUserAuthorized( userId,

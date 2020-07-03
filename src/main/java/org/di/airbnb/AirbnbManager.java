@@ -36,6 +36,7 @@ import org.di.airbnb.assemblers.image.ImageModel;
 import org.di.airbnb.assemblers.location.CityModel;
 import org.di.airbnb.assemblers.location.CountryModel;
 import org.di.airbnb.assemblers.location.DistrictModel;
+import org.di.airbnb.assemblers.messaging.MessagingDetails;
 import org.di.airbnb.assemblers.messaging.MessagingModel;
 import org.di.airbnb.assemblers.property.PropertyBasicInfo;
 import org.di.airbnb.assemblers.property.PropertyModel;
@@ -95,6 +96,7 @@ public class AirbnbManager {
 	private final LoadingCache<Long, City> cityCache;
 	private final LoadingCache<Long, District> districtCache;
 	private final LoadingCache<Long, Image> imageCache;
+	private final LoadingCache<Long, String> userNameCache;
 
 	@Autowired
 	private InputValidator inputValidator;
@@ -166,6 +168,17 @@ public class AirbnbManager {
 					public Image load( final Long propertyId ) {
 						List<Image> images = airbnbDao.getPropertyImages( propertyId );
 						return images.isEmpty() ? new Image() : images.get( 0 );
+					}
+				} );
+		/* userId to name */
+		this.userNameCache = CacheBuilder.newBuilder()
+				.expireAfterWrite( 10, TimeUnit.SECONDS )
+				.recordStats()
+				.softValues()
+				.build( new CacheLoader<Long, String>() {
+					@Override
+					public String load( final Long userId ) {
+						return userRepository.getOne(  userId ).getUsername();
 					}
 				} );
 	}
@@ -331,7 +344,7 @@ public class AirbnbManager {
 				propertyModel.setImage( imageModel );
 			}
 		}
-		
+
 		return propertyModel == null ? Optional.empty() : Optional.of( propertyModel );
 	}
 
@@ -647,17 +660,23 @@ public class AirbnbManager {
 		}
 	}
 
-	public HashMap<Long, List<MessagingModel>> getMessages( final long userId ) {
-		HashMap<Long, List<MessagingModel>> newMessages = new HashMap<>();
+	public HashMap<Long, List<MessagingDetails>> getMessages( final long userId ) {
+		HashMap<Long, List<MessagingDetails>> newMessages = new HashMap<>();
 
 		airbnbDao.getMessages( userId ).forEach( message -> {
 			Long key = !message.getSender()
 					.equals( userId ) ? message.getSender() : message.getRecipient();
-			List<MessagingModel> messages = newMessages.get( key );
+			List<MessagingDetails> messages = newMessages.get( key );
 			if ( messages == null ) {
 				messages = new ArrayList<>();
 			}
-			messages.add( modelMapper.map( message, MessagingModel.class ) );
+			MessagingModel messagingModel = modelMapper.map( message, MessagingModel.class );
+			MessagingDetails messagingDetails = new MessagingDetails();
+			messagingDetails.setMessagingModel( messagingModel );
+			messagingDetails.setRecipientName( userNameCache.getUnchecked( messagingModel.getRecipient() ) );
+			messagingDetails.setSenderName( userNameCache.getUnchecked( messagingModel.getSender() ) );
+
+			messages.add( messagingDetails );
 			newMessages.put( key, messages );
 		} );
 
