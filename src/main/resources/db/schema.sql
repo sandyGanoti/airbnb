@@ -145,6 +145,17 @@ CREATE TABLE IF NOT EXISTS `property_availability` (
     CONSTRAINT fk_property_availability FOREIGN KEY (property_id) REFERENCES property_to_rent (id)
 );
 
+CREATE TABLE IF NOT EXISTS `user_activity` (
+    `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+    `user_id` BIGINT(20) NOT NULL,
+    `property_id` BIGINT(20) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY fk_user_activity_user (user_id),
+    CONSTRAINT fk_user_activity_user FOREIGN KEY (user_id) REFERENCES user_ (id),
+    KEY fk_user_activity_property (property_id),
+    CONSTRAINT fk_user_activity_property FOREIGN KEY (property_id) REFERENCES property_to_rent (id)
+);
+
 INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(1, "$2a$10$JXKXOqdQzQ5QgYGQKTOdbuHE9nCX3REzkJ86BewrDCEc39FyKzx.y", "user1", "user1", "user1", "1234", "TENANT", now(), "user1@user1.com");
 INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(2, "$2a$10$AnrFPILx2oOeFVgVgpovj.lQXi9oMMY2r8nyAq1mhO7LpCF9K8ZS2", "user2", "user2", "user2", "1234", "TENANT", now(), "user2@user2.com");
 INSERT INTO `user_`(id, password, first_name, last_name, username, phone_number, role, created_at, email) values(3, "$2a$10$JHyawNxERXu8XgSQsy/uXe/EdU8Nr3SCEgm0MxFN5pS2JRwk8bx6u", "user3", "user3", "user3", "1234", "TENANT_AND_HOST", now(), "user3@user3.com");

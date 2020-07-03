@@ -55,6 +55,7 @@ import org.di.airbnb.dao.entities.PropertyAvailability;
 import org.di.airbnb.dao.entities.Rating;
 import org.di.airbnb.dao.entities.RentingRules;
 import org.di.airbnb.dao.entities.User;
+import org.di.airbnb.dao.entities.UserActivity;
 import org.di.airbnb.dao.entities.location.City;
 import org.di.airbnb.dao.entities.location.Country;
 import org.di.airbnb.dao.entities.location.District;
@@ -64,6 +65,7 @@ import org.di.airbnb.dao.repository.PropertyAvailabilityRepository;
 import org.di.airbnb.dao.repository.PropertyRepository;
 import org.di.airbnb.dao.repository.RatingRepository;
 import org.di.airbnb.dao.repository.RentingRulesRepository;
+import org.di.airbnb.dao.repository.UserActivityRepository;
 import org.di.airbnb.dao.repository.UserRepository;
 import org.di.airbnb.dao.repository.location.CityRepository;
 import org.di.airbnb.dao.repository.location.CountryRepository;
@@ -120,6 +122,8 @@ public class AirbnbManager {
 	private CityRepository cityRepository;
 	@Autowired
 	private DistrictRepository districtRepository;
+	@Autowired
+	private UserActivityRepository userActivityRepository;
 	@Autowired
 	private AirbnbDaoImpl airbnbDao;
 	@Autowired
@@ -723,9 +727,11 @@ public class AirbnbManager {
 		}
 	}
 
-	//TODO: implement that
 	public void trackUserActivity( final long userId, final long propertyId ) {
-
+		UserActivity userActivity = new UserActivity();
+		userActivity.setUserId( userId );
+		userActivity.setPropertyId( propertyId );
+		userActivityRepository.save( userActivity );
 	}
 
 	private double getMeanRating( final long propertyId ) {
