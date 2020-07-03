@@ -1,5 +1,7 @@
 package org.di.airbnb.assemblers.property;
 
+import java.math.BigDecimal;
+
 import org.di.airbnb.assemblers.image.ImageModel;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,7 +25,7 @@ public class PropertyBasicInfo {
 	private long id;
 	private String propertyName;
 	private ImageModel image;
-	private double price;
+	private BigDecimal price;
 	private String country;
 	private String city;
 	private String district;

@@ -178,7 +178,7 @@ public class AirbnbManager {
 				.build( new CacheLoader<Long, String>() {
 					@Override
 					public String load( final Long userId ) {
-						return userRepository.getOne(  userId ).getUsername();
+						return userRepository.getOne( userId ).getUsername();
 					}
 				} );
 	}
@@ -407,6 +407,7 @@ public class AirbnbManager {
 				imageModel.setPicture( decompressBytes( imageModel.getPicture() ) );
 				propertyBasicInfo.setImage( imageModel );
 			}
+			propertyBasicInfo.setPrice( property.getPrice() );
 			propertyBasicInfo.setMeanRating( getMeanRating( property.getId() ) );
 			propertyBasicInfo.setPropertyName( property.getName() );
 			return propertyBasicInfo;
@@ -673,8 +674,10 @@ public class AirbnbManager {
 			MessagingModel messagingModel = modelMapper.map( message, MessagingModel.class );
 			MessagingDetails messagingDetails = new MessagingDetails();
 			messagingDetails.setMessagingModel( messagingModel );
-			messagingDetails.setRecipientName( userNameCache.getUnchecked( messagingModel.getRecipient() ) );
-			messagingDetails.setSenderName( userNameCache.getUnchecked( messagingModel.getSender() ) );
+			messagingDetails.setRecipientName(
+					userNameCache.getUnchecked( messagingModel.getRecipient() ) );
+			messagingDetails.setSenderName(
+					userNameCache.getUnchecked( messagingModel.getSender() ) );
 
 			messages.add( messagingDetails );
 			newMessages.put( key, messages );
