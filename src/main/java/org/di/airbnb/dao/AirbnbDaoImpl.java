@@ -189,7 +189,6 @@ public class AirbnbDaoImpl {
 
 		Pagination pagination = searchRequest.getPagination();
 		if ( pagination != null ) {
-			if ( pagination.getLimit() == 0 )
 			typedQuery = typedQuery.setFirstResult( pagination.getLimit() )
 					.setMaxResults( pagination.getOffset() );
 		}
