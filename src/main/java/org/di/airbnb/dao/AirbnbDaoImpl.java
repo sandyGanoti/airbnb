@@ -182,7 +182,7 @@ public class AirbnbDaoImpl {
 	public List<Property> getPropertiesBySearchQuery( final SearchRequest searchRequest ) {
 
 		TypedQuery<Long> typedQuery = entityManager.createQuery(
-				"SELECT pa.propertyId FROM PropertyAvailability pa WHERE (:fromDate BETWEEN pa.availableFrom and pa.availableTo) and (:toDate BETWEEN pa.availableFrom and  pa.availableTo)",
+				"SELECT pa.propertyId FROM PropertyAvailability pa WHERE (:fromDate BETWEEN pa.availableFrom and pa.availableTo) and (:toDate BETWEEN pa.availableFrom and  pa.availableTo) order by pa.propertyId",
 				Long.class )
 				.setParameter( "fromDate", searchRequest.getFrom() )
 				.setParameter( "toDate", searchRequest.getTo() );
