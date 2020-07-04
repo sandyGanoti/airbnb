@@ -40,7 +40,6 @@ public class UserCreationRequest {
 
 	@NotBlank
 	@Size(max = 50)
-	@Email
 	private String email;
 
 }
