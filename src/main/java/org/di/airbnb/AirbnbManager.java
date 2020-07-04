@@ -560,8 +560,8 @@ public class AirbnbManager {
 
 		RentingRules rentingRules = modelMapper.map( propertyCreationRequest, RentingRules.class );
 		rentingRules.setPropertyId( newlyCreatedPropertyId );
-		if ( !Strings.isNullOrEmpty( propertyCreationRequest.getFreeText() ) ) {
-			rentingRules.setFreeText( propertyCreationRequest.getFreeText() );
+		if ( !Strings.isNullOrEmpty( propertyCreationRequest.getExtraFreeText() ) ) {
+			rentingRules.setFreeText( propertyCreationRequest.getExtraFreeText() );
 		}
 		rentingRulesRepository.save( rentingRules );
 		return newlyCreatedProperty.getId();
