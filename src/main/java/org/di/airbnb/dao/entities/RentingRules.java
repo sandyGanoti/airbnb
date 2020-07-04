@@ -16,14 +16,14 @@ public class RentingRules implements Serializable {
 
 	private long id;
 	private long propertyId;
-	private boolean aircondition;
-	private boolean tv;
-	private boolean internet;
-	private boolean livingRoom;
-	private boolean kitchen;
-	private boolean partyFriendly;
-	private boolean petFriendly;
-	private boolean smokingFriendly;
+	private Boolean aircondition;
+	private Boolean tv;
+	private Boolean internet;
+	private Boolean livingRoom;
+	private Boolean kitchen;
+	private Boolean partyFriendly;
+	private Boolean petFriendly;
+	private Boolean smokingFriendly;
 	private String freeText;
 
 	@Id
@@ -45,71 +45,75 @@ public class RentingRules implements Serializable {
 		this.propertyId = propertyId;
 	}
 
-	public boolean hasAircondition() {
+	@Column(name = "aircondition")
+	public Boolean getAircondition() {
 		return aircondition;
 	}
 
-	public void setAircondition( final boolean aircondition ) {
+	public void setAircondition( final Boolean aircondition ) {
 		this.aircondition = aircondition;
 	}
 
-	public boolean hasTv() {
+	@Column(name = "tv")
+	public Boolean getTv() {
 		return tv;
 	}
 
-	public void setTv( final boolean tv ) {
+	public void setTv( final Boolean tv ) {
 		this.tv = tv;
 	}
 
-	public boolean hasInternet() {
+	@Column(name = "internet")
+	public Boolean getInternet() {
 		return internet;
 	}
 
-	public void setInternet( final boolean internet ) {
+	public void setInternet( final Boolean internet ) {
 		this.internet = internet;
 	}
 
 	@Column(name = "living_room")
-	public boolean hasLivingRoom() {
+	public Boolean getLivingRoom() {
 		return livingRoom;
 	}
 
-	public void setLivingRoom( final boolean livingRoom ) {
+	public void setLivingRoom( final Boolean livingRoom ) {
 		this.livingRoom = livingRoom;
 	}
 
-	public boolean hasKitchen() {
+	@Column(name = "kitchen")
+	public Boolean getKitchen() {
 		return kitchen;
 	}
 
-	public void setKitchen( final boolean kitchen ) {
+	public void setKitchen( final Boolean kitchen ) {
 		this.kitchen = kitchen;
 	}
 
 	@Column(name = "party_friendly")
-	public boolean isPartyFriendly() {
+	public Boolean getPartyFriendly() {
 		return partyFriendly;
 	}
 
-	public void setPartyFriendly( final boolean partyFriendly ) {
+	public void setPartyFriendly( final Boolean partyFriendly ) {
 		this.partyFriendly = partyFriendly;
 	}
 
 	@Column(name = "pet_friendly")
-	public boolean isPetFriendly() {
+	public Boolean getPetFriendly() {
 		return petFriendly;
 	}
 
-	public void setPetFriendly( final boolean petFriendly ) {
+	public void setPetFriendly( final Boolean petFriendly ) {
 		this.petFriendly = petFriendly;
 	}
 
 	@Column(name = "smoking_friendly")
-	public boolean isSmokingFriendly() {
+	public Boolean getSmokingFriendly() {
 		return smokingFriendly;
 	}
 
-	public void setSmokingFriendly( final boolean smokingFriendly ) {
+	public void setSmokingFriendly( final Boolean smokingFriendly ) {
 		this.smokingFriendly = smokingFriendly;
 	}
 

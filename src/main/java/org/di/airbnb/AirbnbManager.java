@@ -448,13 +448,28 @@ public class AirbnbManager {
 		if ( property == null || property.isHistoric() ) {
 			return Optional.empty();
 		}
+		LOGGER.error( property.toString() );
 		RentingRules rentingRules = airbnbDao.getPropertyRentingRules( propertyId );
+		LOGGER.error( rentingRules.toString() );
+
+		RentingRulesModel rentingRulesModel = new RentingRulesModel();
+		rentingRulesModel.setId( rentingRules.getId() );
+		rentingRulesModel.setAircondition( rentingRules.getAircondition() );
+		rentingRulesModel.setTv( rentingRules.getTv() );
+		rentingRulesModel.setInternet( rentingRules.getInternet() );
+		rentingRulesModel.setLivingRoom( rentingRules.getLivingRoom() );
+		rentingRulesModel.setKitchen( rentingRules.getKitchen() );
+		rentingRulesModel.setPartyFriendly( rentingRules.getPartyFriendly() );
+		rentingRulesModel.setPetFriendly( rentingRules.getPetFriendly() );
+		rentingRulesModel.setSmokingFriendly( rentingRules.getSmokingFriendly() );
+		rentingRulesModel.setFreeText( rentingRules.getFreeText() );
+		LOGGER.error( rentingRules.toString() );
+		LOGGER.error( rentingRulesModel.toString() );
 
 		PropertyWithRentingRules propertyWithRentingRules = new PropertyWithRentingRules();
 		propertyWithRentingRules.setPropertyModel(
 				modelMapper.map( property, PropertyModel.class ) );
-		propertyWithRentingRules.setRentingRulesModel(
-				modelMapper.map( rentingRules, RentingRulesModel.class ) );
+		propertyWithRentingRules.setRentingRulesModel( rentingRulesModel );
 
 		propertyWithRentingRules.setImages(
 				airbnbDao.getPropertyImages( propertyId ).stream().map( image -> {
@@ -469,6 +484,8 @@ public class AirbnbManager {
 				cityCache.getUnchecked( property.getCityId() ).getName() );
 		propertyWithRentingRules.setDistrict(
 				districtCache.getUnchecked( property.getDistrictId() ).getName() );
+		LOGGER.error( propertyWithRentingRules.toString() );
+
 		return Optional.of( propertyWithRentingRules );
 	}
 
