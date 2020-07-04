@@ -535,7 +535,6 @@ public class AirbnbManager {
 		return imageModel;
 	}
 
-	//TODO: do it in one transaction
 	public long createProperty( final PropertyCreationRequest propertyCreationRequest,
 			final long hostId ) {
 		if ( airbnbDao.ownsProperty( hostId ) ) {
@@ -561,6 +560,9 @@ public class AirbnbManager {
 
 		RentingRules rentingRules = modelMapper.map( propertyCreationRequest, RentingRules.class );
 		rentingRules.setPropertyId( newlyCreatedPropertyId );
+		if ( !Strings.isNullOrEmpty( propertyCreationRequest.getFreeText() ) ) {
+			rentingRules.setFreeText( propertyCreationRequest.getFreeText() );
+		}
 		rentingRulesRepository.save( rentingRules );
 		return newlyCreatedProperty.getId();
 	}
