@@ -195,6 +195,7 @@ public class Property {
 		this.longitude = longitude;
 	}
 
+	@Column(name = "historic")
 	public Boolean isHistoric() {
 		return historic;
 	}

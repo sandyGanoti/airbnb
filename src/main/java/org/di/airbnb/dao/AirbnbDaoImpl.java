@@ -207,7 +207,6 @@ public class AirbnbDaoImpl {
 				.setParameter( "numberOfPeople", searchRequest.getNumberOfPeople() )
 				.setParameter( "availablePropertyIds", availablePropertyIds );
 
-
 		/* not booked property ids */
 		List<Long> propertyIds = query.getResultList();
 		LOGGER.error( propertyIds.toString() );
@@ -215,13 +214,14 @@ public class AirbnbDaoImpl {
 			return Collections.emptyList();
 		}
 
-		return entityManager.createQuery( "FROM Property p WHERE p.id IN :propertyIds",
-				Property.class ).setParameter( "propertyIds", propertyIds ).getResultList();
-
-		//TODO: FIRST CHECK from the availability and collect the ids from there
-		// TODO: Also check the other filters as well!
-
-		//TODO: SAME CHECK should be done on booking process as well!
+		return entityManager.createQuery(
+				"FROM Property p WHERE p.id IN :propertyIds and p.countryId = :countryId and p.cityId = :cityId and p.districtId = :districtId",
+				Property.class )
+				.setParameter( "propertyIds", propertyIds )
+				.setParameter( "countryId", searchRequest.getCountryId() )
+				.setParameter( "cityId", searchRequest.getCityId() )
+				.setParameter( "districtId", searchRequest.getDistrictId() )
+				.getResultList();
 	}
 
 }
