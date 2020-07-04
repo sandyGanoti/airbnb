@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -751,7 +752,16 @@ public class AirbnbManager {
 
 	public List<PropertyBasicInfo> findProperties( final SearchRequest searchRequest ) {
 		List<Property> properties = airbnbDao.getPropertiesBySearchQuery( searchRequest );
-		return constructPropertyBasicInfo( properties );
+		List<PropertyBasicInfo> basicInfos = constructPropertyBasicInfo( properties );
+		Collections.sort( basicInfos, new Comparator<PropertyBasicInfo>() {
+					@Override
+					public int compare( final PropertyBasicInfo o1, final PropertyBasicInfo o2 ) {
+						return o1.getPrice().compareTo( o2.getPrice() );
+					}
+				}
+
+		);
+		return basicInfos;
 	}
 
 	public void bookProperty( final long userId, final BookingRequest bookingRequest ) {
