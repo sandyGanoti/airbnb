@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "image")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ImageModel {
 	private Long id;
 	private String name;

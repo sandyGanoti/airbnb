@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "rating")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RatingModel {
 
 	private long id;

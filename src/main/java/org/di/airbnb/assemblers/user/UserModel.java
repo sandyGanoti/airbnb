@@ -20,7 +20,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "user")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserModel {
 
 	@NotNull

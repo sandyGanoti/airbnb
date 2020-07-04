@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "country")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CountryModel {
 
 	private long id;

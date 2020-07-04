@@ -19,7 +19,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "popularplaces")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PropertyBasicInfo {
 
 	private long id;

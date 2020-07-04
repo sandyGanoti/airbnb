@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "messaging")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessagingDetails {
 
 	private MessagingModel messagingModel;

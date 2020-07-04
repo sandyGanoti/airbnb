@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "property_to_rent")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PropertyModel {
 
 	@NotNull

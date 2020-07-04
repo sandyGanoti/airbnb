@@ -1,7 +1,5 @@
 package org.di.airbnb.assemblers.property;
 
-import org.di.airbnb.dao.entities.Property;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -17,18 +15,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "renting_rules")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RentingRulesModel {
 
 	private long id;
-	private boolean aircondition;
-	private boolean tv;
-	private boolean internet;
-	private boolean livingRoom;
-	private boolean kitchen;
-	private boolean partyFriendly;
-	private boolean petFriendly;
-	private boolean smokingFriendly;
+	private Boolean aircondition;
+	private Boolean tv;
+	private Boolean internet;
+	private Boolean livingRoom;
+	private Boolean kitchen;
+	private Boolean partyFriendly;
+	private Boolean petFriendly;
+	private Boolean smokingFriendly;
 	private String freeText;
 
 }

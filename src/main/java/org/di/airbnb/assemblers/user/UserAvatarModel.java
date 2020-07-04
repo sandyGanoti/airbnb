@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "useravatar")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserAvatarModel {
 
 	@NotNull

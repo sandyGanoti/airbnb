@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "booking")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookingModel {
 
 	private long id;

@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "usernamepassword")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UsernamePasswordModel {
 
 	@NotBlank

@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonRootName(value = "city")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CityModel {
 
 	private long id;
