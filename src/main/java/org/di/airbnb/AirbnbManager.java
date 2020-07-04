@@ -462,6 +462,12 @@ public class AirbnbManager {
 					return imageModel;
 				} ).collect( Collectors.toList() ) );
 
+		propertyWithRentingRules.setCountry(
+				countryCache.getUnchecked( property.getCountryId() ).getName() );
+		propertyWithRentingRules.setCity(
+				cityCache.getUnchecked( property.getCityId() ).getName() );
+		propertyWithRentingRules.setDistrict(
+				districtCache.getUnchecked( property.getDistrictId() ).getName() );
 		return Optional.of( propertyWithRentingRules );
 	}
 

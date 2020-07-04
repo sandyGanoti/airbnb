@@ -18,4 +18,7 @@ public class PropertyWithRentingRules {
 	private PropertyModel propertyModel;
 	private RentingRulesModel rentingRulesModel;
 	private List<ImageModel> images;
+	private String country;
+	private String city;
+	private String district;
 }
