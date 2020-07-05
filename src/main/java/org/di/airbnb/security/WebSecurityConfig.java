@@ -65,14 +65,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 				.csrf()
 				.disable()
-//				.authorizeRequests()
-//				.antMatchers( HttpMethod.POST, "/airbnb/user/signup", "/airbnb/user/login" )
-//				.permitAll()
-//				.anyRequest()
-//				.authenticated()
-//				.and()
-				//				.addFilter(new JWTAuthenticationFilter(authenticationManager()))
-				//				.addFilter(new JWTAuthorizationFilter(authenticationManager()))
+
+				.authorizeRequests()
+				.antMatchers( HttpMethod.POST, "/airbnb/user/signup", "/airbnb/user/login" )
+				.permitAll()
+				.anyRequest()
+				.authenticated()
+				.and()
+//								.addFilter(new JWTAuthenticationFilter(authenticationManager())) not that
+//								.addFilter(new JWTAuthorizationFilter(authenticationManager())) and that
 				// this disables session creation on Spring Security
 				.sessionManagement()
 				.sessionCreationPolicy( SessionCreationPolicy.STATELESS );

@@ -17,6 +17,10 @@ dependencies {
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.0.2'
 
+// https://mvnrepository.com/artifact/edu.stanford.nlp/stanford-corenlp
+    compile group: 'edu.stanford.nlp', name: 'stanford-corenlp', version: '4.0.0'
+// https://mvnrepository.com/artifact/com.googlecode.efficient-java-matrix-library/ejml
+    compile group: 'com.googlecode.efficient-java-matrix-library', name: 'ejml', version: '0.23'
 
     compile group: 'com.google.inject', name: 'guice', version: '4.0'
 
