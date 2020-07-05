@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "booking")
+@Table(name = "user_activity")
 public class UserActivity implements Serializable {
 
 	private long id;
