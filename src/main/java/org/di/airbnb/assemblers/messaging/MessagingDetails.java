@@ -1,5 +1,7 @@
 package org.di.airbnb.assemblers.messaging;
 
+import java.time.Instant;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -20,5 +22,6 @@ public class MessagingDetails {
 	private MessagingModel messagingModel;
 	private String senderName;
 	private String recipientName;
+	private Instant createdAt;
 
 }

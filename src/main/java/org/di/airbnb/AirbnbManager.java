@@ -11,9 +11,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
@@ -708,9 +710,20 @@ public class AirbnbManager {
 					userNameCache.getUnchecked( messagingModel.getRecipient() ) );
 			messagingDetails.setSenderName(
 					userNameCache.getUnchecked( messagingModel.getSender() ) );
+			messagingDetails.setCreatedAt( message.getCreatedAt() );
 
 			messages.add( messagingDetails );
 			newMessages.put( key, messages );
+		} );
+
+		newMessages.forEach( (userID, messages) -> {
+			Collections.sort( messages, new Comparator<MessagingDetails>() {
+						@Override
+						public int compare( final MessagingDetails m1, final MessagingDetails m2 ) {
+							return m1.getCreatedAt().compareTo( m2.getCreatedAt() );
+						}
+					}
+			);
 		} );
 
 		return newMessages;

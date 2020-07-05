@@ -506,10 +506,6 @@ curl
 				HttpStatus.OK );
 	}
 
-	//TODO: 1
-	//TODO: fix the pagination
-	// TODO: load image
-	// TODO: load meanRating
 	/*
 	curl
 		-H "Content-Type: application/json"
@@ -545,7 +541,6 @@ curl
 		return new ResponseEntity<>( HttpStatus.NO_CONTENT );
 	}
 
-	//TODO: booking
 	/*
 	curl
 		-H "Content-Type: application/json"
