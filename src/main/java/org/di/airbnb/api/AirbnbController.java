@@ -527,7 +527,7 @@ curl
 				HttpStatus.CREATED );
 	}
 
-	@PostMapping(value = "user/property")
+	@PostMapping(value = "user/{userId}/propertyactivity")
 	public ResponseEntity<?> trackUserActivity(
 			@RequestHeader("Authorization") String authorizationHeader,
 			@PathVariable("userId") long userId,
